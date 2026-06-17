@@ -1,0 +1,9 @@
+"dataset","analysis_scope","group_variable","pc1_variance","pc2_variance","mean_silhouette","n_genes_input","n_genes_used","zero_var_removed"
+"ALL GENES","global_appendage_pca","Appendage",39.6043556827712,16.6084934616471,0.426715045385385,24828,24608,220
+"ALL GENES","antenna_sex_mating_pca","Sex / Mating status",29.6310778765522,26.6315521577672,-0.0105777961689222,24828,24608,887
+"ALL GENES","palp_sex_mating_pca","Sex / Mating status",36.6116052236343,19.3211286040084,0.267167870190716,24828,24608,307
+"ALL GENES","tarsi_sex_mating_pca","Sex / Mating status",42.2006593092091,16.3508998726934,0.056277249044914,24828,24608,455
+"CHEMOSENSORY GENES (Name non-empty)","global_appendage_pca","Appendage",36.0606828284746,30.2545166409531,0.636563122296492,567,553,14
+"CHEMOSENSORY GENES (Name non-empty)","antenna_sex_mating_pca","Sex / Mating status",32.0881156471809,25.583874236868,0.00735582936694429,567,553,40
+"CHEMOSENSORY GENES (Name non-empty)","palp_sex_mating_pca","Sex / Mating status",31.0349601306364,18.4842031973917,0.145512258066865,567,553,25
+"CHEMOSENSORY GENES (Name non-empty)","tarsi_sex_mating_pca","Sex / Mating status",39.2412065102281,14.2186767378276,0.0749832809988096,567,553,38

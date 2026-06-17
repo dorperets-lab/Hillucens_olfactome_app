@@ -1,0 +1,17 @@
+"dataset","model","component","adj_r2_fraction","sex_mated_correlation"
+"ALL GENES","2-way: appendage + sex/mating-status group","Appendage unique",0.691429524166001,NA
+"ALL GENES","2-way: appendage + sex/mating-status group","Sex / mating-status unique",0.032403735748054,NA
+"ALL GENES","2-way: appendage + sex/mating-status group","Unexplained",0.276166740085945,NA
+"ALL GENES","3-way: appendage + sex + mating","Appendage unique",0.691429524166,-0.5
+"ALL GENES","3-way: appendage + sex + mating","Sex unique",0.0144742600416446,NA
+"ALL GENES","3-way: appendage + sex + mating","Mating unique",0.0102539918828131,NA
+"ALL GENES","3-way: appendage + sex + mating","Shared/confounded",0,NA
+"ALL GENES","3-way: appendage + sex + mating","Unexplained",0.283842223909542,NA
+"CHEMOSENSORY GENES (Name non-empty)","2-way: appendage + sex/mating-status group","Appendage unique",0.914966702172695,NA
+"CHEMOSENSORY GENES (Name non-empty)","2-way: appendage + sex/mating-status group","Sex / mating-status unique",0.0117685215556056,NA
+"CHEMOSENSORY GENES (Name non-empty)","2-way: appendage + sex/mating-status group","Unexplained",0.0732647762716995,NA
+"CHEMOSENSORY GENES (Name non-empty)","3-way: appendage + sex + mating","Appendage unique",0.914966702172695,-0.5
+"CHEMOSENSORY GENES (Name non-empty)","3-way: appendage + sex + mating","Sex unique",0.00850870897539913,NA
+"CHEMOSENSORY GENES (Name non-empty)","3-way: appendage + sex + mating","Mating unique",0.00178744940261577,NA
+"CHEMOSENSORY GENES (Name non-empty)","3-way: appendage + sex + mating","Shared/confounded",0,NA
+"CHEMOSENSORY GENES (Name non-empty)","3-way: appendage + sex + mating","Unexplained",0.0747371394492905,NA

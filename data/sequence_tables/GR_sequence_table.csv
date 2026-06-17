@@ -1,0 +1,215 @@
+Tree_ID,Original_FASTA_ID,Hill_ID,Transcript_ID,Species,Species_code,Gene_symbol,Family,Protein_accession,Accession_ID,NCBI_description,Database_source
+HillGR14,GR14,HillGR14,XM_038047598.1,Hermetia illucens,Hill,GR14,GR,XP_037903526.1,XM_038047598.1,Gustatory receptor GR14 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR13,GR13,HillGR13,XM_038047599.1,Hermetia illucens,Hill,GR13,GR,XP_037903526.1,XM_038047599.1,Gustatory receptor GR13 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR15,GR15,HillGR15,XM_038047600.1,Hermetia illucens,Hill,GR15,GR,XP_037903526.1,XM_038047600.1,Gustatory receptor GR15 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR12,GR12,HillGR12,XM_038047601.1,Hermetia illucens,Hill,GR12,GR,XP_037903526.1,XM_038047601.1,Gustatory receptor GR12 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR9,GR9,HillGR9,XM_038047879.1,Hermetia illucens,Hill,GR9,GR,XP_037903807.1,XM_038047879.1,Gustatory receptor GR9 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR10,GR10,HillGR10,XM_038047880.1,Hermetia illucens,Hill,GR10,GR,XP_037903808.1,XM_038047880.1,Gustatory receptor GR10 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR11,GR11,HillGR11,XM_038047881.1,Hermetia illucens,Hill,GR11,GR,XP_037903809.1,XM_038047881.1,Gustatory receptor GR11 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR39,GR39,HillGR39,XM_038048382.1,Hermetia illucens,Hill,GR39,GR,XP_037904310.1,XM_038048382.1,Gustatory receptor GR39 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR24,GR24,HillGR24,XM_038049572.1,Hermetia illucens,Hill,GR24,GR,XP_037905500.1,XM_038049572.1,Gustatory receptor GR24 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR38,GR38,HillGR38,XM_038050309.1,Hermetia illucens,Hill,GR38,GR,XP_037906237.1,XM_038050309.1,Gustatory receptor GR38 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR36,GR36,HillGR36,XM_038050310.1,Hermetia illucens,Hill,GR36,GR,XP_037906238.1,XM_038050310.1,Gustatory receptor GR36 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR31,GR31,HillGR31,XM_038050314.1,Hermetia illucens,Hill,GR31,GR,XP_037906242.1,XM_038050314.1,Gustatory receptor GR31 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR5,GR5,HillGR5,XM_038051358.1,Hermetia illucens,Hill,GR5,GR,XP_037907286.1,XM_038051358.1,Gustatory receptor GR5 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR3,GR3,HillGR3,XM_038052002.1,Hermetia illucens,Hill,GR3,GR,XP_037907930.1,XM_038052002.1,Gustatory receptor GR3 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR37,GR37,HillGR37,XM_038052209.1,Hermetia illucens,Hill,GR37,GR,XP_037908137.1,XM_038052209.1,Gustatory receptor GR37 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR1,GR1,HillGR1,XM_038054377.1,Hermetia illucens,Hill,GR1,GR,XP_037910305.1,XM_038054377.1,Gustatory receptor GR1 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR2,GR2,HillGR2,XM_038056090.1,Hermetia illucens,Hill,GR2,GR,XP_037912018.1,XM_038056090.1,Gustatory receptor GR2 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR4,GR4,HillGR4,XM_038056147.1,Hermetia illucens,Hill,GR4,GR,XP_037912075.1,XM_038056147.1,Gustatory receptor GR4 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR41,GR41,HillGR41,XM_038057268.1,Hermetia illucens,Hill,GR41,GR,XP_037913196.1,XM_038057268.1,Gustatory receptor GR41 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR30,GR30,HillGR30,XM_038058890.1,Hermetia illucens,Hill,GR30,GR,XP_037914818.1,XM_038058890.1,Gustatory receptor GR30 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR17,GR17,HillGR17,XM_038059053.1,Hermetia illucens,Hill,GR17,GR,XP_037914981.1,XM_038059053.1,Gustatory receptor GR17 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR16,GR16,HillGR16,XM_038059054.1,Hermetia illucens,Hill,GR16,GR,XP_037914982.1,XM_038059054.1,Gustatory receptor GR16 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR18,GR18,HillGR18,XM_038059055.1,Hermetia illucens,Hill,GR18,GR,XP_037914983.1,XM_038059055.1,Gustatory receptor GR18 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR21,GR21,HillGR21,XM_038059056.1,Hermetia illucens,Hill,GR21,GR,XP_037914984.1,XM_038059056.1,Gustatory receptor GR21 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR20,GR20,HillGR20,XM_038059058.1,Hermetia illucens,Hill,GR20,GR,XP_037914986.1,XM_038059058.1,Gustatory receptor GR20 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR19,GR19,HillGR19,XM_038059059.1,Hermetia illucens,Hill,GR19,GR,XP_037914987.1,XM_038059059.1,Gustatory receptor GR19 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR22,GR22,HillGR22,XM_038059060.1,Hermetia illucens,Hill,GR22,GR,XP_037914988.1,XM_038059060.1,Gustatory receptor GR22 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR7,GR7,HillGR7,XM_038060221.1,Hermetia illucens,Hill,GR7,GR,XP_037916149.1,XM_038060221.1,Gustatory receptor GR7 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR6,GR6,HillGR6,XM_038060222.1,Hermetia illucens,Hill,GR6,GR,XP_037916150.1,XM_038060222.1,Gustatory receptor GR6 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR8,GR8,HillGR8,XM_038060223.1,Hermetia illucens,Hill,GR8,GR,XP_037916151.1,XM_038060223.1,Gustatory receptor GR8 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR26,GR26,HillGR26,XM_038060761.1,Hermetia illucens,Hill,GR26,GR,XP_037916689.1,XM_038060761.1,Gustatory receptor GR26 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR27,GR27,HillGR27,XM_038060762.1,Hermetia illucens,Hill,GR27,GR,XP_037916690.1,XM_038060762.1,Gustatory receptor GR27 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR28,GR28,HillGR28,XM_038060763.1,Hermetia illucens,Hill,GR28,GR,XP_037916691.1,XM_038060763.1,Gustatory receptor GR28 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR25,GR25,HillGR25,XM_038060764.1,Hermetia illucens,Hill,GR25,GR,XP_037916692.1,XM_038060764.1,Gustatory receptor GR25 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR40,GR40,HillGR40,XM_038061394.1,Hermetia illucens,Hill,GR40,GR,XP_037917322.1,XM_038061394.1,Gustatory receptor GR40 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR33,GR33,HillGR33,XM_038062660.1,Hermetia illucens,Hill,GR33,GR,XP_037918588.1,XM_038062660.1,Gustatory receptor GR33 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR32,GR32,HillGR32,XM_038062662.1,Hermetia illucens,Hill,GR32,GR,XP_037918590.1,XM_038062662.1,Gustatory receptor GR32 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR34,GR34,HillGR34,XM_038062666.1,Hermetia illucens,Hill,GR34,GR,XP_037918594.1,XM_038062666.1,Gustatory receptor GR34 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+HillGR35,GR35,HillGR35,XM_038062667.1,Hermetia illucens,Hill,GR35,GR,XP_037918595.1,XM_038062667.1,Gustatory receptor GR35 [Hermetia illucens]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,NCBI (Hermetia illucens genome GCF_905115235.1)
+AaegGR1,AaegGR1,,,Aedes aegypti,Aaeg,GR1,GR,AaegGr1,AaegGr1,gustatory receptor 1 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR2,AaegGR2,,,Aedes aegypti,Aaeg,GR2,GR,AaegGr2,AaegGr2,gustatory receptor 2 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR3,AaegGR3,,,Aedes aegypti,Aaeg,GR3,GR,AaegGr3,AaegGr3,gustatory receptor 3 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR4,AaegGR4,,,Aedes aegypti,Aaeg,GR4,GR,AaegGr4,AaegGr4,gustatory receptor 4 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR5,AaegGR5,,,Aedes aegypti,Aaeg,GR5,GR,AaegGr5,AaegGr5,gustatory receptor 5 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR6,AaegGR6,,,Aedes aegypti,Aaeg,GR6,GR,AaegGr6,AaegGr6,gustatory receptor 6 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR7,AaegGR7,,,Aedes aegypti,Aaeg,GR7,GR,AaegGr7,AaegGr7,gustatory receptor 7 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR8,AaegGR8,,,Aedes aegypti,Aaeg,GR8,GR,AaegGr8,AaegGr8,gustatory receptor 8 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR9,AaegGR9,,,Aedes aegypti,Aaeg,GR9,GR,AaegGr9,AaegGr9,gustatory receptor 9 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR10,AaegGR10,,,Aedes aegypti,Aaeg,GR10,GR,AaegGr10,AaegGr10,gustatory receptor 10 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR11,AaegGR11,,,Aedes aegypti,Aaeg,GR11,GR,AaegGr11,AaegGr11,gustatory receptor 11 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR13,AaegGR13,,,Aedes aegypti,Aaeg,GR13,GR,AaegGr13,AaegGr13,Gustatory receptor GR13 [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR14,AaegGR14,,,Aedes aegypti,Aaeg,GR14,GR,AaegGr14,AaegGr14,gustatory receptor 14 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR15,AaegGR15,,,Aedes aegypti,Aaeg,GR15,GR,AaegGr15,AaegGr15,gustatory receptor 15 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR16,AaegGR16,,,Aedes aegypti,Aaeg,GR16,GR,AaegGr16,AaegGr16,gustatory receptor 16 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR17,AaegGR17,,,Aedes aegypti,Aaeg,GR17,GR,AaegGr17,AaegGr17,gustatory receptor 17 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR18,AaegGR18,,,Aedes aegypti,Aaeg,GR18,GR,AaegGr18,AaegGr18,gustatory receptor 18 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR19a,AaegGR19a,,,Aedes aegypti,Aaeg,GR19a,GR,AaegGr19a,AaegGr19a,gustatory receptor 19a isoform a [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR19b,AaegGR19b,,,Aedes aegypti,Aaeg,GR19b,GR,AaegGr19b,AaegGr19b,gustatory receptor 18 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR19c,AaegGR19c,,,Aedes aegypti,Aaeg,GR19c,GR,AaegGr19c,AaegGr19c,gustatory receptor 19a isoform a [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20a,AaegGR20a,,,Aedes aegypti,Aaeg,GR20a,GR,AaegGr20a,AaegGr20a,Gustatory receptor GR20a [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20b,AaegGR20b,,,Aedes aegypti,Aaeg,GR20b,GR,AaegGr20b,AaegGr20b,gustatory receptor 2 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20c,AaegGR20c,,,Aedes aegypti,Aaeg,GR20c,GR,AaegGr20c,AaegGr20c,gustatory receptor 20 isoform k [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20d,AaegGR20d,,,Aedes aegypti,Aaeg,GR20d,GR,AaegGr20d,AaegGr20d,Gustatory receptor GR20d [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20e,AaegGR20e,,,Aedes aegypti,Aaeg,GR20e,GR,AaegGr20e,AaegGr20e,gustatory receptor 20 isoform k [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20f,AaegGR20f,,,Aedes aegypti,Aaeg,GR20f,GR,AaegGr20f,AaegGr20f,gustatory receptor 20 isoform k [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20g,AaegGR20g,,,Aedes aegypti,Aaeg,GR20g,GR,AaegGr20g,AaegGr20g,gustatory receptor 20 isoform k [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20h,AaegGR20h,,,Aedes aegypti,Aaeg,GR20h,GR,AaegGr20h,AaegGr20h,Gustatory receptor GR20h [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20i,AaegGR20i,,,Aedes aegypti,Aaeg,GR20i,GR,AaegGr20i,AaegGr20i,gustatory receptor 20 isoform k [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20j,AaegGR20j,,,Aedes aegypti,Aaeg,GR20j,GR,AaegGr20j,AaegGr20j,gustatory receptor 20 isoform k [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20k,AaegGR20k,,,Aedes aegypti,Aaeg,GR20k,GR,AaegGr20k,AaegGr20k,Gustatory receptor GR20k [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20l,AaegGR20l,,,Aedes aegypti,Aaeg,GR20l,GR,AaegGr20l,AaegGr20l,Gustatory receptor GR20l [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR20m,AaegGR20m,,,Aedes aegypti,Aaeg,GR20m,GR,AaegGr20m,AaegGr20m,gustatory receptor 20 isoform k [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR21,AaegGR21,,,Aedes aegypti,Aaeg,GR21,GR,AaegGr21,AaegGr21,gustatory receptor 21 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR22,AaegGR22,,,Aedes aegypti,Aaeg,GR22,GR,AaegGr22,AaegGr22,gustatory receptor 22 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR23,AaegGR23,,,Aedes aegypti,Aaeg,GR23,GR,AaegGr23,AaegGr23,gustatory receptor 23 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR25,AaegGR25,,,Aedes aegypti,Aaeg,GR25,GR,AaegGr25,AaegGr25,gustatory receptor 25 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR26,AaegGR26,,,Aedes aegypti,Aaeg,GR26,GR,AaegGr26,AaegGr26,gustatory receptor 26 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR27,AaegGR27,,,Aedes aegypti,Aaeg,GR27,GR,AaegGr27,AaegGr27,gustatory receptor 27 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR29,AaegGR29,,,Aedes aegypti,Aaeg,GR29,GR,AaegGr29,AaegGr29,gustatory receptor 29 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR30,AaegGR30,,,Aedes aegypti,Aaeg,GR30,GR,AaegGr30,AaegGr30,gustatory receptor 30 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR31,AaegGR31,,,Aedes aegypti,Aaeg,GR31,GR,AaegGr31,AaegGr31,gustatory receptor 31 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR32,AaegGR32,,,Aedes aegypti,Aaeg,GR32,GR,AaegGr32,AaegGr32,gustatory receptor 33b [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR33a,AaegGR33a,,,Aedes aegypti,Aaeg,GR33a,GR,AaegGr33a,AaegGr33a,gustatory receptor 33a isoform 2 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR33b,AaegGR33b,,,Aedes aegypti,Aaeg,GR33b,GR,AaegGr33b,AaegGr33b,gustatory receptor 33b [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR34,AaegGR34,,,Aedes aegypti,Aaeg,GR34,GR,AaegGr34,AaegGr34,gustatory receptor 34 isoform 2 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR35,AaegGR35,,,Aedes aegypti,Aaeg,GR35,GR,AaegGr35,AaegGr35,gustatory receptor 35 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR36,AaegGR36,,,Aedes aegypti,Aaeg,GR36,GR,AaegGr36,AaegGr36,gustatory receptor 36 precursor [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR37,AaegGR37,,,Aedes aegypti,Aaeg,GR37,GR,AaegGr37,AaegGr37,gustatory receptor 37 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39a,AaegGR39a,,,Aedes aegypti,Aaeg,GR39a,GR,AaegGr39a,AaegGr39a,gustatory receptor 39 isoform Gr39a [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39b,AaegGR39b,,,Aedes aegypti,Aaeg,GR39b,GR,AaegGr39b,AaegGr39b,gustatory receptor 39 isoform Gr39b [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39c,AaegGR39c,,,Aedes aegypti,Aaeg,GR39c,GR,AaegGr39c,AaegGr39c,gustatory receptor 39 isoform Gr39c [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39d,AaegGR39d,,,Aedes aegypti,Aaeg,GR39d,GR,AaegGr39d,AaegGr39d,gustatory receptor 39 isoform Gr39c [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39e,AaegGR39e,,,Aedes aegypti,Aaeg,GR39e,GR,AaegGr39e,AaegGr39e,gustatory receptor 39 isoform Gr39c [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39f,AaegGR39f,,,Aedes aegypti,Aaeg,GR39f,GR,AaegGr39f,AaegGr39f,gustatory receptor 39 isoform Gr39c [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39g,AaegGR39g,,,Aedes aegypti,Aaeg,GR39g,GR,AaegGr39g,AaegGr39g,gustatory receptor 39 isoform Gr39c [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR39h,AaegGR39h,,,Aedes aegypti,Aaeg,GR39h,GR,AaegGr39h,AaegGr39h,gustatory receptor 39 isoform Gr39h [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR41,AaegGR41,,,Aedes aegypti,Aaeg,GR41,GR,AaegGr41,AaegGr41,gustatory receptor 41 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR42,AaegGR42,,,Aedes aegypti,Aaeg,GR42,GR,AaegGr42,AaegGr42,gustatory receptor 42 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR43,AaegGR43,,,Aedes aegypti,Aaeg,GR43,GR,AaegGr43,AaegGr43,gustatory receptor 43 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR44,AaegGR44,,,Aedes aegypti,Aaeg,GR44,GR,AaegGr44,AaegGr44,gustatory receptor 44 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR45,AaegGR45,,,Aedes aegypti,Aaeg,GR45,GR,AaegGr45,AaegGr45,Gustatory receptor GR45 [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR46,AaegGR46,,,Aedes aegypti,Aaeg,GR46,GR,AaegGr46,AaegGr46,gustatory receptor 46 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR47,AaegGR47,,,Aedes aegypti,Aaeg,GR47,GR,AaegGr47,AaegGr47,gustatory receptor 47 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR48,AaegGR48,,,Aedes aegypti,Aaeg,GR48,GR,AaegGr48,AaegGr48,gustatory receptor 48 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR49,AaegGR49,,,Aedes aegypti,Aaeg,GR49,GR,AaegGr49,AaegGr49,gustatory receptor 49 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR50,AaegGR50,,,Aedes aegypti,Aaeg,GR50,GR,AaegGr50,AaegGr50,gustatory receptor 50 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR53,AaegGR53,,,Aedes aegypti,Aaeg,GR53,GR,AaegGr53,AaegGr53,Gustatory receptor GR53 [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR54,AaegGR54,,,Aedes aegypti,Aaeg,GR54,GR,AaegGr54,AaegGr54,gustatory receptor 54 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR55,AaegGR55,,,Aedes aegypti,Aaeg,GR55,GR,AaegGr55,AaegGr55,gustatory receptor 55 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR56,AaegGR56,,,Aedes aegypti,Aaeg,GR56,GR,AaegGr56,AaegGr56,gustatory receptor 56 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR57,AaegGR57,,,Aedes aegypti,Aaeg,GR57,GR,AaegGr57,AaegGr57,gustatory receptor 57 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR58,AaegGR58,,,Aedes aegypti,Aaeg,GR58,GR,AaegGr58,AaegGr58,gustatory receptor 58 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR59,AaegGR59,,,Aedes aegypti,Aaeg,GR59,GR,AaegGr59,AaegGr59,gustatory receptor 59 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR60a,AaegGR60a,,,Aedes aegypti,Aaeg,GR60a,GR,AaegGr60a,AaegGr60a,gustatory receptor 60 isoform Gr60a [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR60b,AaegGR60b,,,Aedes aegypti,Aaeg,GR60b,GR,AaegGr60b,AaegGr60b,gustatory receptor 60 isoform Gr60b [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR60c,AaegGR60c,,,Aedes aegypti,Aaeg,GR60c,GR,AaegGr60c,AaegGr60c,gustatory receptor 60 isoform Gr60c [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR60d,AaegGR60d,,,Aedes aegypti,Aaeg,GR60d,GR,AaegGr60d,AaegGr60d,gustatory receptor 60 isoform Gr60d [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR61a,AaegGR61a,,,Aedes aegypti,Aaeg,GR61a,GR,AaegGr61a,AaegGr61a,gustatory receptor 61 isoform Gr61a [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR61b,AaegGR61b,,,Aedes aegypti,Aaeg,GR61b,GR,AaegGr61b,AaegGr61b,gustatory receptor 61 isoform Gr61b [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR62,AaegGR62,,,Aedes aegypti,Aaeg,GR62,GR,AaegGr62,AaegGr62,gustatory receptor 62 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR63,AaegGR63,,,Aedes aegypti,Aaeg,GR63,GR,AaegGr63,AaegGr63,Gustatory receptor GR63 [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR64,AaegGR64,,,Aedes aegypti,Aaeg,GR64,GR,AaegGr64,AaegGr64,gustatory receptor 64 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR65,AaegGR65,,,Aedes aegypti,Aaeg,GR65,GR,AaegGr65,AaegGr65,gustatory receptor 65 isoform 2 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR66,AaegGR66,,,Aedes aegypti,Aaeg,GR66,GR,AaegGr66,AaegGr66,gustatory receptor 66 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR67a,AaegGR67a,,,Aedes aegypti,Aaeg,GR67a,GR,AaegGr67a,AaegGr67a,gustatory receptor 67 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR67b,AaegGR67b,,,Aedes aegypti,Aaeg,GR67b,GR,AaegGr67b,AaegGr67b,gustatory receptor 67 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR67c,AaegGR67c,,,Aedes aegypti,Aaeg,GR67c,GR,AaegGr67c,AaegGr67c,gustatory receptor 67 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR67d,AaegGR67d,,,Aedes aegypti,Aaeg,GR67d,GR,AaegGr67d,AaegGr67d,gustatory receptor 67 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR67e,AaegGR67e,,,Aedes aegypti,Aaeg,GR67e,GR,AaegGr67e,AaegGr67e,gustatory receptor 67 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR68,AaegGR68,,,Aedes aegypti,Aaeg,GR68,GR,AaegGr68,AaegGr68,gustatory receptor 68 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR69,AaegGR69,,,Aedes aegypti,Aaeg,GR69,GR,AaegGr69,AaegGr69,gustatory receptor 69 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR72,AaegGR72,,,Aedes aegypti,Aaeg,GR72,GR,AaegGr72,AaegGr72,gustatory receptor 72 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR73,AaegGR73,,,Aedes aegypti,Aaeg,GR73,GR,AaegGr73,AaegGr73,gustatory receptor 73 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR74a,AaegGR74a,,,Aedes aegypti,Aaeg,GR74a,GR,AaegGr74a,AaegGr74a,gustatory receptor 72 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR74b,AaegGR74b,,,Aedes aegypti,Aaeg,GR74b,GR,AaegGr74b,AaegGr74b,Gustatory receptor GR74b [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR74c,AaegGR74c,,,Aedes aegypti,Aaeg,GR74c,GR,AaegGr74c,AaegGr74c,Gustatory receptor GR74c [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR74d,AaegGR74d,,,Aedes aegypti,Aaeg,GR74d,GR,AaegGr74d,AaegGr74d,Gustatory receptor GR74d [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR74e,AaegGR74e,,,Aedes aegypti,Aaeg,GR74e,GR,AaegGr74e,AaegGr74e,Gustatory receptor GR74e [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR75,AaegGR75,,,Aedes aegypti,Aaeg,GR75,GR,AaegGr75,AaegGr75,gustatory receptor 75 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR76,AaegGR76,,,Aedes aegypti,Aaeg,GR76,GR,AaegGr76,AaegGr76,gustatory receptor 76 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR77,AaegGR77,,,Aedes aegypti,Aaeg,GR77,GR,AaegGr77,AaegGr77,gustatory receptor 77 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR78,AaegGR78,,,Aedes aegypti,Aaeg,GR78,GR,AaegGr78,AaegGr78,gustatory receptor 78 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR79,AaegGR79,,,Aedes aegypti,Aaeg,GR79,GR,AaegGr79,AaegGr79,gustatory receptor 79 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR80,AaegGR80,,,Aedes aegypti,Aaeg,GR80,GR,AaegGr80,AaegGr80,gustatory receptor 80 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+AaegGR81,AaegGR81,,,Aedes aegypti,Aaeg,GR81,GR,AaegGr81,AaegGr81,gustatory receptor 81 [Aedes aegypti],VectorBase / Matthews et al. 2018 Nature (AaegL5; doi:10.1038/s41586-018-0692-z)
+DmelGR2a,DmelGR2a,,,Drosophila melanogaster,Dmel,GR2a,GR,Q9W594.3,Q9W594.3,RecName: Full=Putative gustatory receptor 2a,FlyBase/NCBI
+DmelGR5a,DmelGR5a,,,Drosophila melanogaster,Dmel,GR5a,GR,Q9W497.2,Q9W497.2,RecName: Full=Gustatory receptor 5a for trehalose; AltName: Full=Trehalose receptor,FlyBase/NCBI
+DmelGR8a,DmelGR8a,,,Drosophila melanogaster,Dmel,GR8a,GR,Q9W367.1,Q9W367.1,RecName: Full=Gustatory receptor 8a,FlyBase/NCBI
+DmelGR9a,DmelGR9a,,,Drosophila melanogaster,Dmel,GR9a,GR,Q8IRL8.1,Q8IRL8.1,RecName: Full=Putative gustatory receptor 9a,FlyBase/NCBI
+DmelGR10a,DmelGR10a,,,Drosophila melanogaster,Dmel,GR10a,GR,P58950.1,P58950.1,RecName: Full=Gustatory receptor 10a,FlyBase/NCBI
+DmelGR10b,DmelGR10b,,,Drosophila melanogaster,Dmel,GR10b,GR,Q9VYZ2.1,Q9VYZ2.1,RecName: Full=Putative gustatory receptor 10b,FlyBase/NCBI
+DmelGR21a,DmelGR21a,,,Drosophila melanogaster,Dmel,GR21a,GR,Q9VPT1.3,Q9VPT1.3,RecName: Full=Gustatory and odorant receptor 21a,FlyBase/NCBI
+DmelGR22a,DmelGR22a,,,Drosophila melanogaster,Dmel,GR22a,GR,P58951.2,P58951.2,RecName: Full=Putative gustatory receptor 22a,FlyBase/NCBI
+DmelGR22b,DmelGR22b,,,Drosophila melanogaster,Dmel,GR22b,GR,P84180.1,P84180.1,RecName: Full=Putative gustatory receptor 22b,FlyBase/NCBI
+DmelGR22c,DmelGR22c,,,Drosophila melanogaster,Dmel,GR22c,GR,P58952.3,P58952.3,RecName: Full=Putative gustatory receptor 22c,FlyBase/NCBI
+DmelGR22d,DmelGR22d,,,Drosophila melanogaster,Dmel,GR22d,GR,P84181.2,P84181.2,RecName: Full=Putative gustatory receptor 22d,FlyBase/NCBI
+DmelGR22e,DmelGR22e,,,Drosophila melanogaster,Dmel,GR22e,GR,P58953.1,P58953.1,RecName: Full=Gustatory receptor for bitter taste 22e,FlyBase/NCBI
+DmelGR22f,DmelGR22f,,,Drosophila melanogaster,Dmel,GR22f,GR,P58954.1,P58954.1,RecName: Full=Putative gustatory receptor 22f,FlyBase/NCBI
+DmelGR23aA,DmelGR23aA,,,Drosophila melanogaster,Dmel,GR23aA,GR,NP_523459.3,NP_523459.3,"gustatory receptor 23a, isoform C [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR23aB,DmelGR23aB,,,Drosophila melanogaster,Dmel,GR23aB,GR,NP_523459.3,NP_523459.3,"gustatory receptor 23a, isoform C [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR28a,DmelGR28a,,,Drosophila melanogaster,Dmel,GR28a,GR,Q9VM09.2,Q9VM09.2,RecName: Full=Putative gustatory receptor 28a,FlyBase/NCBI
+DmelGR28bA,DmelGR28bA,,,Drosophila melanogaster,Dmel,GR28bA,GR,NP_995643.1,NP_995643.1,"gustatory receptor 28b, isoform B [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR28bB,DmelGR28bB,,,Drosophila melanogaster,Dmel,GR28bB,GR,NP_995643.1,NP_995643.1,"gustatory receptor 28b, isoform B [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR28bC,DmelGR28bC,,,Drosophila melanogaster,Dmel,GR28bC,GR,NP_995643.1,NP_995643.1,"gustatory receptor 28b, isoform B [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR28bD,DmelGR28bD,,,Drosophila melanogaster,Dmel,GR28bD,GR,NP_995643.1,NP_995643.1,"gustatory receptor 28b, isoform B [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR28bE,DmelGR28bE,,,Drosophila melanogaster,Dmel,GR28bE,GR,NP_995643.1,NP_995643.1,"gustatory receptor 28b, isoform B [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR32a,DmelGR32a,,,Drosophila melanogaster,Dmel,GR32a,GR,Q9VKJ7.3,Q9VKJ7.3,RecName: Full=Gustatory and pheromone receptor 32a,FlyBase/NCBI
+DmelGR33a,DmelGR33a,,,Drosophila melanogaster,Dmel,GR33a,GR,Q9VKA5.3,Q9VKA5.3,RecName: Full=Gustatory and pheromone receptor 33a,FlyBase/NCBI
+DmelGR36a,DmelGR36a,,,Drosophila melanogaster,Dmel,GR36a,GR,P58955.1,P58955.1,RecName: Full=Putative gustatory receptor 36a,FlyBase/NCBI
+DmelGR36b,DmelGR36b,,,Drosophila melanogaster,Dmel,GR36b,GR,Q9VJF2.2,Q9VJF2.2,RecName: Full=Putative gustatory receptor 36b,FlyBase/NCBI
+DmelGR36c,DmelGR36c,,,Drosophila melanogaster,Dmel,GR36c,GR,Q8INZ2.1,Q8INZ2.1,RecName: Full=Putative gustatory receptor 36c,FlyBase/NCBI
+DmelGR39aA,DmelGR39aA,,,Drosophila melanogaster,Dmel,GR39aA,GR,NP_724332.1,NP_724332.1,"gustatory receptor 39a, isoform A [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR39aB,DmelGR39aB,,,Drosophila melanogaster,Dmel,GR39aB,GR,NP_724332.1,NP_724332.1,"gustatory receptor 39a, isoform A [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR39aC,DmelGR39aC,,,Drosophila melanogaster,Dmel,GR39aC,GR,NP_724332.1,NP_724332.1,"gustatory receptor 39a, isoform A [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR39aD,DmelGR39aD,,,Drosophila melanogaster,Dmel,GR39aD,GR,NP_724332.1,NP_724332.1,"gustatory receptor 39a, isoform A [Drosophila melanogaster]",FlyBase/NCBI
+DmelGR39b,DmelGR39b,,,Drosophila melanogaster,Dmel,GR39b,GR,P58960.1,P58960.1,RecName: Full=Putative gustatory receptor 39b,FlyBase/NCBI
+DmelGR43a,DmelGR43a,,,Drosophila melanogaster,Dmel,GR43a,GR,Q9V4K2.3,Q9V4K2.3,RecName: Full=Gustatory receptor for sugar taste 43a,FlyBase/NCBI
+DmelGR47a,DmelGR47a,,,Drosophila melanogaster,Dmel,GR47a,GR,NP_523682.3,NP_523682.3,gustatory receptor 47a [Drosophila melanogaster],FlyBase/NCBI
+DmelGR47b,DmelGR47b,,,Drosophila melanogaster,Dmel,GR47b,GR,P58961.2,P58961.2,RecName: Full=Putative gustatory receptor 47b,FlyBase/NCBI
+DmelGR57a,DmelGR57a,,,Drosophila melanogaster,Dmel,GR57a,GR,Q9V969.1,Q9V969.1,RecName: Full=Putative gustatory receptor 57a,FlyBase/NCBI
+DmelGR58a,DmelGR58a,,,Drosophila melanogaster,Dmel,GR58a,GR,P58962.1,P58962.1,RecName: Full=Putative gustatory receptor 58a,FlyBase/NCBI
+DmelGR58b,DmelGR58b,,,Drosophila melanogaster,Dmel,GR58b,GR,Q9W2B1.2,Q9W2B1.2,RecName: Full=Putative gustatory receptor 58b,FlyBase/NCBI
+DmelGR58c,DmelGR58c,,,Drosophila melanogaster,Dmel,GR58c,GR,Q9W2B2.3,Q9W2B2.3,RecName: Full=Putative gustatory receptor 58c,FlyBase/NCBI
+DmelGR59a,DmelGR59a,,,Drosophila melanogaster,Dmel,GR59a,GR,NP_726287.2,NP_726287.2,gustatory receptor 59a [Drosophila melanogaster],FlyBase/NCBI
+DmelGR59b,DmelGR59b,,,Drosophila melanogaster,Dmel,GR59b,GR,NP_523818.2,NP_523818.2,gustatory receptor 59b [Drosophila melanogaster],FlyBase/NCBI
+DmelGR59c,DmelGR59c,,,Drosophila melanogaster,Dmel,GR59c,GR,Q9W1U5.2,Q9W1U5.2,RecName: Full=Putative gustatory receptor 59c,FlyBase/NCBI
+DmelGR59d,DmelGR59d,,,Drosophila melanogaster,Dmel,GR59d,GR,P58985.1,P58985.1,RecName: Full=Putative gustatory receptor 59d,FlyBase/NCBI
+DmelGR59e,DmelGR59e,,,Drosophila melanogaster,Dmel,GR59e,GR,Q9W1N6.2,Q9W1N6.2,RecName: Full=Putative gustatory receptor 59e,FlyBase/NCBI
+DmelGR59f,DmelGR59f,,,Drosophila melanogaster,Dmel,GR59f,GR,Q9W1N5.2,Q9W1N5.2,RecName: Full=Putative gustatory receptor 59f,FlyBase/NCBI
+DmelGR61a,DmelGR61a,,,Drosophila melanogaster,Dmel,GR61a,GR,Q9W0M2.2,Q9W0M2.2,RecName: Full=Gustatory receptor for sugar taste 61a,FlyBase/NCBI
+DmelGR63a,DmelGR63a,,,Drosophila melanogaster,Dmel,GR63a,GR,Q9VZL7.1,Q9VZL7.1,RecName: Full=Gustatory and odorant receptor 63a,FlyBase/NCBI
+DmelGR64a,DmelGR64a,,,Drosophila melanogaster,Dmel,GR64a,GR,P83293.1,P83293.1,RecName: Full=Gustatory receptor for sugar taste 64a,FlyBase/NCBI
+DmelGR64b,DmelGR64b,,,Drosophila melanogaster,Dmel,GR64b,GR,P83294.1,P83294.1,RecName: Full=Gustatory receptor for sugar taste 64b,FlyBase/NCBI
+DmelGR64c,DmelGR64c,,,Drosophila melanogaster,Dmel,GR64c,GR,P83295.1,P83295.1,RecName: Full=Gustatory receptor for sugar taste 64c,FlyBase/NCBI
+DmelGR64d,DmelGR64d,,,Drosophila melanogaster,Dmel,GR64d,GR,Q9VZJ6.3,Q9VZJ6.3,RecName: Full=Gustatory receptor for sugar taste 64d,FlyBase/NCBI
+DmelGR64e,DmelGR64e,,,Drosophila melanogaster,Dmel,GR64e,GR,P83296.2,P83296.2,RecName: Full=Gustatory receptor for sugar taste 64e,FlyBase/NCBI
+DmelGR64f,DmelGR64f,,,Drosophila melanogaster,Dmel,GR64f,GR,P83297.2,P83297.2,RecName: Full=Gustatory receptor for sugar taste 64f,FlyBase/NCBI
+DmelGR66a,DmelGR66a,,,Drosophila melanogaster,Dmel,GR66a,GR,Q9VSH2.3,Q9VSH2.3,RecName: Full=Gustatory receptor for bitter taste 66a,FlyBase/NCBI
+DmelGR68a,DmelGR68a,,,Drosophila melanogaster,Dmel,GR68a,GR,Q9VTN0.2,Q9VTN0.2,RecName: Full=Gustatory receptor 68a,FlyBase/NCBI
+DmelGR77a,DmelGR77a,,,Drosophila melanogaster,Dmel,GR77a,GR,Q8IPU5.1,Q8IPU5.1,RecName: Full=Putative gustatory receptor 77a,FlyBase/NCBI
+DmelGR85a,DmelGR85a,,,Drosophila melanogaster,Dmel,GR85a,GR,Q8INM9.1,Q8INM9.1,RecName: Full=Putative gustatory receptor 85a,FlyBase/NCBI
+DmelGR89a,DmelGR89a,,,Drosophila melanogaster,Dmel,GR89a,GR,Q9VEU0.2,Q9VEU0.2,RecName: Full=Putative gustatory receptor 89a,FlyBase/NCBI
+DmelGR92a,DmelGR92a,,,Drosophila melanogaster,Dmel,GR92a,GR,Q8IN58.2,Q8IN58.2,RecName: Full=Putative gustatory receptor 92a,FlyBase/NCBI
+DmelGR93a,DmelGR93a,,,Drosophila melanogaster,Dmel,GR93a,GR,Q9VD76.2,Q9VD76.2,RecName: Full=Gustatory receptor for bitter taste 93a,FlyBase/NCBI
+DmelGR93b,DmelGR93b,,,Drosophila melanogaster,Dmel,GR93b,GR,Q8IN23.2,Q8IN23.2,RecName: Full=Putative gustatory receptor 93b,FlyBase/NCBI
+DmelGR93c,DmelGR93c,,,Drosophila melanogaster,Dmel,GR93c,GR,Q9VD74.2,Q9VD74.2,RecName: Full=Putative gustatory receptor 93c,FlyBase/NCBI
+DmelGR93d,DmelGR93d,,,Drosophila melanogaster,Dmel,GR93d,GR,NP_732666.1,NP_732666.1,gustatory receptor 93d [Drosophila melanogaster],FlyBase/NCBI
+DmelGR94a,DmelGR94a,,,Drosophila melanogaster,Dmel,GR94a,GR,Q8IMZ5.1,Q8IMZ5.1,RecName: Full=Putative gustatory receptor 94a,FlyBase/NCBI
+DmelGR97a,DmelGR97a,,,Drosophila melanogaster,Dmel,GR97a,GR,Q8IMQ6.1,Q8IMQ6.1,RecName: Full=Putative gustatory receptor 97a,FlyBase/NCBI
+DmelGR98a,DmelGR98a,,,Drosophila melanogaster,Dmel,GR98a,GR,Q9VB30.2,Q9VB30.2,RecName: Full=Putative gustatory receptor 98a,FlyBase/NCBI
+DmelGR98b,DmelGR98b,,,Drosophila melanogaster,Dmel,GR98b,GR,Q9VB26.2,Q9VB26.2,RecName: Full=Putative gustatory receptor 98b,FlyBase/NCBI
+DmelGR98c,DmelGR98c,,,Drosophila melanogaster,Dmel,GR98c,GR,Q8IMN6.1,Q8IMN6.1,RecName: Full=Putative gustatory receptor 98c,FlyBase/NCBI
+DmelGR98d,DmelGR98d,,,Drosophila melanogaster,Dmel,GR98d,GR,Q8IMN5.1,Q8IMN5.1,RecName: Full=Putative gustatory receptor 98d,FlyBase/NCBI
+AaegGR61c__Gr60_,AaegGR61c__Gr60_,,,Aedes aegypti,Aaeg,GR61c__Gr60_,GR,,,Gustatory receptor GR61c/Gr60 [Aedes aegypti]; gene name based on Drosophila ortholog nomenclature; see accompanying FASTA for sequence,VectorBase / NCBI (Aedes aegypti LVPAgWG)

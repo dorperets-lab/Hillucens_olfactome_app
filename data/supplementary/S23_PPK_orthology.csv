@@ -1,0 +1,40 @@
+Hill_ID,Hill_gene_symbol,Transcript_ID,Protein_accession,Family,Nearest_outgroup_genes,Nearest_outgroup_species,n_Hill_in_clade,n_outgroup_in_clade,Bootstrap_support,Orthology_type,Putative_function_from_Dmel,Notes
+HillPPK1,Ppk1,XM_038059310.1,XP_037915238.1,PPK,Dmelppk9;Dmelppk9,Drosophila melanogaster,1,2,99,co-ortholog,ppk9 — ion channel,
+HillPPK2,Ppk2,XM_038047384.1,XP_037903312.1,PPK,Dmelppk13,Drosophila melanogaster,1,1,100,1:1_ortholog,ppk13 — ion channel,
+HillPPK3,Ppk3,XM_038064647.1,XP_037920575.1,PPK,Dmelppk23;Dmelppk23;Dmelppk23;Dmelppk23,Drosophila melanogaster,1,4,100,co-ortholog,ppk23 — pheromone detection channel,ppk23 clade — candidate pheromone-detection ortholog
+HillPPK4,Ppk4,XM_038064080.1,XP_037920008.1,PPK,Dmelppk3,Drosophila melanogaster,1,1,94,1:1_ortholog,ppk3 — ion channel,
+HillPPK5,Ppk5,XM_038060760.1,XP_037916688.1,PPK,Dmelppk26,Drosophila melanogaster,1,1,99,1:1_ortholog,ppk26 — ion channel,
+HillPPK6,Ppk6,XM_038064204.1,XP_037920132.1,PPK,Dmelppk3,Drosophila melanogaster,3,1,100,ortholog_group,ppk3 — ion channel,
+HillPPK7,Ppk7,XM_038054963.1,XP_037910891.1,PPK,Dmelppk17;Dmelppk17,Drosophila melanogaster,1,2,100,co-ortholog,ppk17 — ion channel (function partially unknown),
+HillPPK8,Ppk8,XM_038057200.1,XP_037913128.1,PPK,Dmelppk31,Drosophila melanogaster,1,1,100,1:1_ortholog,ppk31 — ion channel,
+HillPPK9,Ppk9,XM_038056085.1,XP_037912013.1,PPK,Dmelppk16,Drosophila melanogaster,3,1,100,ortholog_group,ppk16 — sperm motility/ion channel,
+HillPPK10,Ppk10,XM_038056083.1,XP_037912011.1,PPK,Dmelppk16,Drosophila melanogaster,3,1,100,ortholog_group,ppk16 — sperm motility/ion channel,
+HillPPK11,Ppk11,XM_038056084.1,XP_037912012.1,PPK,Dmelppk16,Drosophila melanogaster,3,1,100,ortholog_group,ppk16 — sperm motility/ion channel,tarsi-enriched (this study) — not in ppk23/25 subgroup
+HillPPK12,Ppk12,XM_038057576.1,XP_037913504.1,PPK,Dmelppk10;AaegPpk205;AaegPpk205,Aedes aegypti;Drosophila melanogaster,2,3,100,ortholog_group,ppk10 — ion channel,
+HillPPK13,Ppk13,XM_038061346.1,XP_037917274.1,PPK,Dmelppk26,Drosophila melanogaster,5,1,47,ortholog_group,ppk26 — ion channel,
+HillPPK14,Ppk14,XM_038061347.1,XP_037917275.1,PPK,Dmelppk26,Drosophila melanogaster,5,1,47,ortholog_group,ppk26 — ion channel,
+HillPPK15,Ppk15,XM_038060825.1,XP_037916753.1,PPK,Dmelppk6,Drosophila melanogaster,1,1,100,1:1_ortholog,ppk6 — ion channel,
+HillPPK16,Ppk16,XM_038061622.1,XP_037917550.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,
+HillPPK17,Ppk17,XM_038061621.1,XP_037917549.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,
+HillPPK18,Ppk18,XM_038063713.1,XP_037919641.1,PPK,DmelNach;DmelNach;DmelNach,Drosophila melanogaster,1,3,100,co-ortholog,Nanchung-related — mechanosensory channel,Nanchung-related (degenerin subgroup)
+HillPPK19,Ppk19,XM_038059104.1,XP_037915032.1,PPK,AaegPpk301;AaegPpk301,Aedes aegypti,4,2,76,ortholog_group,PPK channel (function unknown),tarsi-enriched (this study) — not in ppk23/25 subgroup
+HillPPK20,Ppk20,XM_038059105.1,XP_037915033.1,PPK,AaegPpk301;AaegPpk301,Aedes aegypti,4,2,76,ortholog_group,PPK channel (function unknown),
+HillPPK21,Ppk21,XM_038057575.1,XP_037913503.1,PPK,Dmelppk10;AaegPpk205;AaegPpk205,Aedes aegypti;Drosophila melanogaster,2,3,100,ortholog_group,ppk10 — ion channel,
+HillPPK22,Ppk22,XM_038055975.1,XP_037911903.1,PPK,AaegPpk301;AaegPpk301,Aedes aegypti,2,2,60,ortholog_group,PPK channel (function unknown),
+HillPPK23,Ppk23,XM_038055974.1,XP_037911902.1,PPK,AaegPpk301;AaegPpk301,Aedes aegypti,2,2,60,ortholog_group,PPK channel (function unknown),tarsi-enriched (this study) — not in ppk23/25 subgroup
+HillPPK24,Ppk24,XM_038059272.1,XP_037915200.1,PPK,Dmelppk26,Drosophila melanogaster,5,1,47,ortholog_group,ppk26 — ion channel,
+HillPPK25,Ppk25,XM_038059106.1,XP_037915034.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,
+HillPPK26,Ppk26,XM_038058116.1,XP_037914044.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,
+HillPPK27,Ppk27,XM_038068307.1,XP_037924235.1,PPK,Dmelppk15,Drosophila melanogaster,2,1,79,ortholog_group,ppk15 — ion channel (ppk23/25 superfamily),ppk25 clade neighborhood — nearest outgroup is ppk15 (ppk23/25 superfamily)
+HillPPK28,Ppk28,XM_038068306.1,XP_037924234.1,PPK,Dmelppk15,Drosophila melanogaster,2,1,79,ortholog_group,ppk15 — ion channel (ppk23/25 superfamily),ppk25 clade neighborhood — nearest outgroup is ppk15 (ppk23/25 superfamily)
+HillPPK29,Ppk29,XM_038058107.1,XP_037914035.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,tarsi-enriched (this study) — not in ppk23/25 subgroup
+HillPPK30,Ppk30,XM_038059273.1,XP_037915201.1,PPK,Dmelppk26,Drosophila melanogaster,5,1,47,ortholog_group,ppk26 — ion channel,
+HillPPK31,Ppk31,XM_038064321.1,XP_037920249.1,PPK,Dmelppk3,Drosophila melanogaster,2,1,80,ortholog_group,ppk3 — ion channel,
+HillPPK32,Ppk32,XM_038058115.1,XP_037914043.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,
+HillPPK33,Ppk33,XM_038058113.1,XP_037914041.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,
+HillPPK34,Ppk34,XM_038054140.1,XP_037910068.1,PPK,Dmelppk7;Dmelppk14,Drosophila melanogaster,2,2,67,ortholog_group,ppk14 — ion channel,
+HillPPK35,Ppk35,XM_038058114.1,XP_037914042.1,PPK,Dmelppk28;Dmelppk8;Dmelppk8;Dmelppk12;Dmelppk5;Dmelppk5;AaegPpk301;AaegPpk301,Aedes aegypti;Drosophila melanogaster,12,8,100,ortholog_group,ppk28 — water taste channel,
+HillPPK36,Ppk36,XM_038054080.1,XP_037910008.1,PPK,Dmelppk7;Dmelppk14,Drosophila melanogaster,2,2,67,ortholog_group,ppk14 — ion channel,tarsi-enriched (this study) — not in ppk23/25 subgroup
+HillPPK37,Ppk37,XM_038051588.1,XP_037907516.1,PPK,AaegPpk103;AaegPpk103;Dmelppk24;Dmelppk22;Dmelppk22,Aedes aegypti;Drosophila melanogaster,1,5,92,co-ortholog,ppk22 — ion channel,
+HillPPK38,Ppk38,XM_038046613.1,XP_037902541.1,PPK,AaegPpk9;Dmelppk9;Dmelppk9,Aedes aegypti;Drosophila melanogaster,2,3,69,ortholog_group,ppk9 — ion channel,
+HillPPK39,Ppk39,XM_038051665.1,XP_037907593.1,PPK,AaegPpk203,Aedes aegypti,1,1,100,1:1_ortholog,PPK channel (function unknown),

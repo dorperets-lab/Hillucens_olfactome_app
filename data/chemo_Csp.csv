@@ -1,0 +1,11 @@
+Gene_ID,Family,Antenna,Palp,Tarsi,Expr_Status,Antenna_Biased,Palp_Biased,Tarsi_Biased,Antenna_Specific,Palp_Specific,Tarsi_Specific,Antenna_Class,Palp_Class,Tarsi_Class,Cluster_Rep,Is_Duplicate
+CSP9,CSP,523.2993086444444,1608.5676741111113,241.51800048888887,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,CSP9,False
+CSP1,CSP,610621.4927,745455.1358777778,381258.0566,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,CSP1,False
+CSP2,CSP,58938.712118888885,274481.7353,33121.59563333333,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,CSP2,False
+CSP6,CSP,42917.55886777778,26123.436465555555,31710.90955,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,CSP5,True
+CSP5,CSP,42270.72379888889,24829.287276666662,30657.81302888889,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,CSP5,False
+CSP7,CSP,42917.55886777778,26123.436465555555,31710.90955,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,CSP7,False
+CSP8,CSP,42917.55886777778,26123.51340333333,31710.90955,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,CSP8,False
+CSP4,CSP,297.89058002222225,204.60501666666667,1239.000578711111,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,CSP3,True
+CSP3,CSP,308.4904847,213.2317531888889,1491.3204415222222,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,CSP3,False
+CSP10,CSP,234.6321027611111,16.943997726888888,918.9462495333332,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,CSP10,False

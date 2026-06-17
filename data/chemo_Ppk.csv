@@ -1,0 +1,40 @@
+Gene_ID,Family,Antenna,Palp,Tarsi,Expr_Status,Antenna_Biased,Palp_Biased,Tarsi_Biased,Antenna_Specific,Palp_Specific,Tarsi_Specific,Antenna_Class,Palp_Class,Tarsi_Class,Cluster_Rep,Is_Duplicate
+PPK38,PPK,325.41933015666666,64.41113253777777,2596.4008851222225,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK38,False
+PPK2,PPK,41.27034398,54.22275036111111,239.2361681333333,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK2,False
+PPK37,PPK,2.5070757893333333,6.898530170555556,8.97324086088889,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,PPK37,False
+PPK39,PPK,37.21027864555556,24.05891763,166.43722384555556,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK39,False
+PPK36,PPK,4.832150653666667,3.530102389555556,42.97481722222222,Expressed,False,False,True,False,False,True,Not expressed,Not expressed,Tarsi-specific,PPK36,False
+PPK34,PPK,65.09871666555556,39.82350389888889,55.96496538777778,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK34,False
+PPK7,PPK,60.52852872766667,20.026127185444444,67.02686901666667,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK7,False
+PPK23,PPK,2.808735220222222,8.442850638888888,13.98846695011111,Expressed,False,False,False,False,False,True,Not expressed,Not expressed,Tarsi-specific,PPK23,False
+PPK22,PPK,84.21374358333333,44.82100490222222,159.36795696666667,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK22,False
+PPK10,PPK,51.714706918888886,14.624263714666666,533.9692034177777,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK10,False
+PPK11,PPK,2.836244535333333,4.035505809,57.42791415111111,Expressed,False,False,True,False,False,True,Not expressed,Not expressed,Tarsi-specific,PPK11,False
+PPK9,PPK,28.761521404444444,12.294430642444445,274.7049288111112,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK9,False
+PPK8,PPK,438.7842540111111,279.89816074444445,1129.177866588889,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK8,False
+PPK21,PPK,82.40716626555556,170.0765369722222,125.78992893333331,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK21,False
+PPK12,PPK,82.40716626555556,170.0765369722222,125.78992893333331,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK12,False
+PPK29,PPK,3.867888303555556,7.045242793222222,92.20540467444444,Expressed,False,False,True,False,False,True,Not expressed,Not expressed,Tarsi-specific,PPK29,False
+PPK33,PPK,0.3199446271111111,1.0532879183333332,8.494278053111112,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,PPK33,False
+PPK35,PPK,0.0,10.010229082777778,5.605877297444445,Expressed,False,False,False,False,True,False,Not expressed,Palp-specific,Not expressed,PPK35,False
+PPK32,PPK,0.0,1.0582358016666666,5.193496983666667,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,PPK32,False
+PPK26,PPK,26.592597149,18.890811084444444,107.09851868111112,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK26,False
+PPK19,PPK,5.434357557777778,2.838187543,16.045004592666665,Expressed,False,False,False,False,False,True,Not expressed,Not expressed,Tarsi-specific,PPK19,False
+PPK20,PPK,41.51045180444444,8.424910544555555,442.7793532422222,Expressed,False,False,True,False,False,False,Expressed,Not expressed,Tarsi-biased,PPK20,False
+PPK25,PPK,1.381158097111111,19.492989106444444,127.53911211444444,Expressed,False,False,True,False,False,False,Not expressed,Expressed,Tarsi-biased,PPK25,False
+PPK24,PPK,0.0,0.0,2.113550597777778,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,PPK24,False
+PPK30,PPK,0.4002658513333333,0.5982322867777777,6.930135876666667,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,PPK30,False
+PPK1,PPK,137.08467276444443,56.62911203555556,624.2414305755556,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK1,False
+PPK5,PPK,139.5444295111111,63.99993837222223,187.55054867777775,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK5,False
+PPK15,PPK,100.7811642922222,78.04475703333334,597.8352070888889,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK15,False
+PPK13,PPK,93.15216381666669,80.16756157666667,142.33687618888888,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK13,False
+PPK14,PPK,93.15216381666669,80.16756157666667,142.33687618888888,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK14,False
+PPK17,PPK,83.6928002111111,116.04099244444444,404.0194584333333,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK16,True
+PPK16,PPK,83.6928002111111,116.04099244444444,404.0194584333333,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK16,False
+PPK18,PPK,5.283242840777778,3.748698224555556,4.219244986444444,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,PPK18,False
+PPK4,PPK,50.42978450133333,13.074940833333333,198.95593892,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK4,False
+PPK6,PPK,32.59121856755556,11.16452231422222,295.1957156866667,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK6,False
+PPK31,PPK,0.0,1.4341868141111112,0.2432641123333333,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,PPK31,False
+PPK3,PPK,33.634231310888886,119.15530973888887,173.66725298,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,PPK3,False
+PPK28,PPK,73.5135606,46.38302949333333,812.7030582444444,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK27,True
+PPK27,PPK,73.5135606,46.38302949333333,812.7030582444444,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,PPK27,False

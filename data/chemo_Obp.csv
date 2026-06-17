@@ -1,0 +1,76 @@
+Gene_ID,Family,Antenna,Palp,Tarsi,Expr_Status,Antenna_Biased,Palp_Biased,Tarsi_Biased,Antenna_Specific,Palp_Specific,Tarsi_Specific,Antenna_Class,Palp_Class,Tarsi_Class,Cluster_Rep,Is_Duplicate
+OBP54,OBP,16.52130384033333,0.7443555605555555,0.1148235451111111,Expressed,False,False,False,True,False,False,Antenna-specific,Not expressed,Not expressed,OBP54,False
+OBP70,OBP,0.0,0.0,0.0,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP70,False
+OBP55,OBP,0.7858819101111111,0.4096322621111111,0.2665165368888889,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP55,False
+OBP59,OBP,0.8370085363333334,2.5706142843333333,1.5124465574444446,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP59,False
+OBP73,OBP,0.9123861851111112,0.6386773406666667,0.5892453656666667,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP73,False
+OBP72,OBP,0.0,0.0,0.0,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP72,False
+OBP58,OBP,933.6302909444444,187.90313672222223,21.871438451777777,Expressed,True,False,False,False,False,False,Antenna-biased,Expressed,Expressed,OBP58,False
+OBP51,OBP,2164.8209422777777,94.14678781444444,1.558448785666667,Expressed,True,False,False,False,False,False,Antenna-biased,Expressed,Not expressed,OBP51,False
+OBP75,OBP,6.444372704111111,103.73954960222224,2.077572811555556,Expressed,False,True,False,False,True,False,Not expressed,Palp-specific,Not expressed,OBP75,False
+OBP76,OBP,0.0,1.0347684543333333,0.3789638961111111,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP76,False
+OBP74,OBP,2.134569560111111,7.833554935666666,1.5326958573333334,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP74,False
+OBP6,OBP,6161.125236888889,5798.714523222222,9195.067324888889,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP6,False
+OBP5,OBP,30937.656787777774,59773.20270444445,3363.346869,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP5,False
+OBP7,OBP,68.60968213111111,103.20400378222222,584.8392574888888,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,OBP7,False
+OBP32,OBP,0.0,0.0,0.233903535,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP32,False
+OBP34,OBP,11.644629560666669,64.59467550111111,22.63165979011111,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP34,False
+OBP62,OBP,9.61676313611111,228.48882938666665,28.055764341333333,Expressed,False,False,False,False,False,False,Not expressed,Expressed,Expressed,OBP62,False
+OBP19,OBP,5178.512156222222,7716.4100624444445,54.80499905222222,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP19,False
+OBP3,OBP,213837.93252222225,236700.7654,5195.472955222223,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP3,False
+OBP44,OBP,6.294385503888889,0.9135869671111112,15.570411385666668,Expressed,False,False,False,False,False,True,Not expressed,Not expressed,Tarsi-specific,OBP44,False
+OBP41,OBP,0.2326521937777778,0.7778970923333333,0.2482379044444444,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP41,False
+OBP21,OBP,229.60651936666667,55.87468241444444,766.6284654888889,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,OBP21,False
+OBP56,OBP,199.2912360777778,375.99275307777776,133.63242887777778,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP56,False
+OBP57,OBP,199.2912360777778,375.99275307777776,133.63242887777778,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP56,True
+OBP63,OBP,3.671204595111111,19.654490690555555,8.518310278777777,Expressed,False,False,False,False,True,False,Not expressed,Palp-specific,Not expressed,OBP63,False
+OBP37,OBP,5.797659105555555,2.592955249555556,31.65986338377778,Expressed,False,False,True,False,False,True,Not expressed,Not expressed,Tarsi-specific,OBP37,False
+OBP12,OBP,3824.578307777778,84166.55213444444,6927.311775333334,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP12,False
+OBP14,OBP,17510.574068444446,80602.95187555555,9689.248067555556,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP14,False
+OBP13,OBP,17017.998285333335,79476.68467,9389.139447444444,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP13,False
+OBP17,OBP,115707.6976988889,377930.3039777778,26586.30355333333,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP17,False
+OBP40,OBP,0.6979565813333334,0.5310377582222222,0.3723568566666666,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP40,False
+OBP43,OBP,0.0,0.4022582012222222,0.4871804017777777,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP43,False
+OBP25,OBP,13.147526138666668,23.058393204222224,7.090037805222222,Expressed,False,False,False,False,False,False,Expressed,Expressed,Not expressed,OBP25,False
+OBP28,OBP,109.84825183777778,8.528094407333333,185.68877048444443,Expressed,False,False,False,False,False,False,Expressed,Not expressed,Expressed,OBP28,False
+OBP35,OBP,0.0918068998888888,0.0730579257777777,0.0,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP35,False
+OBP46,OBP,23.21047652177777,52.46678320744445,23.96335185533333,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP46,False
+OBP33,OBP,0.0,1.267399703111111,1.543230809,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP33,False
+OBP48,OBP,3.599721988777778,10.603027464111111,4.597679573555555,Expressed,False,False,False,False,True,False,Not expressed,Palp-specific,Not expressed,OBP48,False
+OBP50,OBP,91.1402965088889,523.7413438333333,89.90402169777778,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP50,False
+OBP10,OBP,25395.70939444445,138484.14317777776,120786.09534,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP10,False
+OBP60,OBP,0.0,0.2805060177777778,0.0,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP60,False
+OBP11,OBP,12051.008391666666,95680.07164222222,76163.10297555555,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP11,False
+OBP42,OBP,300.2950687788889,16.796263592888888,700.5491497888888,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,OBP42,False
+OBP15,OBP,103.72517454,673.8757962444445,82.53639360888889,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP15,False
+OBP16,OBP,103.72517454,673.0352746222222,82.27560748666667,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP16,False
+OBP18,OBP,103.72517454,673.0352746222222,82.27560748666667,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP18,False
+OBP27,OBP,0.0,41.77910190666667,0.2432641123333333,Expressed,False,True,False,False,True,False,Not expressed,Palp-specific,Not expressed,OBP27,False
+OBP61,OBP,325.5995672111111,2126.575595111111,6488.096693555555,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,OBP61,False
+OBP45,OBP,0.0,0.1974926312222222,0.2991923408888889,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP45,False
+OBP39,OBP,16.708903816555555,54.82744958255556,31.718058686444447,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP39,False
+OBP49,OBP,2582.5779015555554,15.016919663777776,27.729202336222222,Expressed,True,False,False,False,False,False,Antenna-biased,Expressed,Expressed,OBP49,False
+OBP24,OBP,3.024478518888889,3.1150836152222223,0.173857412,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP23,True
+OBP23,OBP,8.87737432,7.674272113777778,6.760626615888889,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP23,False
+OBP26,OBP,0.1303408835555555,0.3813455604444444,0.1332582684444444,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP26,False
+OBP31,OBP,100.28943083811112,237.97192325111112,40.62733425733333,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP29,True
+OBP29,OBP,122.08897556777777,260.5799470122222,63.21658087666667,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP29,False
+OBP30,OBP,9.291957106666668,80.40757347977777,6.056423718222222,Expressed,False,False,False,False,True,False,Not expressed,Palp-specific,Not expressed,OBP30,False
+OBP22,OBP,0.1164843207777777,9.44215426311111,5.589245637111112,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP22,False
+OBP47,OBP,0.1836137997777777,0.0791408244444444,0.086928706,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP47,False
+OBP20,OBP,6576.970954,245.2598708555556,38301.65513777778,Expressed,False,False,True,False,False,False,Expressed,Expressed,Tarsi-biased,OBP20,False
+OBP2,OBP,102288.54488777778,8773.795909555556,52.06874080555556,Expressed,True,False,False,False,False,False,Antenna-biased,Expressed,Expressed,OBP2,False
+OBP1,OBP,36247.01054222223,106951.43256,28.42369757,Expressed,False,True,False,False,False,False,Expressed,Palp-biased,Expressed,OBP1,False
+OBP71,OBP,1.0156326934444444,28.987464033333328,4.0608711773333335,Expressed,False,True,False,False,True,False,Not expressed,Palp-specific,Not expressed,OBP71,False
+OBP8,OBP,9604.979159444443,0.8271568158888889,1.259159759,Expressed,True,False,False,True,False,False,Antenna-specific,Not expressed,Not expressed,OBP8,False
+OBP9,OBP,9604.979159444443,0.8271568158888889,1.259159759,Expressed,True,False,False,True,False,False,Antenna-specific,Not expressed,Not expressed,OBP9,False
+OBP66,OBP,1.617550600888889,53.59283087888889,71.87575656555555,Expressed,False,False,False,False,False,False,Not expressed,Expressed,Expressed,OBP66,False
+OBP65,OBP,9.42603579488889,2.7633919224444443,12.587739545555555,Expressed,False,False,False,False,False,True,Not expressed,Not expressed,Tarsi-specific,OBP65,False
+OBP68,OBP,0.0,3.6976706574444447,0.0,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP67,True
+OBP67,OBP,0.8005317027777777,4.762968591111111,0.2364556013333333,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP67,False
+OBP69,OBP,0.0,0.8575108706666666,0.1148235451111111,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP69,False
+OBP38,OBP,1.0483588866666669,0.0769379101111111,1.403192147888889,Not expressed,False,False,False,False,False,False,Not expressed,Not expressed,Not expressed,OBP38,False
+OBP53,OBP,276.13118640333334,49.412370348888885,1.464390769,Expressed,True,False,False,False,False,False,Antenna-biased,Expressed,Not expressed,OBP53,False
+OBP64,OBP,80.75770240111112,3.678999962444444,2.4249117866666667,Expressed,True,False,False,True,False,False,Antenna-specific,Not expressed,Not expressed,OBP64,False
+OBP36,OBP,106.66183147444444,1344.2782856777776,101.97328941555556,Expressed,False,False,False,False,False,False,Expressed,Expressed,Expressed,OBP36,False
+OBP52,OBP,686.4884414777778,102.34398022111112,0.0,Expressed,True,False,False,False,False,False,Antenna-biased,Expressed,Not expressed,OBP52,False
