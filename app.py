@@ -4274,14 +4274,14 @@ def render_h1_tab():
 # =============================================================================
 
 @st.cache_data(show_spinner=False)
-def _pdf_to_png_bytes(file_path: str, dpi: int = 150):
-    """Render first page of a PDF to PNG bytes using PyMuPDF (cached per path)."""
+def _pdf_page_samples(file_path: str, dpi: int = 150):
+    """Return (width, height, raw_rgb_bytes) of PDF page 1, or None on failure."""
     try:
-        import fitz  # pymupdf
+        import fitz
         doc = fitz.open(file_path)
         mat = fitz.Matrix(dpi / 72, dpi / 72)
         pix = doc[0].get_pixmap(matrix=mat, alpha=False)
-        return pix.tobytes("png")
+        return pix.width, pix.height, bytes(pix.samples)
     except Exception:
         return None
 
@@ -4290,9 +4290,12 @@ def show_pdf(file_path: str, height: int = 850):
     if not os.path.exists(file_path):
         st.warning(f"Figure file not found: {os.path.basename(file_path)}")
         return
-    img_bytes = _pdf_to_png_bytes(file_path)
-    if img_bytes:
-        st.image(img_bytes, use_container_width=True)
+    result = _pdf_page_samples(file_path)
+    if result is not None:
+        from PIL import Image
+        w, h, samples = result
+        img = Image.frombytes("RGB", [w, h], samples)
+        st.image(img, use_container_width=True)
     else:
         st.info(f"Could not render preview for {os.path.basename(file_path)}. "
                 "Use the download button above.")
