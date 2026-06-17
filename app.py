@@ -143,7 +143,7 @@ GO_FULL = {
     "Unknown": "Unknown",
 }
 
-CHEMO_FAM_ORDER = ["Or", "Gr", "Ir", "Obp", "Csp", "Ppk"]
+CHEMO_FAM_ORDER = ["Or", "Gr", "Ir", "Obp", "Csp", "Ppk", "Trp"]
 
 STATE_COLORS = {
     "Vm": "#ADD8E6",
@@ -4198,7 +4198,7 @@ def h1_make_chemo_heatmap_matplotlib(
 
 def render_h1_tab():
     st.subheader("Chemosensory heatmap")
-    st.caption("Manuscript: **Figs. S17–S22** (per gene family, A4 PDF — OR, GR, IR, OBP, PPK, CSP)")
+    st.caption("Manuscript: **Figs. S17–S23** (per gene family, A4 PDF — OR, GR, IR, OBP, PPK, CSP, TRP)")
 
     unit_choice = st.radio(
         "Expression unit",
@@ -4274,14 +4274,14 @@ def render_h1_tab():
 # =============================================================================
 
 @st.cache_data(show_spinner=False)
-def _pdf_page_samples(file_path: str, dpi: int = 150):
-    """Return (width, height, raw_rgb_bytes) of PDF page 1, or None on failure."""
+def _pdf_to_png_bytes(file_path: str, dpi: int = 150) -> bytes | None:
+    """Render first page of a PDF to PNG bytes using PyMuPDF (cached per path)."""
     try:
-        import fitz
+        import fitz  # pymupdf
         doc = fitz.open(file_path)
         mat = fitz.Matrix(dpi / 72, dpi / 72)
         pix = doc[0].get_pixmap(matrix=mat, alpha=False)
-        return pix.width, pix.height, bytes(pix.samples)
+        return pix.tobytes("png")
     except Exception:
         return None
 
@@ -4290,12 +4290,9 @@ def show_pdf(file_path: str, height: int = 850):
     if not os.path.exists(file_path):
         st.warning(f"Figure file not found: {os.path.basename(file_path)}")
         return
-    result = _pdf_page_samples(file_path)
-    if result is not None:
-        from PIL import Image
-        w, h, samples = result
-        img = Image.frombytes("RGB", [w, h], samples)
-        st.image(img, use_column_width="always")
+    img_bytes = _pdf_to_png_bytes(file_path)
+    if img_bytes:
+        st.image(img_bytes, use_container_width=True)
     else:
         st.info(f"Could not render preview for {os.path.basename(file_path)}. "
                 "Use the download button above.")
@@ -4776,7 +4773,7 @@ MAIN_FIGURE_CAPTIONS = {
         "(B) Stacked GO domain % bars for appendage-biased DEGs. "
         "(C) GO names overlap per tissue. "
         "(D) Chemosensory gene classification pies per appendage. "
-        "See also Figs. S9–S11 (GO enrichment bars) and Figs. S17–S22 (per-family heatmaps)."
+        "See also Figs. S9–S11 (GO enrichment bars) and Figs. S17–S23 (per-family heatmaps)."
     ),
     "Figure 4 — Sex & mating analysis": (
         "**Figure 4.** Sex- and mating-induced transcriptional regulation across appendages. "
@@ -4862,7 +4859,7 @@ SUPP_FIGURE_CAPTIONS = {
         "Rows grouped by appendage of peak expression (Antenna → Maxillary palp → Tarsi), "
         "sorted by expression level within each group. Columns: Virgin male → Virgin female → Mated female "
         "per appendage. Colour scale: log₂(normalised counts + 1) centred at threshold of 10 counts; "
-        "same scale across Figs. S17–S22."
+        "same scale across Figs. S17–S23."
     ),
     "Figure S18 — Heatmap: GR family": (
         "**Figure S18.** Expression heatmap of the Gustatory Receptor (GR) family (39 genes). "
@@ -4883,6 +4880,12 @@ SUPP_FIGURE_CAPTIONS = {
     "Figure S22 — Heatmap: CSP family": (
         "**Figure S22.** Expression heatmap of the Chemosensory Protein (CSP) family (10 genes). "
         "Layout and scale as in Fig. S17."
+    ),
+    "Figure S23 — Heatmap: TRP family": (
+        "**Figure S23.** Expression heatmap of the Transient Receptor Potential channel (Trp) family (111 genes). "
+        "Layout and colour scale as in Supplementary Fig. S17. Columns represent the nine group-mean normalised counts "
+        "(Antenna: Vm, VF, MF; Palp: Vm, VF, MF; Tarsi: Vm, VF, MF). "
+        "Rows sorted by maximum expression across all conditions (descending)."
     ),
 }
 
