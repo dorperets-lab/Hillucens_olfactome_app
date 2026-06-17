@@ -4295,7 +4295,7 @@ def show_pdf(file_path: str, height: int = 850):
         from PIL import Image
         w, h, samples = result
         img = Image.frombytes("RGB", [w, h], samples)
-        st.image(img, use_container_width=True)
+        st.image(img, use_column_width="always")
     else:
         st.info(f"Could not render preview for {os.path.basename(file_path)}. "
                 "Use the download button above.")
