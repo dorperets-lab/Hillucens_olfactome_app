@@ -20,8 +20,13 @@ from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from typing import List
 
 # === PAGE CONFIG (must be first Streamlit call) ===
-st.set_page_config(page_title="BSF Transcriptome Explorer", layout="wide")
-st.markdown("# *Hermetia illucens* Appendage-Resolved Transcriptomic Atlas of Adult Chemosensory Appendages")
+st.set_page_config(
+    page_title="H. illucens Olfactome | Perets et al. 2026",
+    page_icon="🪰",
+    layout="wide",
+)
+st.markdown("# Appendage-resolved transcriptomics reveals constitutive sex-biased expression and reproductive-state plasticity in adult *Hermetia illucens* chemosensory appendages")
+st.caption("Perets et al. 2026 · *Genome Biology* · Interactive data companion")
 
 st.markdown("""
 <style>
@@ -1973,7 +1978,7 @@ def c1_fig_volcano(vdf, padj_thr, lfc_thr, overlay_chemo, highlight_query):
 
 @st.cache_data(show_spinner=False)
 def c1_load_chemo_tables(chemo_dir: str):
-    fam_order = ["Or", "Gr", "Ir", "Obp", "Csp", "Ppk"]
+    fam_order = ["Or", "Gr", "Ir", "Obp", "Csp", "Ppk", "Trp"]
     family_tables = {}
     for fam in fam_order:
         csv_path = os.path.join(chemo_dir, f"chemo_{fam}.csv")
@@ -2423,7 +2428,7 @@ def c1_render_chemo_tab(chemo_tables, chemo_available, chemo_error, chemo_dir,
     has_preclassified = any(
         any(col in df.columns for col in CLASS_COLS) for df in chemo_tables.values()
     )
-    fam_order = ["Or", "Gr", "Ir", "Obp", "Csp", "Ppk"]
+    fam_order = ["Or", "Gr", "Ir", "Obp", "Csp", "Ppk", "Trp"]
     tissue_keys = ["Antenna", "Palp", "Tarsi"]
     class_cols_map = {"Antenna": "Antenna_Class", "Palp": "Palp_Class", "Tarsi": "Tarsi_Class"}
 
@@ -4890,56 +4895,79 @@ SUPP_FIGURE_CAPTIONS = {
 }
 
 _SUPP_FILES_ORDERED = [
+    # AF 1–9: DESeq2 results per contrast
     ("S1_Appendage_DE_Antenna_vs_Tarsi.csv",
-     "S1 — Appendage DE: Antenna vs Tarsi (DESeq2, 24,828 genes, 8 columns)"),
+     "Additional file 1 — Appendage DE: Antenna vs Tarsi (DESeq2, 24,828 genes, 8 cols)", "text/csv"),
     ("S2_Appendage_DE_Antenna_vs_MaxillaryPalp.csv",
-     "S2 — Appendage DE: Antenna vs Maxillary Palp"),
+     "Additional file 2 — Appendage DE: Antenna vs Maxillary Palp", "text/csv"),
     ("S3_Appendage_DE_Tarsi_vs_MaxillaryPalp.csv",
-     "S3 — Appendage DE: Tarsi vs Maxillary Palp"),
+     "Additional file 3 — Appendage DE: Tarsi vs Maxillary Palp", "text/csv"),
     ("S4_Antenna_sex_VirginFemale_vs_VirginMale.csv",
-     "S4 — Antenna: sex effect (VF vs Vm, 14 columns with per-replicate counts)"),
+     "Additional file 4 — Antenna: sex effect VF vs Vm (14 cols, per-replicate counts)", "text/csv"),
     ("S5_Antenna_mating_MatedFemale_vs_VirginFemale.csv",
-     "S5 — Antenna: mating effect (MF vs VF)"),
+     "Additional file 5 — Antenna: mating effect MF vs VF", "text/csv"),
     ("S6_MaxillaryPalp_sex_VirginFemale_vs_VirginMale.csv",
-     "S6 — Maxillary palp: sex effect (VF vs Vm)"),
+     "Additional file 6 — Maxillary palp: sex effect VF vs Vm", "text/csv"),
     ("S7_MaxillaryPalp_mating_MatedFemale_vs_VirginFemale.csv",
-     "S7 — Maxillary palp: mating effect (MF vs VF)"),
+     "Additional file 7 — Maxillary palp: mating effect MF vs VF", "text/csv"),
     ("S8_Tarsi_sex_VirginFemale_vs_VirginMale.csv",
-     "S8 — Tarsi: sex effect (VF vs Vm)"),
+     "Additional file 8 — Tarsi: sex effect VF vs Vm", "text/csv"),
     ("S9_Tarsi_mating_MatedFemale_vs_VirginFemale.csv",
-     "S9 — Tarsi: mating effect (MF vs VF)"),
+     "Additional file 9 — Tarsi: mating effect MF vs VF", "text/csv"),
+    # AF 10–11: Expression and annotation matrices
     ("S10_normalized_counts_all_samples.csv",
-     "S10 — Normalized count matrix (24,828 genes × 27 samples + genomic coordinates)"),
+     "Additional file 10 — Normalized count matrix (24,828 genes × 27 samples + genomic coords)", "text/csv"),
     ("S11_GO_annotations_all_genes.csv",
-     "S11 — GO annotation database (24,828 genes, 6 columns)"),
+     "Additional file 11 — GO annotation database (24,828 genes, 6 cols)", "text/csv"),
+    # AF 12–18: Amino acid identity matrices
     ("S12_AA_identity_matrix_CSP.csv",
-     "S12 — Pairwise amino acid identity matrix: CSP"),
+     "Additional file 12 — Pairwise AA identity matrix: Csp (10 × 10)", "text/csv"),
     ("S13_AA_identity_matrix_GR.csv",
-     "S13 — Pairwise amino acid identity matrix: GR"),
+     "Additional file 13 — Pairwise AA identity matrix: Gr (39 × 39)", "text/csv"),
     ("S14_AA_identity_matrix_IR.csv",
-     "S14 — Pairwise amino acid identity matrix: IR"),
+     "Additional file 14 — Pairwise AA identity matrix: Ir (101 × 101)", "text/csv"),
     ("S15_AA_identity_matrix_OBP.csv",
-     "S15 — Pairwise amino acid identity matrix: OBP"),
+     "Additional file 15 — Pairwise AA identity matrix: Obp (75 × 75)", "text/csv"),
     ("S16_AA_identity_matrix_OR.csv",
-     "S16 — Pairwise amino acid identity matrix: OR"),
+     "Additional file 16 — Pairwise AA identity matrix: Or (192 × 192)", "text/csv"),
     ("S17_AA_identity_matrix_PPK.csv",
-     "S17 — Pairwise amino acid identity matrix: PPK"),
+     "Additional file 17 — Pairwise AA identity matrix: Ppk (39 × 39)", "text/csv"),
     ("S18_AA_identity_matrix_TRP.csv",
-     "S18 — Pairwise amino acid identity matrix: TRP"),
+     "Additional file 18 — Pairwise AA identity matrix: Trp (111 × 111)", "text/csv"),
+    # AF 19: Diptera chemosensory comparison
+    ("AF19_Diptera_chemosensory_comparison.csv",
+     "Additional file 19 — Diptera chemosensory gene family comparison (6 species)", "text/csv"),
+    # AF 20–26: Per-family phylogenetic orthology tables
     ("S19_OR_orthology.csv",
-     "S19 — OR orthology classification (ML tree-based, 192 genes)"),
+     "Additional file 20 — Or orthology classification (ML tree-based, 192 genes)", "text/csv"),
     ("S20_GR_orthology.csv",
-     "S20 — GR orthology classification (39 genes)"),
+     "Additional file 21 — Gr orthology classification (39 genes)", "text/csv"),
     ("S21_IR_orthology.csv",
-     "S21 — IR orthology classification (101 genes)"),
+     "Additional file 22 — Ir orthology classification (101 genes)", "text/csv"),
     ("S22_OBP_orthology.csv",
-     "S22 — OBP orthology classification (75 genes)"),
+     "Additional file 23 — Obp orthology classification (75 genes)", "text/csv"),
     ("S23_PPK_orthology.csv",
-     "S23 — PPK orthology classification (39 genes)"),
+     "Additional file 24 — Ppk orthology classification (39 genes)", "text/csv"),
     ("S24_TRP_orthology.csv",
-     "S24 — TRP orthology classification (111 genes)"),
+     "Additional file 25 — Trp orthology classification (111 genes)", "text/csv"),
     ("S25_CSP_orthology.csv",
-     "S25 — CSP orthology classification (10 genes)"),
+     "Additional file 26 — Csp orthology classification (10 genes)", "text/csv"),
+    # AF 27–28: BLASTp and 1:1 ortholog identity
+    ("AF27_Unknown_BLAST.csv",
+     "Additional file 27 — BLASTp results for Unknown-domain DEGs vs D. melanogaster proteome (538 genes)", "text/csv"),
+    ("AF28_AA_identity_1to1_orthologs.csv",
+     "Additional file 28 — Pairwise AA identity between H. illucens 1:1 orthologs and nearest Dmel homolog", "text/csv"),
+    # AF 29–33: Analysis scripts
+    ("AF29_Figure_1.R",
+     "Additional file 29 — R script: multivariate statistics (PCA, PERMANOVA, variance partitioning, correlation)", "text/plain"),
+    ("AF30_Figure_2.R",
+     "Additional file 30 — R script: multivariate transcriptome overview (identical to AF29)", "text/plain"),
+    ("AF31_Figure_3.R",
+     "Additional file 31 — R script: appendage DE analysis, GO enrichment, chemosensory classification (Fig. 3)", "text/plain"),
+    ("AF32_Figure_4.R",
+     "Additional file 32 — R script: sex- and mating-state DE, volcano plots, Venn diagrams, scatter (Fig. 4)", "text/plain"),
+    ("AF33_generate_heatmaps.py",
+     "Additional file 33 — Python script: per-family expression heatmaps (Figs. S17–S23)", "text/plain"),
 ]
 
 
@@ -4951,7 +4979,7 @@ def render_figures_tab():
     st.header("Figures & Supplementary Data")
 
     fig_tab1, fig_tab2, fig_tab3 = st.tabs(
-        ["Main Figures", "Supplementary Figures", "Download Data (S1–S25)"]
+        ["Main Figures", "Supplementary Figures", "Download Additional Files (AF1–AF33)"]
     )
 
     with fig_tab1:
@@ -4999,25 +5027,28 @@ def render_figures_tab():
         st.markdown(SUPP_FIGURE_CAPTIONS[supp_choice])
 
     with fig_tab3:
-        st.subheader("Supplementary Data Files (S1–S25)")
+        st.subheader("Additional Files (AF1–AF33)")
         st.caption(
-            "All supplementary data from Perets *et al.* 2026. "
-            "S1–S9: DESeq2 results per contrast. S10: count matrix. S11: GO database. "
-            "S12–S18: amino acid identity matrices. S19–S25: phylogenetic orthology tables."
+            "All additional files from Perets *et al.* 2026 (v5.2). "
+            "AF1–AF9: DESeq2 DE results per contrast. AF10: count matrix. AF11: GO database. "
+            "AF12–AF18: amino acid identity matrices. AF19: Diptera comparison. "
+            "AF20–AF26: per-family orthology tables. AF27: Unknown-domain BLASTp. "
+            "AF28: 1:1 ortholog AA identity. AF29–AF33: R/Python analysis scripts."
         )
-        for fname, desc in _SUPP_FILES_ORDERED:
+        for fname, desc, mime in _SUPP_FILES_ORDERED:
             fpath = os.path.join(SUPP_FILE_DIR, fname)
             col_desc, col_btn = st.columns([5, 1])
             with col_desc:
                 st.markdown(f"**{desc}**")
             with col_btn:
                 if os.path.exists(fpath):
+                    ext = fname.rsplit(".", 1)[-1].upper()
                     with open(fpath, "rb") as f:
                         st.download_button(
-                            "CSV",
+                            ext,
                             data=f.read(),
                             file_name=fname,
-                            mime="text/csv",
+                            mime=mime,
                             key=f"supp_dl_{fname}",
                         )
                 else:
