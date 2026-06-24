@@ -25,8 +25,8 @@ st.set_page_config(
     page_icon="🪰",
     layout="wide",
 )
-st.markdown("# Appendage-resolved transcriptomics reveals constitutive sex-biased expression and reproductive-state plasticity in adult *Hermetia illucens* chemosensory appendages")
-st.caption("Perets et al. 2026 · *Genome Biology* · Interactive data companion")
+st.markdown("# Tissue-Specific Chemosensory Transcriptomics Across Sex and Reproductive States in *Hermetia illucens*")
+st.caption( "Interactive data companion")
 
 st.markdown("""
 <style>
