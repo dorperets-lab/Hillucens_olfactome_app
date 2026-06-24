@@ -4297,7 +4297,7 @@ def show_pdf(file_path: str, height: int = 850):
         return
     img_bytes = _pdf_to_png_bytes(file_path)
     if img_bytes:
-        st.image(img_bytes, use_container_width=True)
+        st.image(img_bytes, use_column_width=True)
     else:
         st.info(f"Could not render preview for {os.path.basename(file_path)}. "
                 "Use the download button above.")
