@@ -1,0 +1,9 @@
+gene_set,analysis,effect,PERMANOVA_R2,PERMANOVA_F,PERMANOVA_p,PC1_variance_pct,PC2_variance_pct,mean_silhouette,betadisper_F,betadisper_p
+ALL GENES,global_appendage_pca,Appendage,0.6638,23.69,0.001,39.6,16.61,0.4267,3.943,0.028
+ALL GENES,antenna_sex_mating_pca,Sex / Mating status,0.3364,1.521,0.004,29.63,26.63,-0.0106,6.007,0.013
+ALL GENES,palp_sex_mating_pca,Sex / Mating status,0.5689,3.959,0.004,36.61,19.32,0.2672,0.717,0.549
+ALL GENES,tarsi_sex_mating_pca,Sex / Mating status,0.4023,2.019,0.004,42.2,16.35,0.0563,0.343,0.735
+CHEMOSENSORY GENES (Name non-empty),global_appendage_pca,Appendage,0.8557,71.162,0.001,36.06,30.25,0.6366,3.146,0.054
+CHEMOSENSORY GENES (Name non-empty),antenna_sex_mating_pca,Sex / Mating status,0.4048,2.04,0.004,32.09,25.58,0.0074,9.239,0.002
+CHEMOSENSORY GENES (Name non-empty),palp_sex_mating_pca,Sex / Mating status,0.4371,2.33,0.01,31.03,18.48,0.1455,0.68,0.56
+CHEMOSENSORY GENES (Name non-empty),tarsi_sex_mating_pca,Sex / Mating status,0.3869,1.894,0.004,39.24,14.22,0.075,0.418,0.659

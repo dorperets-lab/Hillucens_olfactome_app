@@ -4,6 +4,7 @@
 
 # === IMPORTS ===
 import base64
+from urllib.parse import quote
 import os
 import re
 import math
@@ -192,10 +193,13 @@ S1_DEFAULT_PATHS = {
     "DE_FILES": {
         "Antenna - MF vs VF": "results_ant_MF_vs_VF.csv",
         "Antenna - VF vs Vm": "results_ant_VF_vs_Vm.csv",
+        "Antenna - MF vs Vm": "results_ant_MF_vs_Vm.csv",
         "Palp - MF vs VF":    "results_palp_MF_vs_VF.csv",
         "Palp - VF vs Vm":    "results_palp_VF_vs_Vm.csv",
+        "Palp - MF vs Vm":    "results_palp_MF_vs_Vm.csv",
         "Tarsi - MF vs VF":   "results_leg_MF_vs_VF.csv",
         "Tarsi - VF vs Vm":   "results_leg_VF_vs_Vm.csv",
+        "Tarsi - MF vs Vm":   "results_leg_MF_vs_Vm.csv",
     },
     "FILE_GO":   "BSF_all-rna_GO_ID_annotated.csv",
     "FILE_NORM": "BSF_normalized_counts_nameX.csv",
@@ -1072,7 +1076,8 @@ def t1_get_gene_family_from_counts(norm_counts: pd.DataFrame) -> pd.Series:
     if name_col is None:
         return pd.Series(["nan"] * len(norm_counts), index=norm_counts.index, dtype=str)
 
-    s = norm_counts[name_col].astype(str).str.upper()
+    s = (norm_counts[name_col].astype("object")
+         .where(norm_counts[name_col].notna(), "").astype(str).str.upper())
 
     def infer(x: str) -> str:
         # conservative prefix inference
@@ -1397,7 +1402,7 @@ def render_t1_tab():
         col_map = {
             "Or": col_p0, "Gr": col_p0,
             "Ir": col_p1, "Obp": col_p1,
-            "Csp": col_p2, "Ppk": col_p2,
+            "Csp": col_p2, "Ppk": col_p2, "Trp": col_p2,
         }
         for fam in CHEMO_FAM_ORDER:
             col_here = col_map[fam]
@@ -3311,6 +3316,130 @@ def s1_fig_domain_venn(n_sex_only, n_mat_only, n_overlap, domain, dom_color):
     return fig
 
 
+# =============================================================================
+# === FIGURE 4D: REORGANISATION OF SEX BIAS BY MATING ===
+# Sex bias measured in virgins (x, VF vs Vm) against sex bias measured in mated
+# females (y, MF vs Vm).  Both axes are female-minus-male against the SAME
+# reference group, virgin males, so a change of sign between them is a genuine
+# reversal rather than an artefact of a shared denominator.
+#
+# Two layers are deliberately kept apart, as in the manuscript:
+#   POSITION is direction  - which sex is favoured, in each group
+#   COLOUR   is evidence   - in which group the bias reached significance
+# "Reversed" is an evidence call, so it gets its own mark (an open ring) and
+# never appears in the quadrant wording.
+# =============================================================================
+CLS_CHEMO = "Chemosensory"
+CLS_BOTH  = "Non-chemosensory, sex-biased in both states"
+CLS_ONE   = "Non-chemosensory, sex-biased in one state"
+RETENTION_COLORS = {CLS_ONE: "#D8D8D8", CLS_BOTH: "#4A76C4", CLS_CHEMO: "#B2182B"}
+RETENTION_LIM = 10.0
+
+QUAD_TEXT = {
+    "x- y+": "Male-biased in virgins,<br>female-biased in mated females",
+    "x+ y+": "Female-biased in virgins<br>and in mated females",
+    "x- y-": "Male-biased in virgins<br>and in mated females",
+    "x+ y-": "Female-biased in virgins,<br>male-biased in mated females",
+}
+
+
+def s1_build_retention(tissue_cross, tissue):
+    """Figure 4D data: every gene significant in EITHER sex contrast."""
+    if tissue not in tissue_cross:
+        return None
+    td = tissue_cross[tissue]
+    msex_df = td.get("msex_df")
+    if msex_df is None:
+        return None
+    sx = td["sex_df"][["JoinKey", "log2FoldChange", "padj", "is_sig", "ChemoName"]].copy()
+    sx = sx.drop_duplicates("JoinKey").rename(
+        columns={"log2FoldChange": "x", "padj": "padj_virgin", "is_sig": "sig_v"})
+    mx = msex_df[["JoinKey", "log2FoldChange", "padj", "is_sig"]].copy()
+    mx = mx.drop_duplicates("JoinKey").rename(
+        columns={"log2FoldChange": "y", "padj": "padj_mated", "is_sig": "sig_m"})
+    d = sx.merge(mx, on="JoinKey", how="inner")
+    d["x"] = pd.to_numeric(d["x"], errors="coerce")
+    d["y"] = pd.to_numeric(d["y"], errors="coerce")
+    d = d.dropna(subset=["x", "y"])
+    d = d[d["sig_v"] | d["sig_m"]].copy()
+    if d.empty:
+        return None
+    d["reversed"] = d["sig_v"] & d["sig_m"] & (np.sign(d["x"]) != np.sign(d["y"]))
+    is_chemo = d["ChemoName"].notna()
+    d["Class"] = np.where(is_chemo, CLS_CHEMO,
+                 np.where(d["sig_v"] & d["sig_m"], CLS_BOTH, CLS_ONE))
+    # clamp the view; nothing is dropped, out-of-range points sit on the boundary
+    d["oor"] = (d["x"].abs() > RETENTION_LIM) | (d["y"].abs() > RETENTION_LIM)
+    d["px"] = d["x"].clip(-RETENTION_LIM, RETENTION_LIM)
+    d["py"] = d["y"].clip(-RETENTION_LIM, RETENTION_LIM)
+    d["Quad"] = np.select(
+        [(d.x < 0) & (d.y > 0), (d.x > 0) & (d.y > 0),
+         (d.x < 0) & (d.y < 0), (d.x > 0) & (d.y < 0)],
+        ["x- y+", "x+ y+", "x- y-", "x+ y-"], default="axis")
+    return d
+
+
+def s1_fig_retention(d, tissue_label, show_quad_text=False):
+    L = RETENTION_LIM
+    fig = go.Figure()
+    # shade the two quadrants where the direction of bias differs between groups
+    for x0, x1, y0, y1 in [(-L, 0, 0, L), (0, L, -L, 0)]:
+        fig.add_shape(type="rect", x0=x0, x1=x1, y0=y0, y1=y1,
+                      fillcolor="#F0F0F0", opacity=0.6, line_width=0, layer="below")
+    fig.add_shape(type="line", x0=-L, x1=L, y0=-L, y1=L,
+                  line=dict(color="#BBBBBB", width=1, dash="dot"), layer="below")
+    for ln in (dict(x0=-L, x1=L, y0=0, y1=0), dict(x0=0, x1=0, y0=-L, y1=L)):
+        fig.add_shape(type="line", line=dict(color="#555555", width=1), layer="below", **ln)
+    # grey backdrop first, chemosensory last, so the genes the paper is about sit on top
+    for cls in (CLS_ONE, CLS_BOTH, CLS_CHEMO):
+        sub = d[d["Class"] == cls]
+        if sub.empty:
+            continue
+        fig.add_trace(go.Scattergl(
+            x=sub["px"], y=sub["py"], mode="markers", name=cls,
+            marker=dict(size=4.5, color=RETENTION_COLORS[cls],
+                        line=dict(width=0)),
+            customdata=np.stack([sub["JoinKey"], sub["x"], sub["y"]], axis=-1),
+            hovertemplate=("<b>%{customdata[0]}</b><br>"
+                           "virgins %{customdata[1]:.2f}<br>"
+                           "mated %{customdata[2]:.2f}<extra></extra>"),
+        ))
+    rev = d[d["reversed"]]
+    if not rev.empty:
+        fig.add_trace(go.Scattergl(
+            x=rev["px"], y=rev["py"], mode="markers", name="Direction reversed",
+            marker=dict(size=10, color="rgba(0,0,0,0)",
+                        line=dict(width=1.3, color="#111111")),
+            customdata=np.stack([rev["JoinKey"], rev["x"], rev["y"]], axis=-1),
+            hovertemplate=("<b>%{customdata[0]}</b> — reversed<br>"
+                           "virgins %{customdata[1]:.2f}<br>"
+                           "mated %{customdata[2]:.2f}<extra></extra>"),
+        ))
+    # quadrant counts; the wording is spelled out only in the first panel
+    for key, (qx, qy, ax_, ay) in {
+        "x- y+": (-L * 0.96,  L * 0.96, "left", "top"),
+        "x+ y+": ( L * 0.96,  L * 0.96, "right", "top"),
+        "x- y-": (-L * 0.96, -L * 0.96, "left", "bottom"),
+        "x+ y-": ( L * 0.96, -L * 0.96, "right", "bottom"),
+    }.items():
+        n = int((d["Quad"] == key).sum())
+        txt = f"{QUAD_TEXT[key]}<br>n = {n}" if show_quad_text else f"n = {n}"
+        fig.add_annotation(x=qx, y=qy, text=txt, showarrow=False,
+                           xanchor=ax_, yanchor=ay,
+                           font=dict(size=9, color="#666666"), align=ax_)
+    fig.update_layout(
+        title=dict(text=tissue_label, font=dict(size=13)),
+        xaxis=dict(title="Sex bias in virgins (log₂FC, VF vs Vm)",
+                   range=[-L, L], zeroline=False),
+        yaxis=dict(title="Sex bias in mated females (log₂FC, MF vs Vm)",
+                   range=[-L, L], zeroline=False, scaleanchor="x", scaleratio=1),
+        legend=dict(orientation="h", yanchor="top", y=-0.18, x=0, font=dict(size=9)),
+        margin=dict(l=10, r=10, t=35, b=10), height=520,
+        plot_bgcolor="white",
+    )
+    return fig
+
+
 def s1_build_scatter_sex_mating(tissue_cross, tissue):
     """Scatter of LFC_sex vs LFC_mating for genes significant in BOTH contrasts."""
     if tissue not in tissue_cross:
@@ -3450,8 +3579,9 @@ def s1_compute_sex_mating_overlap(by_tissue):
         if tissue not in by_tissue:
             continue
         contrast_list = by_tissue[tissue]
-        sex_item = next((x for x in contrast_list if x["cond1"] == "VF" and x["cond2"] == "Vm"), None)
-        mat_item = next((x for x in contrast_list if x["cond1"] == "MF" and x["cond2"] == "VF"), None)
+        sex_item  = next((x for x in contrast_list if x["cond1"] == "VF" and x["cond2"] == "Vm"), None)
+        mat_item  = next((x for x in contrast_list if x["cond1"] == "MF" and x["cond2"] == "VF"), None)
+        msex_item = next((x for x in contrast_list if x["cond1"] == "MF" and x["cond2"] == "Vm"), None)
         if sex_item is None or mat_item is None:
             continue
         sex_df = sex_item["df"]
@@ -3460,6 +3590,16 @@ def s1_compute_sex_mating_overlap(by_tissue):
         sex_vm = set(sex_df.loc[sex_df["is_sig"] & (sex_df["Side"] == "Vm"), "JoinKey"].astype(str))
         mat_mf = set(mat_df.loc[mat_df["is_sig"] & (mat_df["Side"] == "MF"), "JoinKey"].astype(str))
         mat_vf = set(mat_df.loc[mat_df["is_sig"] & (mat_df["Side"] == "VF"), "JoinKey"].astype(str))
+        # The manuscript calls a gene mating-responsive only when it moves in the
+        # same direction against BOTH virgin groups, so the mated-female versus
+        # virgin-male contrast gates the mated-female versus virgin-female one.
+        # Without this gate the app reports larger sets than Figure 4B.
+        if msex_item is not None:
+            msex_df = msex_item["df"]
+            msex_up = set(msex_df.loc[msex_df["is_sig"] & (msex_df["Side"] == "MF"), "JoinKey"].astype(str))
+            msex_dn = set(msex_df.loc[msex_df["is_sig"] & (msex_df["Side"] == "Vm"), "JoinKey"].astype(str))
+            mat_mf &= msex_up
+            mat_vf &= msex_dn
         overlap = (sex_vf | sex_vm) & (mat_mf | mat_vf)
         result[tissue] = {
             "sex_vf": sex_vf, "sex_vm": sex_vm,
@@ -3468,6 +3608,7 @@ def s1_compute_sex_mating_overlap(by_tissue):
             "ov_female": sex_vf & overlap,
             "ov_male": sex_vm & overlap,
             "sex_df": sex_df, "mat_df": mat_df,
+            "msex_df": msex_item["df"] if msex_item is not None else None,
         }
     return result
 
@@ -3613,22 +3754,26 @@ def render_s1_tab():
 
     tab_volc, tab_bar, tab_venn, tab_4de, tab_gonames = st.tabs(
         ["Volcano (Figs. 4A–B)", "DE summary bars + DEG tables", "Venn diagrams (Fig. 4C)",
-         "Scatter & Overlap (Figs. 4D–E)", "GO Term Browser (Figs. S14–S16)"]
+         "Scatter & Overlap (Fig. 4D)", "GO Term Browser (Figs. S22–S24)"]
     )
 
     tissue_labels_s1 = {"Antenna": "Antenna", "Palp": "Maxillary palp", "Tarsi": "Tarsi"}
 
     # -------------------- VOLCANO TAB --------------------
     with tab_volc:
-        st.subheader("Volcano plots (two per tissue)")
-        st.caption("Manuscript: **Figure 4A** (VF vs Vm, sex-biased) · **Figure 4B** (MF vs VF, mating-regulated)")
+        st.subheader("Volcano plots (three per appendage)")
+        st.caption(
+            "Manuscript: **Figure 4A** (VF vs Vm, sex-biased) · "
+            "**Figure 4B** (mating-responsive). The third panel, mated female vs virgin male, "
+            "is the second of the two contrasts a gene must pass to count as mating-responsive."
+        )
         for tissue in ["Antenna", "Palp", "Tarsi"]:
             if tissue not in by_tissue:
                 continue
             st.markdown(f"### {TISSUE_DISPLAY[tissue]}")
-            cols = st.columns(2)
             contrasts = sorted(by_tissue[tissue], key=s1_sort_key)
-            for i, item in enumerate(contrasts[:2]):
+            cols = st.columns(len(contrasts))
+            for i, item in enumerate(contrasts):
                 cond1, cond2, df_cls = item["cond1"], item["cond2"], item["df"]
                 with cols[i]:
                     st.caption(s1_de_counts_caption(df_cls, cond1, cond2))
@@ -3647,9 +3792,9 @@ def render_s1_tab():
             if tissue not in by_tissue:
                 continue
             st.markdown(f"### {TISSUE_DISPLAY[tissue]}")
-            cols = st.columns(2)
             contrasts = sorted(by_tissue[tissue], key=s1_sort_key)
-            for i, item in enumerate(contrasts[:2]):
+            cols = st.columns(len(contrasts))
+            for i, item in enumerate(contrasts):
                 cond1, cond2, df_cls = item["cond1"], item["cond2"], item["df"]
                 with cols[i]:
                     label1 = COND_FULL.get(cond1, cond1)
@@ -3867,25 +4012,58 @@ def render_s1_tab():
         if not tissue_cross:
             st.warning("No overlap data — ensure both contrasts are loaded for each tissue.")
         else:
-            # ── Figure 4 A-C: Scatter plots ──────────────────────────────────
-            st.subheader("Sex × mating LFC correlation — genes significant in both contrasts")
-            st.caption("Manuscript: **Figure 4E**")
+            # ── Figure 4D: reorganisation of sex bias by mating ─────────────
+            st.subheader("Reorganisation of sex bias by mating")
+            st.caption("Manuscript: **Figure 4D**")
             st.markdown(
-                "Each point is a gene significant in **both** the sex (VF vs Vm) "
-                "and mating (MF vs VF) contrasts. Colored by GO domain (chemosensory genes dark red). "
-                "Quadrants: Q1 (pink) = female-biased + mating-induced; Q3 (blue) = male-biased + mating-suppressed; "
-                "Q4/Q2 (orange) = reversed."
+                "Sex bias measured in virgins (x, virgin female vs virgin male) against sex bias "
+                "measured in mated females (y, mated female vs virgin male), for every gene "
+                "significant in **either** contrast. Both axes are female-minus-male against the "
+                "same reference group, virgin males, so a change of sign between them is a genuine "
+                "reversal of sex bias rather than an artefact of a shared denominator. "
+                "Points on the dotted diagonal are unchanged by mating; vertical distance from it "
+                "is the mating effect. Shaded quadrants are those where the direction of bias "
+                "differs between the two groups. Axes are clipped at ±10 log₂FC and any gene "
+                "beyond is drawn on the boundary."
             )
-            scatter_cols = st.columns(3)
+            ret_rows = {}
+            ret_cols = st.columns(3)
             for ci, tissue in enumerate(["Antenna", "Palp", "Tarsi"]):
-                merged_sc, r_sc = s1_build_scatter_sex_mating(tissue_cross, tissue)
-                with scatter_cols[ci]:
-                    if merged_sc is None:
-                        st.info(f"No overlap genes for {TISSUE_DISPLAY[tissue]}.")
+                d_ret = s1_build_retention(tissue_cross, tissue)
+                ret_rows[tissue] = d_ret
+                with ret_cols[ci]:
+                    if d_ret is None:
+                        st.info(f"Mated-female contrast not loaded for {TISSUE_DISPLAY[tissue]}.")
                     else:
-                        fig_sc = s1_fig_scatter(merged_sc, r_sc, TISSUE_DISPLAY[tissue])
-                        st.plotly_chart(fig_sc, use_container_width=True,
-                                        key=f"s1_scatter_{tissue}")
+                        st.plotly_chart(
+                            s1_fig_retention(d_ret, TISSUE_DISPLAY[tissue], show_quad_text=(ci == 0)),
+                            use_container_width=True, key=f"s1_retention_{tissue}")
+            summary = []
+            for tissue, d_ret in ret_rows.items():
+                if d_ret is None:
+                    continue
+                summary.append({
+                    "Appendage": TISSUE_DISPLAY[tissue],
+                    "Sex-biased in virgins": int(d_ret["sig_v"].sum()),
+                    "Sex-biased in mated females": int(d_ret["sig_m"].sum()),
+                    "Significant in both": int((d_ret["sig_v"] & d_ret["sig_m"]).sum()),
+                    "Direction reversed": int(d_ret["reversed"].sum()),
+                    "Chemosensory": int((d_ret["Class"] == CLS_CHEMO).sum()),
+                })
+            if summary:
+                st.dataframe(pd.DataFrame(summary), use_container_width=True, hide_index=True)
+                rev_all = pd.concat(
+                    [d.assign(Appendage=TISSUE_DISPLAY[t]) for t, d in ret_rows.items()
+                     if d is not None and d["reversed"].any()],
+                    ignore_index=True) if any(
+                    d is not None and d["reversed"].any() for d in ret_rows.values()) else None
+                if rev_all is not None:
+                    with st.expander("Genes whose sex bias reverses after mating"):
+                        rv = rev_all[rev_all["reversed"]][
+                            ["Appendage", "JoinKey", "ChemoName", "x", "y"]].copy()
+                        rv.columns = ["Appendage", "Gene", "Chemosensory name",
+                                      "log₂FC virgins", "log₂FC mated females"]
+                        st.dataframe(rv.round(2), use_container_width=True, hide_index=True)
 
             st.markdown("---")
             # ── Figure 4D: Venns ────────────────────────────────────────────
@@ -3947,12 +4125,12 @@ def render_s1_tab():
                                            file_name=f"BSF_{safe_4dt}_{safe_4dr}.csv",
                                            mime="text/csv", key=f"s1_4d_dl_{tissue}_{safe_4dr}")
 
-    # -------------------- GO NAMES TAB (S14–S16 equivalent) --------------------
+    # -------------------- GO NAMES TAB (S22–S24 equivalent) --------------------
     with tab_gonames:
         st.subheader("GO term enrichment browser")
         st.markdown(
             "Browse the top enriched GO terms for each gene set from the Venn diagrams. "
-            "Supplementary Figures S14 (sex-biased only), S15 (mating-regulated only), S16 (overlap)."
+            "Supplementary Figures S22 (sex-biased only), S23 (mating-responsive only), S24 (overlap)."
         )
         if not tissue_cross:
             st.warning("No data — ensure both contrasts are loaded for each tissue.")
@@ -3972,7 +4150,7 @@ def render_s1_tab():
                 mat_only_gn = all_mat - ov
 
                 st.markdown(f"### {TISSUE_DISPLAY[tissue]}")
-                reg_tabs = st.tabs(["Sex-biased only (S14)", "Mating-regulated only (S15)", "Sex & mating overlap (S16)"])
+                reg_tabs = st.tabs(["Sex-biased only (S22)", "Mating-responsive only (S23)", "Sex & mating overlap (S24)"])
 
                 for ri, (region_label, region_keys, rtab) in enumerate([
                     ("Sex-only", sex_only_gn, reg_tabs[0]),
@@ -4091,8 +4269,9 @@ def h1_load_norm_counts(unit_choice: str = "Normalized counts") -> pd.DataFrame:
         if "PPK" in name: return "PPK"
         return "nan"
 
-    df["gene_fam"] = df[name_col].astype(str).apply(assign_family)
-    df["Name_prefixed"] = df[name_col].astype(str).apply(h1_add_hill_prefix)
+    names = df[name_col].astype("object").where(df[name_col].notna(), "").astype(str)
+    df["gene_fam"] = names.apply(assign_family)
+    df["Name_prefixed"] = names.apply(h1_add_hill_prefix)
     return df
 
 def h1_make_chemo_heatmap_matplotlib(
@@ -4203,7 +4382,7 @@ def h1_make_chemo_heatmap_matplotlib(
 
 def render_h1_tab():
     st.subheader("Chemosensory heatmap")
-    st.caption("Manuscript: **Figs. S17–S23** (per gene family, A4 PDF — OR, GR, IR, OBP, PPK, CSP, TRP)")
+    st.caption("Manuscript: **Figs. S13–S19** (per gene family, A4 PDF — OR, GR, IR, OBP, PPK, CSP, TRP)")
 
     unit_choice = st.radio(
         "Expression unit",
@@ -4309,13 +4488,13 @@ def show_pdf(file_path: str, height: int = 850):
 
 TREE_FAMILY_MAP = {
     "All families": ("Figure_S1.pdf", None, None, None),
-    "CSP (10 genes)":  ("Figure_S2.pdf", "S25_CSP_orthology.csv", "CSP_tree_clean.txt", "CSP_sequences_clean.fasta"),
-    "GR (39 genes)":   ("Figure_S3.pdf", "S20_GR_orthology.csv",  "GR_tree_clean.txt",  "GR_sequences_clean.fasta"),
-    "IR (101 genes)":  ("Figure_S4.pdf", "S21_IR_orthology.csv",  "IR_tree_clean.txt",  "IR_sequences_clean.fasta"),
-    "OBP (75 genes)":  ("Figure_S5.pdf", "S22_OBP_orthology.csv", "OBP_tree_clean.txt", "OBP_sequences_clean.fasta"),
-    "OR (192 genes)":  ("Figure_S6.pdf", "S19_OR_orthology.csv",  "OR_tree_clean.txt",  "OR_sequences_clean.fasta"),
-    "PPK (39 genes)":  ("Figure_S7.pdf", "S23_PPK_orthology.csv", "PPK_tree_clean.txt", "PPK_sequences_clean.fasta"),
-    "TRP (111 genes)": ("Figure_S8.pdf", "S24_TRP_orthology.csv", "TRP_tree_clean.txt", "TRP_sequences_clean.fasta"),
+    "CSP (10 genes)":  ("Figure_S2.pdf", "Additional_file_26_CSP_orthology.csv", "CSP_tree_clean.txt", "CSP_sequences_clean.fasta"),
+    "GR (39 genes)":   ("Figure_S3.pdf", "Additional_file_21_GR_orthology.csv",  "GR_tree_clean.txt",  "GR_sequences_clean.fasta"),
+    "IR (101 genes)":  ("Figure_S4.pdf", "Additional_file_22_IR_orthology.csv",  "IR_tree_clean.txt",  "IR_sequences_clean.fasta"),
+    "OBP (75 genes)":  ("Figure_S5.pdf", "Additional_file_23_OBP_orthology.csv", "OBP_tree_clean.txt", "OBP_sequences_clean.fasta"),
+    "OR (192 genes)":  ("Figure_S6.pdf", "Additional_file_20_OR_orthology.csv",  "OR_tree_clean.txt",  "OR_sequences_clean.fasta"),
+    "PPK (39 genes)":  ("Figure_S7.pdf", "Additional_file_24_PPK_orthology.csv", "PPK_tree_clean.txt", "PPK_sequences_clean.fasta"),
+    "TRP (111 genes)": ("Figure_S8.pdf", "Additional_file_25_TRP_orthology.csv", "TRP_tree_clean.txt", "TRP_sequences_clean.fasta"),
 }
 
 ORTHOLOGY_TYPE_COLORS = {
@@ -4756,218 +4935,496 @@ def render_trees_tab():
 # =============================================================================
 
 MAIN_FIGURE_CAPTIONS = {
-    "Figure 1 — Phylogenetic trees": (
-        "**Figure 1.** Phylogenetic characterisation of *H. illucens* chemosensory gene families. "
-        "ML trees of all seven families (OR 192 genes, IR 101, TRP 111, OBP 75, GR 39, PPK 39, CSP 10) "
-        "inferred with IQ-TREE. Bootstrap support ≥ 70 shown on branches. "
-        "Scale bar = amino acid substitutions per site."
+    "Figure 1 — Phylogeny of chemosensory families": (
+        "**Figure 1.** Phylogenetic analysis of H. illucens chemosensory gene families. A) Adult H. "
+        "illucens highlighting the three chemosensory appendages analyzed in this study: antennae, "
+        "maxillary palps, and tarsi (image adapted from Beta Bugs Ltd., UK). B) Simplified phylogeny of "
+        "representative dipteran families included in the comparative analyses, illustrating the basal "
+        "phylogenetic position of H. illucens (Stratiomyidae) within the Brachycera. The time scale (Myr) "
+        "indicates the approximate divergence of major dipteran lineages based on Wiegmann et al. (2011) "
+        "[69]. C) Unrooted maximum-likelihood phylogeny of 1,620 chemosensory proteins, comprising 567 H. "
+        "illucens sequences and 1,053 homologs from Aedes aegypti, Drosophila melanogaster, Musca "
+        "domestica, Calliphora stygia, Bactrocera dorsalis, and Glossina morsitans. Proteins are grouped "
+        "into the seven conserved chemosensory gene families: odorant receptors (OR), gustatory receptors "
+        "(GR), ionotropic receptors (IR), odorant-binding proteins (OBP), chemosensory proteins (CSP), "
+        "pickpocket channels (PPK), and transient receptor potential channels (TRP). Branches are "
+        "color-coded by gene family. Expanded phylogenies with protein names, orthology assignments, and "
+        "bootstrap support values are provided in Figures S1-S8. "
     ),
     "Figure 2 — Transcriptome overview": (
-        "**Figure 2.** Transcriptome-wide overview of chemosensory appendage gene expression. "
-        "(A) PCA of all 27 RNA-seq libraries (log₂ normalised counts). "
-        "(B) Pearson correlation matrix of 9 group means (convex hull areas: Antenna 2764.9, "
-        "Palp 394.7, Tarsi 2043.9 PC-space units²). "
-        "(C) Variance partitioning pie — all genes (n = 24,608; Ezekiel adj. R²). "
-        "(E) Chemoreceptors-only PCA. "
-        "(F) Chemoreceptors-only Pearson correlation. "
-        "(G) Variance partitioning pie — chemosensory genes only."
+        "**Figure 2.** Appendage identity dominates transcriptomic organization in H. illucens. A) "
+        "Principal component analysis (PCA) of global transcriptomic profiles from antennae, maxillary "
+        "palps, and tarsi of virgin males (VM), virgin females (VF), and mated females (MF) (n = 3 "
+        "biological replicates per group). Samples cluster primarily by appendage. Grey polygons "
+        "delineate appendage clusters, numbers within polygons indicate cluster area in PC1–PC2 space, "
+        "and grey lines connect appendage centroids. Numbers along the connecting lines indicate "
+        "Euclidean distances between appendage centroids in PCA space. B) Pearson correlation matrix of "
+        "mean global gene expression profiles across appendages and reproductive groups. Circle size and "
+        "color intensity are proportional to the Pearson correlation coefficient. C) Variation "
+        "partitioning of the global transcriptome showing the proportion of multivariate variance "
+        "explained by appendage identity, sex, mating status, and unexplained variance. D) PCA of the "
+        "global transcriptome within each appendage, illustrating variation among virgin males, virgin "
+        "females, and mated females. E) PCA of the 567 annotated chemosensory transcript models showing "
+        "stronger appendage-specific separation than observed for the global transcriptome. Grey "
+        "polygons, centroid connections, cluster areas, and centroid distances are displayed as in panel "
+        "A. F) Pearson correlation matrix of chemosensory gene expression profiles. G) Variation "
+        "partitioning of chemosensory gene expression. H) Within-appendage PCA of chemosensory gene "
+        "expression across reproductive groups. Together, these analyses show that appendage identity is "
+        "the primary determinant of both global and chemosensory transcriptomic variation, whereas sex "
+        "and mating status contribute comparatively modest effects. "
     ),
-    "Figure 3 — Appendage comparison": (
-        "**Figure 3.** Appendage-specific transcriptional profiles. "
-        "(A) Volcano plots of pairwise appendage DESeq2 contrasts (padj < 0.001, |log₂FC| ≥ 1). "
-        "(B) Stacked GO domain % bars for appendage-biased DEGs. "
-        "(C) GO names overlap per tissue. "
-        "(D) Chemosensory gene classification pies per appendage. "
-        "See also Figs. S9–S11 (GO enrichment bars) and Figs. S17–S23 (per-family heatmaps)."
+    "Figure 3 — Appendage-specific divergence": (
+        "**Figure 3.** Appendage-specific transcriptional divergence and chemosensory specialization in "
+        "H. illucens. A) Pairwise differential expression analyses comparing antennae, maxillary palps, "
+        "and tarsi (|log₂FC| ≥ 1; adjusted p < 0.001). Volcano plots show significantly up- and "
+        "downregulated genes for each comparison. Chemosensory genes are highlighted in red. Numbers "
+        "above each plot indicate the number of chemosensory differentially expressed genes (DEGs) "
+        "relative to the total number of DEGs, and the chemosensory genes with the largest fold changes "
+        "are labelled. B) Chemosensory and non-chemosensory composition of the DEGs identified in each "
+        "pairwise comparison. Bar heights represent DEG counts and the values within the bars the "
+        "percentage of the DEG set; genes belonging to the seven chemosensory families are counted as "
+        "chemosensory irrespective of their GO domain. C) Identification of consensus appendage-biased "
+        "gene sets by intersecting pairwise DEG comparisons. Venn diagrams show genes consistently "
+        "enriched in the antenna, maxillary palp, or tarsi relative to the other two appendages, "
+        "providing appendage-specific transcriptional signatures. D) Classification of the 510 annotated "
+        "chemosensory genes into appendage-specific, appendage-biased, broadly expressed, and "
+        "non-expressed categories across the seven chemosensory gene families (Or, Gr, Ir, Obp, Csp, ppk, "
+        "and Trp). Classification criteria are described in the Materials and Methods. Together, these "
+        "analyses demonstrate that each appendage possesses a distinct transcriptional identity supported "
+        "by characteristic enrichment of chemosensory gene families, with Ors predominating in the "
+        "antennae, Obps in the maxillary palps, and ppk, Ir, Gr, and Trp genes in the tarsi. "
     ),
-    "Figure 4 — Sex & mating analysis": (
-        "**Figure 4.** Sex- and mating-induced transcriptional regulation across appendages. "
-        "(A) Volcano plots — sex contrast (VF vs Vm) per appendage. "
-        "(B) Volcano plots — mating contrast (MF vs VF) per appendage. "
-        "(C) Three-tissue Venn diagrams of upregulated genes per sex/mating state. "
-        "(D) Two-circle Venn diagrams showing overlap between sex-biased and mating-regulated DEGs "
-        "per appendage (padj < 0.001, |log₂FC| ≥ 1), with per-GO-domain breakdown. "
-        "(E) Scatter plots of log₂FC(VF/Vm) vs log₂FC(MF/VF) for genes significant in both contrasts. "
-        "Chemosensory genes highlighted (dark red). "
-        "Note: tarsi *r* = −0.903 reflects a shared-VF contrast design artifact (see Limitations). "
-        "See also Figs. S14–S16 (GO term names for sex/mating gene sets)."
+    "Figure 4 — Sex & mating remodelling": (
+        "**Figure 4.** Sex- and mating-dependent transcriptional remodelling across adult chemosensory "
+        "appendages. Genes are called differentially expressed at |log₂FC| ≥ 1 and adjusted p < 0.001. "
+        "Mating-responsive denotes significance in the same direction against both virgin females and "
+        "virgin males. A) Chemosensory loci responding to sex (left) or mating (right), one row per gene "
+        "locus, grouped by family. Stems run from no change to the log₂ fold change; dot area is mean "
+        "normalised expression in that appendage. Colour denotes appendage: antenna, dark blue; maxillary "
+        "palp, mid blue; tarsi, grey. Panels A and B share one dot-size scale. B) Non-chemosensory genes, "
+        "the top 20 within each contrast ranked by |log₂FC| × −log₁₀(adjusted p), sex above and mating "
+        "below. Colours as in A. Names are abbreviated; an asterisk marks a name inferred from the best "
+        "Drosophila melanogaster BLASTp match rather than a H. illucens annotation. C) Venn diagrams of "
+        "genes shared among appendages for four programmes: male-biased and female-biased in virgins, and "
+        "reduced or induced in mated females. Representative genes are named beside the regions they "
+        "occupy. D) Reorganisation of sex bias by mating. Sex bias measured in virgins (virgin female "
+        "versus virgin male, x) against sex bias measured in mated females (mated female versus virgin "
+        "male, y), for every gene significant in either contrast. Because both axes share virgin males as "
+        "the reference, a change of sign between them is a genuine reversal of sex bias. Genes are "
+        "classified by their behaviour across the two reproductive states: sex-biased in both states "
+        "(blue), sex-biased in one state only (grey), or sex-biased in both with the direction reversed "
+        "(ringed). Red marks chemosensory genes. Quadrant labels give the direction of bias in each "
+        "group, and the counts give the genes in each quadrant. Axes are clipped at ±10 log2FC, with any "
+        "gene beyond drawn on the boundary. "
+    ),
+    "Figure 5 — Hierarchical model": (
+        "**Figure 5.** A hierarchical model for the evolution and modulation of peripheral chemosensory "
+        "systems in Diptera. A conceptual model summarizing the evolutionary and physiological "
+        "organization of the Hermetia illucens chemosensory system inferred from this study. The model "
+        "proposes three hierarchical levels operating across distinct evolutionary timescales. (1) "
+        "Evolutionary conservation (deep evolutionary timescale; proposed, not tested here): the antenna, "
+        "maxillary palp and tarsi carry distinct anatomical and functional identities, which we "
+        "hypothesise became stabilised early in dipteran evolution. The present data establish that these "
+        "identities are invariant across sex and reproductive state in H. illucens; dating their origin "
+        "requires appendage-resolved data from further lineages. (2) Molecular diversification "
+        "(intermediate evolutionary timescale): within these conserved appendages, chemosensory receptor "
+        "gene families (OR, GR, IR, OBP, CSP, TRP, and PPK) diversified through lineage-specific "
+        "expansion, contraction, and differential deployment, enabling ecological specialization without "
+        "fundamentally altering appendage identity. (3) Physiological modulation (adult timescale): sex, "
+        "reproductive state, and circadian context modulate the activity of conserved sensory circuits "
+        "through regulation of shared signaling pathways, including sex determination (transformer), "
+        "circadian regulation (daywake), neuropeptide signalling (the SIFamide receptor) and remodelling "
+        "of the cuticle and extracellular matrix, rather than through wholesale remodeling of peripheral "
+        "receptor repertoires. In the tarsi this modulation abolishes constitutive sex-biased expression "
+        "and installs a female-specific programme of induced genes, with no accompanying change in "
+        "receptor-gene expression. Together, these findings support a hierarchical model in which stable "
+        "appendage-specific sensory architectures provide the anatomical setting in which receptor-family "
+        "diversification and reversible physiological regulation generate behavioral flexibility. "
     ),
 }
 
 SUPP_FIGURE_CAPTIONS = {
-    "Figure S1 — All families (circular)": (
-        "**Figure S1.** Circular ML tree of all seven *H. illucens* chemosensory gene families "
-        "combined, with gene name labels. Bootstrap ≥ 70 shown. Families colour-coded."
+    "Figure S1 — Tree: all families": (
+        "**Figure S1.** phylogenetic reconstruction of the H. illucens chemosensory repertoire. Circular "
+        "maximum-likelihood phylogeny of all 1,620 chemosensory proteins analyzed in this study, "
+        "comprising 567 annotated H. illucens sequences and 1,053 homologous proteins from Aedes aegypti, "
+        "Drosophila melanogaster, Musca domestica, Calliphora stygia, Bactrocera dorsalis, and Glossina "
+        "morsitans. Branches are color-coded according to the seven conserved chemosensory protein "
+        "families: odorant receptors (OR), gustatory receptors (GR), ionotropic receptors (IR), transient "
+        "receptor potential channels (TRP), odorant-binding proteins (OBP), chemosensory proteins (CSP), "
+        "and pickpocket channels (PPK). Terminal labels identify individual proteins, with species "
+        "indicated by label color. Grey circles at internal nodes indicate bootstrap support (70–100%), "
+        "with node size proportional to support; values below 70 are omitted. This overview summarizes "
+        "the phylogenetic relationships among all annotated chemosensory proteins and provides the basis "
+        "for the detailed family-specific phylogenies presented in Figures S2–S8. "
     ),
-    "Figure S2 — CSP": (
-        "**Figure S2.** ML tree of the *H. illucens* Chemosensory Protein (CSP) family (10 genes). "
-        "Note: CSP10 (→ *DmelCSP4*) is a cysteine string protein by naming convergence."
+    "Figure S2 — Tree: CSP": (
+        "**Figure S2.** Maximum-likelihood phylogeny of the H. illucens chemosensory protein (CSP) "
+        "family. Circular maximum-likelihood phylogeny of the 10 annotated H. illucens CSP proteins "
+        "reconstructed together with homologous CSP sequences from Drosophila melanogaster, Musca "
+        "domestica, Bactrocera dorsalis, and Glossina morsitans. Terminal labels identify individual "
+        "proteins, with species indicated by label color. Grey circles at internal nodes indicate "
+        "bootstrap support (50–100%), with node size proportional to support; values below 50 are "
+        "omitted. The phylogeny identifies orthologous relationships and lineage-specific expansions "
+        "within the CSP family, providing the basis for the annotation and nomenclature of H. illucens "
+        "CSP genes. "
     ),
-    "Figure S3 — GR": (
-        "**Figure S3.** ML tree of the *H. illucens* Gustatory Receptor (GR) family (39 genes). "
-        "GR1–5 form a CO₂ receptor clade; GR40 → *Gr43a* fructose receptor (BS = 99)."
+    "Figure S3 — Tree: GR": (
+        "**Figure S3.** Maximum-likelihood phylogeny of the H. illucens gustatory receptor (GR) family. "
+        "Circular maximum-likelihood phylogeny of the 39 annotated H. illucens gustatory receptor (GR) "
+        "proteins reconstructed together with homologous GR sequences from Aedes aegypti and Drosophila "
+        "melanogaster. Terminal labels identify individual receptors, with species indicated by label "
+        "color. Grey circles at internal nodes indicate bootstrap support (50–100%), with node size "
+        "proportional to support; values below 50 are omitted. The phylogeny identifies orthologous "
+        "relationships between H. illucens and well-characterized dipteran GRs, including the conserved "
+        "carbon dioxide receptor clade (HillGR1–HillGR5), the fructose receptor ortholog HillGR40 "
+        "(Gr43a), and the bitter receptor orthologs HillGR24 (Gr66a) and HillGR39 (Gr33a), providing the "
+        "basis for functional annotation of the H. illucens GR repertoire. "
     ),
-    "Figure S4 — IR": (
-        "**Figure S4.** ML tree of the *H. illucens* Ionotropic Receptor (IR) family (101 genes). "
-        "IR7 = *Ir8a* ortholog (BS = 86); IR3 = *Ir25a* ortholog (BS = 95)."
+    "Figure S4 — Tree: IR": (
+        "**Figure S4.** Maximum-likelihood phylogeny of the H. illucens ionotropic receptor (IR) family. "
+        "Circular maximum-likelihood phylogeny of the 101 annotated H. illucens ionotropic receptor (IR) "
+        "proteins reconstructed together with homologous IR sequences from Aedes aegypti, Drosophila "
+        "melanogaster, and Calliphora stygia. Terminal labels identify individual receptors, with species "
+        "indicated by label color. Grey circles at internal nodes indicate bootstrap support (53–100%), "
+        "with node size proportional to support; values below 53 are omitted. The phylogeny identifies "
+        "conserved co-receptors (Ir8a, Ir25a and Ir76b), antennal tuning receptors, and lineage-specific "
+        "expansions within the H. illucens IR repertoire, providing the basis for functional annotation "
+        "and gene nomenclature. "
     ),
-    "Figure S5 — OBP": (
-        "**Figure S5.** ML tree of the *H. illucens* Odorant Binding Protein (OBP) family (75 genes)."
+    "Figure S5 — Tree: OBP": (
+        "**Figure S5.** Maximum-likelihood phylogeny of the H. illucens odorant-binding protein (OBP) "
+        "family. Circular maximum-likelihood phylogeny of the 75 annotated H. illucens odorant-binding "
+        "protein (OBP) sequences reconstructed together with homologous OBPs from Aedes aegypti, "
+        "Drosophila melanogaster, and Musca domestica. Terminal labels identify individual proteins, with "
+        "species indicated by label color. Grey circles at internal nodes indicate bootstrap support "
+        "(50–100%), with node size proportional to support; values below 50 are omitted. The phylogeny "
+        "identifies orthologous relationships and lineage-specific expansions within the H. illucens OBP "
+        "family and provides the basis for gene annotation and nomenclature. "
     ),
-    "Figure S6 — OR": (
-        "**Figure S6.** ML tree of the *H. illucens* Olfactory Receptor (OR) family (192 genes). "
-        "ORco and Or_putative_Orco-like both cluster in the Orco clade (BS = 98)."
+    "Figure S6 — Tree: OR": (
+        "**Figure S6.** Maximum-likelihood phylogeny of the H. illucens odorant receptor (OR) family. "
+        "Circular maximum-likelihood phylogeny of the 192 annotated H. illucens odorant receptor (OR) "
+        "proteins reconstructed together with homologous OR sequences from Aedes aegypti, Drosophila "
+        "melanogaster, Musca domestica, and Calliphora stygia. Terminal labels identify individual "
+        "receptors, with species indicated by label color. Grey circles at internal nodes indicate "
+        "bootstrap support (50–100%), with node size proportional to support; values below 50 are "
+        "omitted. The phylogeny identifies the conserved odorant receptor co-receptors (HillORco and "
+        "HillORco2) together with extensive lineage-specific expansion of the OR repertoire, providing "
+        "the basis for functional annotation and evolutionary comparisons. "
     ),
-    "Figure S7 — PPK": (
-        "**Figure S7.** ML tree of the *H. illucens* Pickpocket (PPK) family (39 genes). "
-        "PPK3 = *ppk23* ortholog (BS = 100); PPK18 = Nanchung co-ortholog (BS = 100)."
+    "Figure S7 — Tree: PPK": (
+        "**Figure S7.** Maximum-likelihood phylogeny of the H. illucens pickpocket (PPK) family. Circular "
+        "maximum-likelihood phylogeny of the 39 annotated H. illucens pickpocket (PPK) proteins "
+        "reconstructed together with homologous PPK sequences from Aedes aegypti and Drosophila "
+        "melanogaster. Terminal labels identify individual proteins, with species indicated by label "
+        "color. Grey circles at internal nodes indicate bootstrap support (50–100%), with node size "
+        "proportional to support; values below 50 are omitted. The phylogeny identifies orthologous "
+        "relationships within the PPK family, including the ppk23 pheromone-sensing lineage and the Nach "
+        "lineage, providing the basis for functional annotation of the H. illucens PPK repertoire. "
     ),
-    "Figure S8 — TRP": (
-        "**Figure S8.** ML tree of the *H. illucens* Transient Receptor Potential (TRP) family (111 genes). "
-        "TRPN expansion: 44 genes (NompC clade), larger than TRPm (15 genes)."
+    "Figure S8 — Tree: TRP": (
+        "**Figure S8.** Maximum-likelihood phylogeny of the H. illucens transient receptor potential "
+        "(TRP) family. Circular maximum-likelihood phylogeny of the 111 annotated H. illucens transient "
+        "receptor potential (TRP) proteins reconstructed together with homologous TRP sequences from "
+        "Aedes aegypti and Drosophila melanogaster. Terminal labels identify individual proteins, with "
+        "species indicated by label color. Grey circles at internal nodes indicate bootstrap support "
+        "(50–100%), with node size proportional to support; values below 50 are omitted. The phylogeny "
+        "resolves the major TRP subfamilies, including TRPA, TRPM, TRPN (NompC), TRPC, TRPV, TRPML, PKD, "
+        "and Brivido channels, highlighting lineage-specific expansions within the H. illucens TRP "
+        "repertoire and providing the basis for functional annotation. "
     ),
-    "Figure S9 — GO bars: Antenna": (
-        "**Figure S9.** GO enrichment stacked bars for antenna-biased genes "
-        "(genes significantly up in Antenna vs both Tarsi and Maxillary palp)."
+    "Figure S9 — GO: antenna-biased": (
+        "**Figure S9.** Gene Ontology enrichment of antenna-biased genes. with bar length giving the "
+        "significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p, and gene "
+        "counts printed beside each bar. Terms are ordered by significance; bars that do not reach q < "
+        "0.05 are drawn pale. GO terms shown in bold and enclosed in a black box denote the biologically "
+        "salient category discussed in the Results: olfactory receptor activity, the dominant molecular "
+        "function of the antenna. "
     ),
-    "Figure S10 — GO bars: Maxillary palp": (
-        "**Figure S10.** GO enrichment stacked bars for maxillary palp-biased genes."
+    "Figure S10 — GO: palp-biased": (
+        "**Figure S10.** Gene Ontology enrichment of maxillary palp-biased genes. Unlike the antenna, the "
+        "maxillary palp exhibits a heterogeneous functional profile: the most strongly over-represented "
+        "terms are solute:inorganic anion antiporter activity and odorant binding, with structural "
+        "constituents of the ribosome and cuticle and monooxygenase activity also enriched.with bar "
+        "length giving the significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted "
+        "p, and gene counts printed beside each bar. Terms are ordered by significance; bars that do not "
+        "reach q < 0.05 are drawn pale. solute:inorganic anion antiporter activity and odorant binding, "
+        "the two most strongly over-represented terms. "
     ),
-    "Figure S11 — GO bars: Tarsi": (
-        "**Figure S11.** GO enrichment stacked bars for tarsi-biased genes."
+    "Figure S11 — GO: tarsi-biased": (
+        "**Figure S11.** Gene Ontology enrichment of tarsus-biased genes. The tarsus has the largest "
+        "appendage-biased repertoire, but over-representation is confined to signalling and regulatory "
+        "functions, principally G protein-coupled receptor activity, DNA-binding transcription factor "
+        "activity, regulation of alternative mRNA splicing and neuropeptide hormone activity.with bar "
+        "length giving the significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted "
+        "p, and gene counts printed beside each bar. Terms are ordered by significance; bars that do not "
+        "reach q < 0.05 are drawn pale. G protein-coupled receptor activity. Protein binding and "
+        "nucleotide binding are the numerically largest categories in this set but are not "
+        "over-represented against the annotated background (q = 0.77 and q = 1.00), and are therefore not "
+        "boxed. "
     ),
-    "Figure S12 — GO bars: Sex-biased genes": (
-        "**Figure S12.** GO term enrichment of sex-biased genes (virgin female vs. virgin male) "
-        "per chemosensory appendage. Top 20 GO terms per domain (MF, CC, BP) among significant "
-        "DEGs (adjusted *p* < 0.001, |log₂FC| ≥ 1)."
+    "Figure S12 — GO domain composition": (
+        "**Figure S12.** Gene Ontology domain composition of appendage-biased genes. For each pairwise "
+        "appendage comparison, the differentially expressed genes biased to either appendage (adjusted p "
+        "< 0.001, |log₂FC| ≥ 1) are broken down by Gene Ontology domain, with chemosensory genes shown as "
+        "a separate category. This breakdown is descriptive: Additional file 11 assigns exactly one GO "
+        "term to each transcript, so the domain split reflects how the genome was annotated rather than a "
+        "tested property of the gene sets. Statistically tested over-representation is reported in "
+        "Figures S9–S11, and the chemosensory enrichment tests, with odds ratios and 95% confidence "
+        "intervals, in Additional file 38. "
     ),
-    "Figure S13 — GO bars: Mating-regulated genes": (
-        "**Figure S13.** GO term enrichment of mating-regulated genes (mated female vs. virgin "
-        "female) per chemosensory appendage. Layout as in Supplementary Fig. S12."
+    "Figure S13 — Heatmap: OR": (
+        "**Figure S13.** Expression heatmap of the H. illucens odorant receptor (OR) family. Heatmap "
+        "showing normalized expression of the 192 annotated odorant receptor (OR) genes across the "
+        "antennae, maxillary palps, and tarsi of virgin males (VM), virgin females (VF), and mated "
+        "females (MF). Expression values are displayed as log₂(counts + 1) and centered on a threshold of "
+        "10 normalized counts (white = 10 counts, blue = lower expression, red = higher expression). "
+        "Genes are ordered according to the appendage showing the highest mean expression (antenna → "
+        "maxillary palp → tarsi), and subsequently by expression level within each appendage. The heatmap "
+        "illustrates the pronounced enrichment of OR expression in the antennae, with a smaller subset of "
+        "appendage-specific receptors expressed in the maxillary palps and relatively few enriched in the "
+        "tarsi. "
     ),
-    "Figure S14 — GO names: Sex-biased genes (only)": (
-        "**Figure S14.** Top GO term names (per domain: MF, CC, BP) for genes with sex-biased expression "
-        "(VF vs Vm) that are not also mating-regulated — per appendage (padj < 0.001, |log₂FC| ≥ 1). "
-        "Interactive version: Sex & Mating Analysis → GO Term Browser → Sex-biased only."
+    "Figure S14 — Heatmap: GR": (
+        "**Figure S14.** Expression heatmap of the H. illucens gustatory receptor (GR) family. Heatmap "
+        "showing normalized expression of the 39 annotated gustatory receptor (GR) genes across the "
+        "antennae, maxillary palps, and tarsi of virgin males (VM), virgin females (VF), and mated "
+        "females (MF). Expression values are displayed as log₂(counts + 1) and centered on a threshold of "
+        "10 normalized counts (white = 10 counts). Genes are ordered by appendage of highest mean "
+        "expression and then by expression level. The heatmap highlights distinct appendage-specific GR "
+        "subsets, including receptors preferentially expressed in the maxillary palps and tarsi, "
+        "consistent with their roles in CO₂ detection and contact chemosensation. "
     ),
-    "Figure S15 — GO names: Mating-only genes": (
-        "**Figure S15.** Top GO term names for genes differentially expressed in the mating contrast "
-        "(MF vs VF) only — not in the sex contrast — per appendage. Layout as in Supplementary Fig. S14."
+    "Figure S15 — Heatmap: IR": (
+        "**Figure S15.** Expression heatmap of the H. illucens ionotropic receptor (IR) family. Heatmap "
+        "showing normalized expression of the 101 annotated ionotropic receptor (IR) genes across the "
+        "antennae, maxillary palps, and tarsi of virgin males (VM), virgin females (VF), and mated "
+        "females (MF). Expression values are displayed as log₂(counts + 1) and centered on a threshold of "
+        "10 normalized counts (white = 10 counts). Genes are ordered by appendage of highest mean "
+        "expression and then by expression level. The heatmap illustrates broad expression of the "
+        "conserved IR co-receptors together with appendage-specific tuning receptor subsets enriched in "
+        "the antennae and tarsi. "
     ),
-    "Figure S16 — GO names: Sex/mating overlap genes": (
-        "**Figure S16.** Top GO term names for genes differentially expressed in **both** the sex "
-        "(VF vs Vm) and mating (MF vs VF) contrasts within the same appendage. "
-        "These represent genes jointly regulated by both sex and reproductive state."
+    "Figure S16 — Heatmap: OBP": (
+        "**Figure S16.** Expression heatmap of the H. illucens odorant-binding protein (OBP) family. "
+        "Heatmap showing normalized expression of the 75 annotated odorant-binding protein (OBP) genes "
+        "across the antennae, maxillary palps, and tarsi of virgin males (VM), virgin females (VF), and "
+        "mated females (MF). Expression values are displayed as log₂(counts + 1) and centered on a "
+        "threshold of 10 normalized counts (white = 10 counts). Genes are ordered by appendage of highest "
+        "mean expression and then by expression level. Distinct antennal-, maxillary palp-, and "
+        "tarsus-enriched OBP clusters are apparent, illustrating the extensive appendage-specific "
+        "diversification of odorant-binding proteins. "
     ),
-    "Figure S17 — Heatmap: OR family": (
-        "**Figure S17.** Expression heatmap of the Olfactory Receptor (OR) family (192 genes). "
-        "Rows grouped by appendage of peak expression (Antenna → Maxillary palp → Tarsi), "
-        "sorted by expression level within each group. Columns: Virgin male → Virgin female → Mated female "
-        "per appendage. Colour scale: log₂(normalised counts + 1) centred at threshold of 10 counts; "
-        "same scale across Figs. S17–S23."
+    "Figure S17 — Heatmap: PPK": (
+        "**Figure S17.** Expression heatmap of the H. illucens pickpocket (PPK) family. Heatmap showing "
+        "normalized expression of the 39 annotated pickpocket (PPK) genes across the antennae, maxillary "
+        "palps, and tarsi of virgin males (VM), virgin females (VF), and mated females (MF). Expression "
+        "values are displayed as log₂(counts + 1) and centered on a threshold of 10 normalized counts "
+        "(white = 10 counts). Genes are ordered by appendage of highest mean expression and then by "
+        "expression level. Most PPK genes exhibit preferential expression in the tarsi, consistent with "
+        "their established roles in contact chemosensation and mechanosensory function. "
     ),
-    "Figure S18 — Heatmap: GR family": (
-        "**Figure S18.** Expression heatmap of the Gustatory Receptor (GR) family (39 genes). "
-        "Layout and scale as in Fig. S17."
+    "Figure S18 — Heatmap: CSP": (
+        "**Figure S18.** Expression heatmap of the H. illucens chemosensory protein (CSP) family. Heatmap "
+        "showing normalized expression of the 10 annotated chemosensory protein (CSP) genes across the "
+        "antennae, maxillary palps, and tarsi of virgin males (VM), virgin females (VF), and mated "
+        "females (MF). Expression values are displayed as log₂(counts + 1) and centered on a threshold of "
+        "10 normalized counts (white = 10 counts). Genes are ordered by appendage of highest mean "
+        "expression and then by expression level. In contrast to other chemosensory families, most CSP "
+        "genes exhibit broad expression across all appendages, suggesting more generalized functions in "
+        "the peripheral sensory system. "
     ),
-    "Figure S19 — Heatmap: IR family": (
-        "**Figure S19.** Expression heatmap of the Ionotropic Receptor (IR) family (101 genes). "
-        "Layout and scale as in Fig. S17."
+    "Figure S19 — Heatmap: TRP": (
+        "**Figure S19.** Expression heatmap of the H. illucens transient receptor potential (TRP) family. "
+        "Heatmap showing normalized expression of the 111 annotated transient receptor potential (TRP) "
+        "channel genes across the antennae, maxillary palps, and tarsi of virgin males (VM), virgin "
+        "females (VF), and mated females (MF). Expression values are displayed as log₂(counts + 1) and "
+        "centered on a threshold of 10 normalized counts (white = 10 counts). Genes are ordered by "
+        "appendage of highest mean expression and then by expression level. The heatmap reveals "
+        "widespread expression of TRP channels together with appendage-specific subsets, particularly "
+        "within the tarsi, consistent with roles in thermo-, mechano-, and polymodal sensory signaling. "
     ),
-    "Figure S20 — Heatmap: OBP family": (
-        "**Figure S20.** Expression heatmap of the Odorant Binding Protein (OBP) family (75 genes). "
-        "Layout and scale as in Fig. S17."
+    "Figure S20 — GO: sex-biased": (
+        "**Figure S20.** Gene Ontology enrichment of sex-biased genes across chemosensory appendages. Top "
+        "20 enriched Gene Ontology (GO) terms associated with sex-biased differentially expressed genes "
+        "(virgin female vs. virgin male; adjusted Bar length gives the significance of "
+        "over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p; terms are ordered by "
+        "significance and bars that do not reach q < 0.05 are drawn pale.p < 0.001, |log₂FC| ≥ 1) in the "
+        "antennae (top row), maxillary palps (middle row), and tarsi (bottom row). GO terms are presented "
+        "separately for Molecular Function (MF), Cellular Component (CC), and Biological Process (BP). "
+        "Bar lengths indicate the number of genes assigned to each GO term. Panel titles indicate the "
+        "appendage (rows: antennae, maxillary palps, tarsi) and Gene Ontology domain (columns) shown. GO "
+        "terms shown in bold and enclosed in a black box denote the categories discussed in the main "
+        "text: chemosensory (olfactory receptor activity, odorant binding), pheromone and detoxification "
+        "metabolism (monooxygenase activity), cuticular structure (structural constituent of cuticle), "
+        "and reproduction-, signalling- and immunity-related processes (lipid metabolic process, MAPK "
+        "cascade, defense response, developmental process involved in reproduction). "
     ),
-    "Figure S21 — Heatmap: PPK family": (
-        "**Figure S21.** Expression heatmap of the Pickpocket (PPK) family (39 genes). "
-        "Layout and scale as in Fig. S17."
+    "Figure S21 — GO: mating-responsive": (
+        "**Figure S21.** Gene Ontology enrichment of mating-responsive genes across chemosensory "
+        "appendages. Bar length gives the significance of over-representation, −log₁₀ of the "
+        "Benjamini–Hochberg adjusted p; terms are ordered by significance and bars that do not reach q < "
+        "0.05 are drawn pale.(mated female vs. virgin female and mated female vs. virgin male, "
+        "significant in the same direction in both; adjusted p < 0.001, |log₂FC| ≥ 1) in the antennae "
+        "(top row), maxillary palps (middle row), and tarsi (bottom row). GO terms are presented "
+        "separately for Molecular Function (MF), Cellular Component (CC), and Biological Process (BP). "
+        "Bar lengths indicate the number of genes assigned to each GO term. Panel titles indicate the "
+        "appendage (rows: antennae, maxillary palps, tarsi) and Gene Ontology domain (columns) shown. GO "
+        "terms shown in bold and enclosed in a black box denote the mating-responsive categories "
+        "discussed in the main text: monooxygenase activity, odorant binding and G protein-coupled "
+        "receptor activity, together with the biological processes MAPK cascade, defense response and "
+        "lipid metabolic process. "
     ),
-    "Figure S22 — Heatmap: CSP family": (
-        "**Figure S22.** Expression heatmap of the Chemosensory Protein (CSP) family (10 genes). "
-        "Layout and scale as in Fig. S17."
+    "Figure S22 — GO: sex-biased only": (
+        "**Figure S22.** Gene Ontology enrichment of constitutively sex-biased genes. Top enriched Gene "
+        "Ontology (GO) terms associated with genes showing constitutive sex-biased expression (virgin "
+        "female vs. virgin male) but no significant mating response within each chemosensory appendage "
+        "(adjusted Bar length gives the significance of over-representation, −log₁₀ of the "
+        "Benjamini–Hochberg adjusted p; terms are ordered by significance and bars that do not reach q < "
+        "0.05 are drawn pale (p< 0.001, |log₂FC| ≥ 1). Results are shown separately for the antennae (top "
+        "row), maxillary palps (middle row), and tarsi (bottom row). For each appendage, the top 15 "
+        "enriched GO terms are presented for Molecular Function (MF), Cellular Component (CC), and "
+        "Biological Process (BP), with bar lengths representing the number of genes assigned to each GO "
+        "term. These analyses identify appendage-specific biological functions associated with "
+        "constitutive sexual dimorphism). GO terms shown in bold and enclosed in a black box denote the "
+        "categories underlying constitutive sexual dimorphism discussed in the main text: olfactory "
+        "receptor activity and monooxygenase activity in the antenna, odorant binding in the palp and "
+        "tarsi, and developmental process involved in reproduction in the tarsi. "
     ),
-    "Figure S23 — Heatmap: TRP family": (
-        "**Figure S23.** Expression heatmap of the Transient Receptor Potential channel (Trp) family (111 genes). "
-        "Layout and colour scale as in Supplementary Fig. S17. Columns represent the nine group-mean normalised counts "
-        "(Antenna: Vm, VF, MF; Palp: Vm, VF, MF; Tarsi: Vm, VF, MF). "
-        "Rows sorted by maximum expression across all conditions (descending)."
+    "Figure S23 — GO: mating-responsive only": (
+        "**Figure S23.** Gene Ontology enrichment of mating-responsive genes. Bar length gives the "
+        "significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p; terms are "
+        "ordered by significance and bars that do not reach q < 0.05 are drawn pale.genes responding to "
+        "mating (significant in the same direction against both virgin females and virgin males) but not "
+        "significantly sex GO terms shown in bold and enclosed in a black box denote the post-mating "
+        "categories discussed in the main text: monooxygenase activity and odorant binding, and the "
+        "biological processes immune system process and lipid metabolic process, most pronounced in the "
+        "tarsi. "
+    ),
+    "Figure S24 — GO: sex & mating": (
+        "**Figure S24.** Gene Ontology enrichment of genes regulated by both sex and mating status. Top "
+        "enriched Gene Ontology (GO) terms associated with genes that were significantly differentially "
+        "expressed in both the sex comparison (virgin female vs. virgin male) and the mating comparison "
+        "(mated female vs. virgin female) within the same appendage (adjusted Bar length gives the "
+        "significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p; terms are "
+        "ordered by significance and bars that do not reach q < 0.05 are drawn pale.p < 0.001, |log₂FC| ≥ "
+        "1). Results are shown separately for the antennae (top row), maxillary palps (middle row), and "
+        "tarsi (bottom row). For each appendage, the top 15 enriched GO terms are presented for Molecular "
+        "Function (MF), Cellular Component (CC), and Biological Process (BP), with bar lengths "
+        "representing the number of genes assigned to each GO term. Absence of enriched terms is "
+        "indicated where no GO category met the enrichment criteria. These analyses identify biological "
+        "pathways jointly influenced by constitutive sexual dimorphism and reproductive state. GO terms "
+        "shown in bold and enclosed in a black box denote the categories jointly regulated by sex and "
+        "mating discussed in the main text: the tarsal terms monooxygenase activity, G protein-coupled "
+        "receptor activity and odorant binding, and the biological processes MAPK cascade and defense "
+        "response. "
+    ),
+    "Figure S25 — DE across appendages": (
+        "**Figure S25.** Differential expression across appendages, by sex and by mating. Volcano plots "
+        "for every gene tested in each appendage. Left column, sex bias in virgins (virgin female versus "
+        "virgin male); right column, the mating response, which requires significance in the same "
+        "direction against both virgin females and virgin males. Points are coloured grey where not "
+        "significant, blue where significant, and red where significant and belonging to one of the seven "
+        "chemosensory families. Dashed lines mark the significance thresholds (adjusted p < 0.001, "
+        "|log₂FC| ≥ 1). Axes are clipped at |log₂FC| 12 and −log₁₀(adjusted p) 300; 38 of 148,968 points "
+        "lie beyond and are drawn on the boundary. These are the distributions underlying the counts in "
+        "Figure 4. "
+    ),
+    "Figure S26 — Mated-female-specific": (
+        "**Figure S26.** Mated-female-specific expression against constitutive sex bias. Axes as in "
+        "Figure 4D: sex bias measured in virgins (virgin female versus virgin male) against sex bias "
+        "measured in mated females (mated female versus virgin male). Because both axes share virgin "
+        "males as the reference, vertical displacement from the diagonal equals the log2 fold change "
+        "between mated and virgin females; genes on the line show sex bias unchanged by mating. Coloured "
+        "points are the mating-responsive set defined in the Methods, significant in the same direction "
+        "against both virgin groups: orange where induced in mated females, blue where reduced, grey "
+        "where not mating-responsive. Red rings mark chemosensory genes. Counts in each panel give the "
+        "mating-responsive genes, and the chemosensory genes within each category, as a fraction of those "
+        "plotted. Axes are clipped at ±10 log2FC. Because mated females were older than virgin males at "
+        "collection, this contrast carries the same age confound as the mating comparison (Methods). "
     ),
 }
 
 _SUPP_FILES_ORDERED = [
-    # AF 1–9: DESeq2 results per contrast
-    ("S1_Appendage_DE_Antenna_vs_Tarsi.csv",
-     "Additional file 1 — Appendage DE: Antenna vs Tarsi (DESeq2, 24,828 genes, 8 cols)", "text/csv"),
-    ("S2_Appendage_DE_Antenna_vs_MaxillaryPalp.csv",
-     "Additional file 2 — Appendage DE: Antenna vs Maxillary Palp", "text/csv"),
-    ("S3_Appendage_DE_Tarsi_vs_MaxillaryPalp.csv",
-     "Additional file 3 — Appendage DE: Tarsi vs Maxillary Palp", "text/csv"),
-    ("S4_Antenna_sex_VirginFemale_vs_VirginMale.csv",
-     "Additional file 4 — Antenna: sex effect VF vs Vm (14 cols, per-replicate counts)", "text/csv"),
-    ("S5_Antenna_mating_MatedFemale_vs_VirginFemale.csv",
-     "Additional file 5 — Antenna: mating effect MF vs VF", "text/csv"),
-    ("S6_MaxillaryPalp_sex_VirginFemale_vs_VirginMale.csv",
-     "Additional file 6 — Maxillary palp: sex effect VF vs Vm", "text/csv"),
-    ("S7_MaxillaryPalp_mating_MatedFemale_vs_VirginFemale.csv",
-     "Additional file 7 — Maxillary palp: mating effect MF vs VF", "text/csv"),
-    ("S8_Tarsi_sex_VirginFemale_vs_VirginMale.csv",
-     "Additional file 8 — Tarsi: sex effect VF vs Vm", "text/csv"),
-    ("S9_Tarsi_mating_MatedFemale_vs_VirginFemale.csv",
-     "Additional file 9 — Tarsi: mating effect MF vs VF", "text/csv"),
-    # AF 10–11: Expression and annotation matrices
-    ("S10_normalized_counts_all_samples.csv",
-     "Additional file 10 — Normalized count matrix (24,828 genes × 27 samples + genomic coords)", "text/csv"),
-    ("S11_GO_annotations_all_genes.csv",
-     "Additional file 11 — GO annotation database (24,828 genes, 6 cols)", "text/csv"),
-    # AF 12–18: Amino acid identity matrices
-    ("S12_AA_identity_matrix_CSP.csv",
-     "Additional file 12 — Pairwise AA identity matrix: Csp (10 × 10)", "text/csv"),
-    ("S13_AA_identity_matrix_GR.csv",
-     "Additional file 13 — Pairwise AA identity matrix: Gr (39 × 39)", "text/csv"),
-    ("S14_AA_identity_matrix_IR.csv",
-     "Additional file 14 — Pairwise AA identity matrix: Ir (101 × 101)", "text/csv"),
-    ("S15_AA_identity_matrix_OBP.csv",
-     "Additional file 15 — Pairwise AA identity matrix: Obp (75 × 75)", "text/csv"),
-    ("S16_AA_identity_matrix_OR.csv",
-     "Additional file 16 — Pairwise AA identity matrix: Or (192 × 192)", "text/csv"),
-    ("S17_AA_identity_matrix_PPK.csv",
-     "Additional file 17 — Pairwise AA identity matrix: Ppk (39 × 39)", "text/csv"),
-    ("S18_AA_identity_matrix_TRP.csv",
-     "Additional file 18 — Pairwise AA identity matrix: Trp (111 × 111)", "text/csv"),
-    # AF 19: Diptera chemosensory comparison
-    ("AF19_Diptera_chemosensory_comparison.csv",
-     "Additional file 19 — Diptera chemosensory gene family comparison (6 species)", "text/csv"),
-    # AF 20–26: Per-family phylogenetic orthology tables
-    ("S19_OR_orthology.csv",
-     "Additional file 20 — Or orthology classification (ML tree-based, 192 genes)", "text/csv"),
-    ("S20_GR_orthology.csv",
-     "Additional file 21 — Gr orthology classification (39 genes)", "text/csv"),
-    ("S21_IR_orthology.csv",
-     "Additional file 22 — Ir orthology classification (101 genes)", "text/csv"),
-    ("S22_OBP_orthology.csv",
-     "Additional file 23 — Obp orthology classification (75 genes)", "text/csv"),
-    ("S23_PPK_orthology.csv",
-     "Additional file 24 — Ppk orthology classification (39 genes)", "text/csv"),
-    ("S24_TRP_orthology.csv",
-     "Additional file 25 — Trp orthology classification (111 genes)", "text/csv"),
-    ("S25_CSP_orthology.csv",
-     "Additional file 26 — Csp orthology classification (10 genes)", "text/csv"),
-    # AF 27–28: BLASTp and 1:1 ortholog identity
-    ("AF27_Unknown_BLAST.csv",
-     "Additional file 27 — BLASTp results for Unknown-domain DEGs vs D. melanogaster proteome (538 genes)", "text/csv"),
-    ("AF28_AA_identity_1to1_orthologs.csv",
-     "Additional file 28 — Pairwise AA identity between H. illucens 1:1 orthologs and nearest Dmel homolog", "text/csv"),
-    # AF 29–33: Analysis scripts
-    ("AF29_Figure_1.R",
-     "Additional file 29 — R script: multivariate statistics (PCA, PERMANOVA, variance partitioning, correlation)", "text/plain"),
-    ("AF30_Figure_2.R",
-     "Additional file 30 — R script: multivariate transcriptome overview (identical to AF29)", "text/plain"),
-    ("AF31_Figure_3.R",
-     "Additional file 31 — R script: appendage DE analysis, GO enrichment, chemosensory classification (Fig. 3)", "text/plain"),
-    ("AF32_Figure_4.R",
-     "Additional file 32 — R script: sex- and mating-state DE, volcano plots, Venn diagrams, scatter (Fig. 4)", "text/plain"),
-    ("AF33_generate_heatmaps.py",
-     "Additional file 33 — Python script: per-family expression heatmaps (Figs. S17–S23)", "text/plain"),
+    ("Additional_file_1_Appendage_DE_Antenna_vs_Tarsi.csv.gz",
+     "Additional file 1 — Appendage DE: antenna vs tarsi (DESeq2) (0.8 MB) [gzip]", "application/gzip"),
+    ("Additional_file_2_Appendage_DE_Antenna_vs_MaxillaryPalp.csv.gz",
+     "Additional file 2 — Appendage DE: antenna vs maxillary palp (DESeq2) (0.8 MB) [gzip]", "application/gzip"),
+    ("Additional_file_3_Appendage_DE_Tarsi_vs_MaxillaryPalp.csv.gz",
+     "Additional file 3 — Appendage DE: tarsi vs maxillary palp (DESeq2) (0.8 MB) [gzip]", "application/gzip"),
+    ("Additional_file_4_Antenna_sex_VirginFemale_vs_VirginMale.csv.gz",
+     "Additional file 4 — Antenna, sex: virgin female vs virgin male (DESeq2) (1.2 MB) [gzip]", "application/gzip"),
+    ("Additional_file_5_Antenna_mating_MatedFemale_vs_VirginFemale.csv.gz",
+     "Additional file 5 — Antenna, mating: mated female vs virgin female (DESeq2) (1.2 MB) [gzip]", "application/gzip"),
+    ("Additional_file_6_MaxillaryPalp_sex_VirginFemale_vs_VirginMale.csv.gz",
+     "Additional file 6 — Maxillary palp, sex: virgin female vs virgin male (DESeq2) (1.2 MB) [gzip]", "application/gzip"),
+    ("Additional_file_7_MaxillaryPalp_mating_MatedFemale_vs_VirginFemale.csv.gz",
+     "Additional file 7 — Maxillary palp, mating: mated female vs virgin female (DESeq2) (1.3 MB) [gzip]", "application/gzip"),
+    ("Additional_file_8_Tarsi_sex_VirginFemale_vs_VirginMale.csv.gz",
+     "Additional file 8 — Tarsi, sex: virgin female vs virgin male (DESeq2) (1.2 MB) [gzip]", "application/gzip"),
+    ("Additional_file_9_Tarsi_mating_MatedFemale_vs_VirginFemale.csv.gz",
+     "Additional file 9 — Tarsi, mating: mated female vs virgin female (DESeq2) (1.2 MB) [gzip]", "application/gzip"),
+    ("Additional_file_10_normalized_counts_all_samples.csv.gz",
+     "Additional file 10 — Normalised count matrix, all 27 libraries (2.8 MB) [gzip]", "application/gzip"),
+    ("Additional_file_11_GO_annotations_all_genes.csv.gz",
+     "Additional file 11 — GO annotations for all 24,828 genes (0.3 MB) [gzip]", "application/gzip"),
+    ("Additional_file_12_AA_identity_matrix_CSP.csv",
+     "Additional file 12 — Amino-acid identity matrix — CSP (1 kB)", "text/csv"),
+    ("Additional_file_13_AA_identity_matrix_GR.csv",
+     "Additional file 13 — Amino-acid identity matrix — GR (11 kB)", "text/csv"),
+    ("Additional_file_14_AA_identity_matrix_IR.csv",
+     "Additional file 14 — Amino-acid identity matrix — IR (71 kB)", "text/csv"),
+    ("Additional_file_15_AA_identity_matrix_OBP.csv",
+     "Additional file 15 — Amino-acid identity matrix — OBP (39 kB)", "text/csv"),
+    ("Additional_file_16_AA_identity_matrix_OR.csv",
+     "Additional file 16 — Amino-acid identity matrix — OR (0.2 MB)", "text/csv"),
+    ("Additional_file_17_AA_identity_matrix_PPK.csv",
+     "Additional file 17 — Amino-acid identity matrix — PPK (11 kB)", "text/csv"),
+    ("Additional_file_18_AA_identity_matrix_TRP.csv",
+     "Additional file 18 — Amino-acid identity matrix — TRP (82 kB)", "text/csv"),
+    ("Additional_file_19_Diptera_chemosensory_comparison.csv",
+     "Additional file 19 — Chemosensory family sizes across Diptera (0 kB)", "text/csv"),
+    ("Additional_file_20_OR_orthology.csv",
+     "Additional file 20 — Orthology assignments — OR (82 kB)", "text/csv"),
+    ("Additional_file_21_GR_orthology.csv",
+     "Additional file 21 — Orthology assignments — GR (15 kB)", "text/csv"),
+    ("Additional_file_22_IR_orthology.csv",
+     "Additional file 22 — Orthology assignments — IR (0.2 MB)", "text/csv"),
+    ("Additional_file_23_OBP_orthology.csv",
+     "Additional file 23 — Orthology assignments — OBP (34 kB)", "text/csv"),
+    ("Additional_file_24_PPK_orthology.csv",
+     "Additional file 24 — Orthology assignments — PPK (7 kB)", "text/csv"),
+    ("Additional_file_25_TRP_orthology.csv",
+     "Additional file 25 — Orthology assignments — TRP (18 kB)", "text/csv"),
+    ("Additional_file_26_CSP_orthology.csv",
+     "Additional file 26 — Orthology assignments — CSP (4 kB)", "text/csv"),
+    ("Additional_file_27_Unknown_BLAST.csv",
+     "Additional file 27 — BLASTp hits for unknown-domain genes (0.2 MB)", "text/csv"),
+    ("Additional_file_28_AA_identity_1to1_orthologs.csv",
+     "Additional file 28 — Amino-acid identity of 1:1 orthologs (4 kB)", "text/csv"),
+    ("Additional_file_29_Antenna_matedsex_MatedFemale_vs_VirginMale.csv.gz",
+     "Additional file 29 — Antenna, mated sex: mated female vs virgin male (DESeq2) (1.6 MB) [gzip]", "application/gzip"),
+    ("Additional_file_30_MaxillaryPalp_matedsex_MatedFemale_vs_VirginMale.csv.gz",
+     "Additional file 30 — Maxillary palp, mated sex: mated female vs virgin male (DESeq2) (1.7 MB) [gzip]", "application/gzip"),
+    ("Additional_file_31_Tarsi_matedsex_MatedFemale_vs_VirginMale.csv.gz",
+     "Additional file 31 — Tarsi, mated sex: mated female vs virgin male (DESeq2) (1.7 MB) [gzip]", "application/gzip"),
+    ("Additional_file_32_multivariate_statistics.zip",
+     "Additional file 32 — Multivariate statistics: PCA, PERMANOVA, variation partitioning (25 kB) [zip]", "application/zip"),
+    ("Additional_file_33_GO_overrepresentation_significant.csv",
+     "Additional file 33 — GO over-representation — significant terms (24 kB)", "text/csv"),
+    ("Additional_file_34_GO_overrepresentation_all_tests.csv.gz",
+     "Additional file 34 — GO over-representation — all tests (0.2 MB) [gzip]", "application/gzip"),
+    ("Additional_file_35_identical_protein_clusters.csv",
+     "Additional file 35 — Identical-protein clusters (17 kB)", "text/csv"),
+    ("Additional_file_36_newick_trees.zip",
+     "Additional file 36 — Newick trees for all seven families and the combined tree (48 kB) [zip]", "application/zip"),
+    ("Additional_file_37_transcript_model_to_gene_locus.csv",
+     "Additional file 37 — Transcript model to gene locus map (567 models, 393 loci) (21 kB)", "text/csv"),
+    ("Additional_file_38_Figure3_statistical_tests.csv",
+     "Additional file 38 — Statistical tests underlying Figure 3 (1 kB)", "text/csv"),
+    ("Additional_file_39_FPKM_all_samples.csv.gz",
+     "Additional file 39 — FPKM matrix for all 27 libraries (derived from Additional file 10) (1.7 MB) [gzip]", "application/gzip"),
 ]
 
 
@@ -4978,8 +5435,9 @@ def render_figures_tab():
 
     st.header("Figures & Supplementary Data")
 
-    fig_tab1, fig_tab2, fig_tab3 = st.tabs(
-        ["Main Figures", "Supplementary Figures", "Download Additional Files (AF1–AF33)"]
+    fig_tab1, fig_tab2, fig_tab3, fig_tab4 = st.tabs(
+        ["Main Figures", "Supplementary Figures",
+         "Download Additional Files (AF1–AF39)", "Analysis code"]
     )
 
     with fig_tab1:
@@ -5027,13 +5485,18 @@ def render_figures_tab():
         st.markdown(SUPP_FIGURE_CAPTIONS[supp_choice])
 
     with fig_tab3:
-        st.subheader("Additional Files (AF1–AF33)")
+        st.subheader("Additional Files (AF1–AF39)")
         st.caption(
-            "All additional files from Perets *et al.* 2026 (v5.2). "
-            "AF1–AF9: DESeq2 DE results per contrast. AF10: count matrix. AF11: GO database. "
-            "AF12–AF18: amino acid identity matrices. AF19: Diptera comparison. "
-            "AF20–AF26: per-family orthology tables. AF27: Unknown-domain BLASTp. "
-            "AF28: 1:1 ortholog AA identity. AF29–AF33: R/Python analysis scripts."
+            "All additional files from Perets *et al.* 2026. "
+            "AF1–AF9: DESeq2 results per contrast. AF10: count matrix. AF11: GO annotations. "
+            "AF12–AF18: amino-acid identity matrices. AF19: Diptera comparison. "
+            "AF20–AF26: per-family orthology tables. AF27: unknown-domain BLASTp. "
+            "AF28: 1:1 ortholog identity. AF29–AF31: mated-female versus virgin-male contrasts. "
+            "AF32: multivariate statistics. AF33–AF34: GO over-representation. "
+            "AF35: identical-protein clusters. AF36: Newick trees. "
+            "AF37: transcript-to-locus map. AF38: Figure 3 statistical tests. "
+            "AF39: FPKM matrix. "
+            "Large tables are served gzipped."
         )
         for fname, desc, mime in _SUPP_FILES_ORDERED:
             fpath = os.path.join(SUPP_FILE_DIR, fname)
@@ -5054,10 +5517,619 @@ def render_figures_tab():
                 else:
                     st.caption("—")
 
+    with fig_tab4:
+        st.subheader("Analysis code")
+        st.caption(
+            "The R scripts that produce the figures from the Additional files. "
+            "Under the current numbering these are no longer Additional files "
+            "themselves, so they are published here and in the repository."
+        )
+        code_dir = str(pathlib.Path(__file__).resolve().parent / "data" / "code")
+        notes = {
+            "Figure_2.R": "Figure 2 and the multivariate statistics",
+            "Figure_3.R": "Figure 3, Figures S9\u2013S19",
+            "Figure_4.R": "Figure 4, Figures S20\u2013S26",
+            "Figure_4A_lollipop.R": "Figure 4A, chemosensory lollipops",
+            "Figure_4B_lollipop.R": "Figure 4B, non-chemosensory lollipops",
+            "Figure_4_names.R": "shared gene-name shortening for panels B and D",
+        }
+        if not os.path.isdir(code_dir):
+            st.info("Analysis code not bundled with this deployment.")
+        else:
+            for fn in sorted(os.listdir(code_dir)):
+                fp = os.path.join(code_dir, fn)
+                if not os.path.isfile(fp):
+                    continue
+                kb = os.path.getsize(fp) / 1e3
+                col_d, col_b = st.columns([5, 1])
+                with col_d:
+                    st.markdown(f"**{fn}** — {notes.get(fn, 'analysis script')} ({kb:.0f} kB)")
+                with col_b:
+                    with open(fp, "rb") as fh:
+                        st.download_button("R", fh.read(), file_name=fn,
+                                           mime="text/plain", key=f"code_dl_{fn}")
+
 
 # =============================================================================
 # === MAIN APP ===
 # =============================================================================
+
+
+# =============================================================================
+# === DATA EXPLORER ===
+# The app exists so a reader of the manuscript can interrogate the data behind
+# the figures, not just look at the figures again.  This section exposes the
+# layers that have no figure of their own, or whose figure shows only the top
+# of a much longer table: the GO over-representation tests, the per-locus
+# chemosensory response, the BLAST evidence behind unnamed genes, and the
+# comparative counts.  Everything here reads an Additional file directly.
+# =============================================================================
+SUPP_DIR = str(pathlib.Path(__file__).resolve().parent / "data" / "supplementary")
+
+EXPLORER_FILES = {
+    "go_sig":   "Additional_file_33_GO_overrepresentation_significant.csv",
+    "go_all":   "Additional_file_34_GO_overrepresentation_all_tests.csv.gz",
+    "diptera":  "Additional_file_19_Diptera_chemosensory_comparison.csv",
+    "unknown":  "Additional_file_27_Unknown_BLAST.csv",
+    "clusters": "Additional_file_35_identical_protein_clusters.csv",
+    "locus":    "Additional_file_37_transcript_model_to_gene_locus.csv",
+    "fig3stat": "Additional_file_38_Figure3_statistical_tests.csv",
+}
+
+
+@st.cache_data(show_spinner=False)
+def ex_load(key):
+    path = os.path.join(SUPP_DIR, EXPLORER_FILES[key])
+    if not os.path.exists(path):
+        return pd.DataFrame()
+    return pd.read_csv(path)
+
+
+def ex_download(df, label, fname, key=None):
+    st.download_button(label, df.to_csv(index=False).encode("utf-8"),
+                       file_name=fname, mime="text/csv",
+                       key=f"dl_{key or fname}")
+
+
+# -------------------------------------------------------------- GO over-rep
+def ex_tab_go():
+    st.subheader("Gene Ontology over-representation")
+    st.markdown(
+        "Every GO term tested against its gene set, with the odds ratio and the "
+        "Benjamini–Hochberg adjusted p value. Figures S9–S12 and S20–S24 plot the "
+        "strongest terms; this is the whole table. Tests are one-sided Fisher "
+        "exact tests, corrected within each gene set × GO domain."
+    )
+    sig = ex_load("go_sig")
+    if sig.empty:
+        st.info("Additional file 33 not found.")
+        return
+    show_all = st.checkbox(
+        "Include tests that did not reach significance (Additional file 34)",
+        value=False, key="ex_go_all")
+    df = ex_load("go_all") if show_all else sig
+    if df.empty:
+        st.info("Additional file 34 not found.")
+        return
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        sets = sorted(df["Gene_set"].dropna().unique())
+        pick = st.multiselect("Gene set", sets, default=sets[:1], key="ex_go_set")
+    with c2:
+        doms = sorted(df["GO_domain"].dropna().unique())
+        dpick = st.multiselect("GO domain", doms, default=doms, key="ex_go_dom")
+    with c3:
+        qmax = st.number_input("Maximum q (BH)", value=0.05, min_value=1e-12,
+                               max_value=1.0, format="%.4g", key="ex_go_q")
+    term_q = st.text_input("Filter GO term contains", "", key="ex_go_term")
+    sub = df[df["Gene_set"].isin(pick) & df["GO_domain"].isin(dpick)]
+    sub = sub[pd.to_numeric(sub["q_BH"], errors="coerce") <= qmax]
+    if term_q.strip():
+        sub = sub[sub["GO_term"].str.contains(term_q.strip(), case=False, na=False)]
+    if sub.empty:
+        st.info("No terms match these filters.")
+        return
+    sub = sub.sort_values("q_BH")
+    st.caption(f"{len(sub):,} terms")
+    top = sub.head(25).iloc[::-1]
+    fig = go.Figure(go.Bar(
+        x=top["odds_ratio"], y=top["GO_term"], orientation="h",
+        marker=dict(color=top["odds_ratio"], colorscale="Blues", showscale=False),
+        customdata=np.stack([top["q_BH"], top["k_in_set"], top["n_set"]], axis=-1),
+        hovertemplate=("<b>%{y}</b><br>odds ratio %{x:.2f}<br>"
+                       "q = %{customdata[0]:.3g}<br>"
+                       "%{customdata[1]} of %{customdata[2]} genes<extra></extra>"),
+    ))
+    fig.update_layout(height=max(320, 22 * len(top) + 90), plot_bgcolor="white",
+                      margin=dict(l=10, r=10, t=30, b=10),
+                      xaxis_title="Odds ratio", yaxis_title=None,
+                      title=dict(text="Strongest 25 terms", font=dict(size=12)))
+    st.plotly_chart(fig, use_container_width=True, key="ex_go_fig")
+    st.dataframe(sub, use_container_width=True, hide_index=True, height=360)
+    ex_download(sub, "Download these terms (CSV)", "GO_overrepresentation_filtered.csv")
+
+
+# ------------------------------------------------- chemosensory per-locus view
+# Every contrast in the paper, restricted to the 567 chemosensory transcript
+# models.  Family membership comes from Additional file 37 rather than from
+# string-matching a name, so the counts here are the published ones.
+DE_CONTRASTS = {
+    "Antenna vs Tarsi":              ("condition_vs_Ant_vs_Leg_name.csv", "appendage"),
+    "Antenna vs Maxillary palp":     ("condition_vs_Ant_vs_P_name.csv",   "appendage"),
+    "Tarsi vs Maxillary palp":       ("condition_vs_Leg_vs_P_name.csv",   "appendage"),
+    "Antenna — sex (VF vs Vm)":          ("results_ant_VF_vs_Vm.csv",  "sex"),
+    "Maxillary palp — sex (VF vs Vm)":   ("results_palp_VF_vs_Vm.csv", "sex"),
+    "Tarsi — sex (VF vs Vm)":            ("results_leg_VF_vs_Vm.csv",  "sex"),
+    "Antenna — mating (MF vs VF)":        ("results_ant_MF_vs_VF.csv",  "mating"),
+    "Maxillary palp — mating (MF vs VF)": ("results_palp_MF_vs_VF.csv", "mating"),
+    "Tarsi — mating (MF vs VF)":          ("results_leg_MF_vs_VF.csv",  "mating"),
+    "Antenna — mated female vs virgin male":        ("results_ant_MF_vs_Vm.csv",  "matedsex"),
+    "Maxillary palp — mated female vs virgin male": ("results_palp_MF_vs_Vm.csv", "matedsex"),
+    "Tarsi — mated female vs virgin male":          ("results_leg_MF_vs_Vm.csv",  "matedsex"),
+}
+
+
+@st.cache_data(show_spinner=False)
+def ex_family_map():
+    loci = ex_load("locus")
+    if loci.empty:
+        return {}, {}
+    fam = dict(zip(loci["Transcript_ID"].astype(str), loci["Family"].astype(str)))
+    sym = dict(zip(loci["Transcript_ID"].astype(str), loci["Hill_gene_symbol"].astype(str)))
+    return fam, sym
+
+
+@st.cache_data(show_spinner=False)
+def ex_load_contrast(fname, padj_thr, lfc_thr, chemo_only):
+    path = os.path.join(BASE_DIR, fname)
+    if not os.path.exists(path):
+        return pd.DataFrame()
+    d = pd.read_csv(path, usecols=lambda c: c in
+                    ("Gene", "Name", "log2FoldChange", "padj", "baseMean"))
+    d["Gene"] = d["Gene"].astype(str)
+    d["lfc"] = -pd.to_numeric(d["log2FoldChange"], errors="coerce")   # see README
+    d["padj"] = pd.to_numeric(d["padj"], errors="coerce")
+    d["sig"] = (d["padj"] < padj_thr) & (d["lfc"].abs() >= lfc_thr)
+    fam, sym = ex_family_map()
+    d["Family"] = d["Gene"].map(fam)
+    d["Symbol"] = d["Gene"].map(sym)
+    if chemo_only:
+        d = d[d["Family"].notna()]
+    return d.drop(columns=["log2FoldChange"], errors="ignore")
+
+
+def ex_lollipop(d, title, n_max):
+    """Stems from no change to the log2 fold change, as in Figure 4A."""
+    d = d.sort_values("lfc")
+    if len(d) > n_max:
+        keep = pd.concat([d.head(n_max // 2), d.tail(n_max - n_max // 2)])
+        d = keep.sort_values("lfc")
+    lab = d["Symbol"].fillna(d["Gene"]).astype(str)
+    if "Appendage" in d.columns:
+        lab = lab + "  (" + d["Appendage"].astype(str) + ")"
+    fig = go.Figure()
+    for x, y in zip(d["lfc"], lab):
+        fig.add_shape(type="line", x0=0, x1=x, y0=y, y1=y,
+                      line=dict(color="#C9C9C9", width=1))
+    size = 8.0
+    if "baseMean" in d.columns and d["baseMean"].notna().any():
+        bm = pd.to_numeric(d["baseMean"], errors="coerce").fillna(0).clip(lower=1)
+        size = 5 + 9 * (np.log10(bm) - np.log10(bm).min()) / max(
+            np.log10(bm).max() - np.log10(bm).min(), 1e-9)
+    fig.add_trace(go.Scatter(
+        x=d["lfc"], y=lab, mode="markers",
+        marker=dict(size=size, color=d["lfc"], colorscale="RdBu_r", cmid=0,
+                    line=dict(width=0.5, color="#3A3A3A")),
+        customdata=np.stack([d["Gene"], d["padj"].fillna(1),
+                             d.get("Family", pd.Series("", index=d.index))], axis=-1),
+        hovertemplate=("<b>%{y}</b><br>log₂FC %{x:.2f}<br>"
+                       "%{customdata[0]}<br>adjusted p %{customdata[1]:.3g}"
+                       "<extra></extra>")))
+    fig.add_vline(x=0, line_width=1, line_color="#555555")
+    fig.update_layout(height=max(340, 15 * len(d) + 110), plot_bgcolor="white",
+                      margin=dict(l=10, r=10, t=40, b=10), showlegend=False,
+                      xaxis_title="log₂ fold change",
+                      title=dict(text=title, font=dict(size=12)))
+    return fig
+
+
+def ex_tab_chemo(by_tissue, padj_thr, lfc_thr):
+    st.subheader("Response locus by locus")
+    st.markdown(
+        "The data behind the **Figure 4A** lollipops, extended to every contrast "
+        "in the paper — including the three appendage comparisons. Each stem runs "
+        "from no change to the gene's log₂ fold change; dot area is mean "
+        "normalised expression. Pick a contrast, a family, and whether to look "
+        "only at chemosensory genes."
+    )
+    c1, c2 = st.columns([3, 2])
+    with c1:
+        picks = st.multiselect("Contrast", list(DE_CONTRASTS.keys()),
+                               default=["Antenna — sex (VF vs Vm)"], key="ex_ll_con")
+    with c2:
+        chemo_only = st.checkbox("Chemosensory genes only", value=True, key="ex_ll_chemo")
+    if not picks:
+        st.info("Choose at least one contrast.")
+        return
+    frames = []
+    for name in picks:
+        fname, layer = DE_CONTRASTS[name]
+        d = ex_load_contrast(fname, padj_thr, lfc_thr, chemo_only)
+        if d.empty:
+            continue
+        d = d.copy()
+        d["Appendage"] = name.split(" — ")[0]
+        d["Contrast"] = name
+        frames.append(d)
+    if not frames:
+        st.info("Those contrasts are not available.")
+        return
+    D = pd.concat(frames, ignore_index=True)
+    c3, c4, c5 = st.columns(3)
+    with c3:
+        fams = sorted(D["Family"].dropna().unique())
+        fpick = st.multiselect("Family", fams, default=fams, key="ex_ll_fam") if fams else []
+    with c4:
+        sig_only = st.checkbox("Significant only", value=True, key="ex_ll_sig")
+    with c5:
+        n_max = int(st.number_input("Maximum loci to plot", min_value=10, max_value=200,
+                                    value=50, step=10, key="ex_ll_n"))
+    sub = D.copy()
+    if fpick:
+        sub = sub[sub["Family"].isin(fpick) | sub["Family"].isna()]
+    if chemo_only and fpick:
+        sub = sub[sub["Family"].isin(fpick)]
+    if sig_only:
+        sub = sub[sub["sig"]]
+    if sub.empty:
+        st.info("Nothing matches these filters. Try clearing 'Significant only'.")
+        return
+    st.caption(f"{len(sub):,} loci across {sub['Contrast'].nunique()} contrast(s)")
+    for name in picks:
+        part = sub[sub["Contrast"] == name]
+        if part.empty:
+            continue
+        st.plotly_chart(ex_lollipop(part.drop(columns=["Appendage"]), name, n_max),
+                        use_container_width=True, key=f"ex_ll_{name}")
+    out = sub[["Contrast", "Gene", "Symbol", "Family", "lfc", "padj", "sig", "baseMean"]]
+    out = out.rename(columns={"lfc": "log2FC", "padj": "adjusted_p",
+                              "sig": "significant", "baseMean": "mean_normalised_count"})
+    st.dataframe(out, use_container_width=True, hide_index=True, height=340)
+    ex_download(out, "Download this table (CSV)", "locus_response.csv")
+
+
+# ----------------------------------------- S26: mated-female-specific expression
+def ex_tab_mfs(tissue_cross):
+    st.subheader("Mated-female-specific expression")
+    st.markdown(
+        "The interactive form of **Figure S26**. Sex bias in virgins (x) against "
+        "sex bias in mated females (y). The diagonal is the null for the mating "
+        "contrast: a gene sitting on it has the same sex bias in both groups, so "
+        "**y = x means no mating response**. Vertical displacement from the "
+        "diagonal is the mating effect, and colour says whether that displacement "
+        "passed the strict test against both virgin groups."
+    )
+    if not tissue_cross:
+        st.info("Contrasts not loaded.")
+        return
+    L = RETENTION_LIM
+    cols = st.columns(3)
+    tables, genes = [], []
+    for ci, tissue in enumerate(["Antenna", "Palp", "Tarsi"]):
+        td = tissue_cross.get(tissue)
+        d = s1_build_retention(tissue_cross, tissue)
+        if d is None or td is None:
+            with cols[ci]:
+                st.info(f"Not available for {TISSUE_DISPLAY[tissue]}.")
+            continue
+        up, dn = td["mat_mf"], td["mat_vf"]
+        d = d.copy()
+        key = d["JoinKey"].astype(str)
+        d["MFS"] = np.where(key.isin(up), "Induced in mated females",
+                   np.where(key.isin(dn), "Reduced in mated females",
+                            "Not mating-responsive"))
+        colmap = {"Induced in mated females": "#C0392B",
+                  "Reduced in mated females": "#2471A3",
+                  "Not mating-responsive": "#D5D5D5"}
+        fig = go.Figure()
+        fig.add_shape(type="line", x0=-L, x1=L, y0=-L, y1=L,
+                      line=dict(color="#555555", width=1.4), layer="below")
+        for cls in ("Not mating-responsive", "Reduced in mated females",
+                    "Induced in mated females"):
+            part = d[d["MFS"] == cls]
+            if part.empty:
+                continue
+            fig.add_trace(go.Scattergl(
+                x=part["px"], y=part["py"], mode="markers", name=cls,
+                marker=dict(size=4.5, color=colmap[cls]),
+                customdata=np.stack([part["JoinKey"], part["x"], part["y"]], axis=-1),
+                hovertemplate=("<b>%{customdata[0]}</b><br>virgins %{customdata[1]:.2f}"
+                               "<br>mated %{customdata[2]:.2f}<extra></extra>")))
+        fig.update_layout(
+            title=dict(text=TISSUE_DISPLAY[tissue], font=dict(size=13)),
+            xaxis=dict(title="Sex bias in virgins (log₂FC)", range=[-L, L]),
+            yaxis=dict(title="Sex bias in mated females (log₂FC)", range=[-L, L],
+                       scaleanchor="x", scaleratio=1),
+            legend=dict(orientation="h", yanchor="top", y=-0.18, x=0, font=dict(size=9)),
+            margin=dict(l=10, r=10, t=35, b=10), height=520, plot_bgcolor="white")
+        with cols[ci]:
+            st.plotly_chart(fig, use_container_width=True, key=f"ex_mfs_{tissue}")
+        t = d.groupby("MFS").agg(
+            genes=("JoinKey", "size"),
+            chemosensory=("Class", lambda c: int((c == CLS_CHEMO).sum()))).reset_index()
+        t.insert(0, "Appendage", TISSUE_DISPLAY[tissue])
+        tables.append(t)
+        genes.append(d.assign(Appendage=TISSUE_DISPLAY[tissue])[
+            ["Appendage", "JoinKey", "ChemoName", "x", "y", "MFS"]].rename(
+            columns={"JoinKey": "Gene", "ChemoName": "Chemosensory name",
+                     "x": "log2FC_virgins", "y": "log2FC_mated"}))
+    if tables:
+        summ = pd.concat(tables, ignore_index=True)
+        st.dataframe(summ, use_container_width=True, hide_index=True)
+        ex_download(summ, "Download these counts (CSV)",
+                    "S26_matedfemale_specific_counts.csv")
+    if genes:
+        allg = pd.concat(genes, ignore_index=True)
+        with st.expander(f"All {len(allg):,} plotted genes"):
+            st.dataframe(allg.round(3), use_container_width=True, hide_index=True,
+                         height=360)
+            ex_download(allg, "Download every plotted gene (CSV)",
+                        "S26_matedfemale_specific_genes.csv")
+
+
+# ------------------------------------------------------------- gene lookup
+def ex_tab_gene(by_tissue):
+    st.subheader("Look up a gene")
+    st.markdown(
+        "Every contrast for one gene, side by side, with its BLAST evidence. "
+        "Search by accession, chemosensory name or description."
+    )
+    unk = ex_load("unknown")
+    loci = ex_load("locus")
+    q = st.text_input("Gene accession, name or description", "", key="ex_gene_q")
+    if not q.strip():
+        st.caption("Try ORco, OBP34, or an XM_ accession.")
+        return
+    qq = q.strip().lower()
+    hits = set()
+    for _, items in by_tissue.items():
+        for it in items:
+            d = it["df"]
+            m = (d["JoinKey"].astype(str).str.lower().str.contains(qq, na=False)
+                 | d["ChemoName"].astype(str).str.lower().str.contains(qq, na=False)
+                 | d.get("Name", pd.Series("", index=d.index)).astype(str)
+                   .str.lower().str.contains(qq, na=False))
+            hits.update(d.loc[m, "JoinKey"].astype(str).tolist())
+    if not hits:
+        st.warning("No gene matches that search.")
+        return
+    hits = sorted(hits)
+    if len(hits) > 1:
+        gene = st.selectbox(f"{len(hits)} matches", hits, key="ex_gene_pick")
+    else:
+        gene = hits[0]
+    rows = []
+    for tissue, items in by_tissue.items():
+        for it in items:
+            d = it["df"]
+            r = d[d["JoinKey"].astype(str) == gene]
+            if r.empty:
+                continue
+            r = r.iloc[0]
+            rows.append({
+                "Appendage": TISSUE_DISPLAY[tissue],
+                "Contrast": f'{it["cond1"]} vs {it["cond2"]}',
+                "log₂FC": round(float(r["log2FoldChange"]), 3),
+                "adjusted p": float(r["padj"]) if pd.notna(r["padj"]) else None,
+                "Significant": bool(r["is_sig"]),
+            })
+    if rows:
+        rdf = pd.DataFrame(rows)
+        st.dataframe(rdf, use_container_width=True, hide_index=True)
+        ex_download(rdf, "Download this gene's contrasts (CSV)", f"{gene}_contrasts.csv")
+    if not loci.empty:
+        lr = loci[loci["Transcript_ID"].astype(str) == gene]
+        if not lr.empty:
+            r = lr.iloc[0]
+            st.caption(f"Family **{r['Family']}** · symbol **{r['Hill_gene_symbol']}** "
+                       f"· locus **{r['gene_id']}**")
+    if not unk.empty:
+        ur = unk[unk["Gene"].astype(str) == gene]
+        if not ur.empty:
+            with st.expander("BLAST evidence and category"):
+                st.dataframe(ur.T.rename(columns=lambda c: "value"),
+                             use_container_width=True)
+
+
+# ------------------------------------------------------------- comparative
+def ex_tab_comparative():
+    st.subheader("Comparative and structural data")
+    dip = ex_load("diptera")
+    if not dip.empty:
+        st.markdown("**Chemosensory family sizes across Diptera** (Additional file 19)")
+        long = dip.melt(id_vars="Family", var_name="Species", value_name="Genes")
+        long["Species"] = long["Species"].str.replace("_", ". ", regex=False)
+        fig = px.bar(long, x="Family", y="Genes", color="Species", barmode="group",
+                     color_discrete_sequence=px.colors.qualitative.Set2)
+        fig.update_layout(height=380, plot_bgcolor="white",
+                          margin=dict(l=10, r=10, t=30, b=10))
+        st.plotly_chart(fig, use_container_width=True, key="ex_dip_fig")
+        st.dataframe(dip, use_container_width=True, hide_index=True)
+        ex_download(dip, "Download family sizes (CSV)", "AF19_Diptera_comparison.csv")
+    cl = ex_load("clusters")
+    if not cl.empty:
+        st.markdown("**Identical protein clusters** (Additional file 35)")
+        st.caption(
+            f"{len(cl)} clusters of transcript models encoding identical proteins. "
+            "These are why the paper reports 567 transcript models but 393 gene loci."
+        )
+        st.dataframe(cl, use_container_width=True, hide_index=True, height=260)
+        ex_download(cl, "Download clusters (CSV)", "AF35_identical_protein_clusters.csv")
+    f3 = ex_load("fig3stat")
+    if not f3.empty:
+        st.markdown("**Enrichment tests behind Figure 3** (Additional file 38)")
+        st.dataframe(f3, use_container_width=True, hide_index=True)
+        ex_download(f3, "Download Figure 3 tests (CSV)", "AF38_Figure3_statistical_tests.csv")
+
+
+
+# --------------------------------------------------------------- statistics
+STATS_DIR = str(pathlib.Path(__file__).resolve().parent / "data" / "stats_reports")
+
+STATS_TITLES = {
+    "00_SUMMARY_permanova_silhouette_betadisper.csv": "Summary: PERMANOVA, silhouette, dispersion",
+    "01_pca_overview.csv": "PCA: variance explained per component",
+    "02_pca_group_geometry_and_silhouette.csv": "PCA: group geometry and silhouette",
+    "03_permanova_summary.csv": "PERMANOVA: main effects",
+    "04a_pairwise_permanova_tests.csv": "PERMANOVA: pairwise tests",
+    "04b_pairwise_mean_distances.csv": "Pairwise mean distances",
+    "05_pearson_correlation_long.csv": "Pearson correlations, long form",
+    "06_pearson_correlation_summary.csv": "Pearson correlations, summary",
+    "07_variation_partitioning.csv": "Variation partitioning",
+}
+
+
+def ex_tab_stats():
+    st.subheader("Multivariate statistics")
+    st.markdown(
+        "The statistical reports behind Figure 2 (Additional file 32): how much "
+        "variance appendage identity, sex and mating status each explain, whether "
+        "the groups separate, and by how much. Every table downloads as CSV."
+    )
+    if not os.path.isdir(STATS_DIR):
+        st.info("Additional file 32 not found.")
+        return
+    avail = [f for f in sorted(os.listdir(STATS_DIR)) if f.endswith(".csv")]
+    if not avail:
+        st.info("No statistical reports found.")
+        return
+    labels = {STATS_TITLES.get(f, f): f for f in avail}
+    pick = st.selectbox("Report", list(labels.keys()), key="ex_stats_pick")
+    fname = labels[pick]
+    df = pd.read_csv(os.path.join(STATS_DIR, fname))
+    st.dataframe(df, use_container_width=True, hide_index=True, height=420)
+    ex_download(df, "Download this report (CSV)", fname)
+    with st.expander("All reports in one download"):
+        for f in avail:
+            d = pd.read_csv(os.path.join(STATS_DIR, f))
+            st.caption(f"{STATS_TITLES.get(f, f)} — {len(d):,} rows")
+            ex_download(d, f"Download {f}", f, key=f"all_{f}")
+
+
+# ------------------------------------------------- amino-acid identity matrices
+IDENTITY_FILES = {
+    "CSP": "Additional_file_12_AA_identity_matrix_CSP.csv",
+    "GR":  "Additional_file_13_AA_identity_matrix_GR.csv",
+    "IR":  "Additional_file_14_AA_identity_matrix_IR.csv",
+    "OBP": "Additional_file_15_AA_identity_matrix_OBP.csv",
+    "OR":  "Additional_file_16_AA_identity_matrix_OR.csv",
+    "PPK": "Additional_file_17_AA_identity_matrix_PPK.csv",
+    "TRP": "Additional_file_18_AA_identity_matrix_TRP.csv",
+    "1:1 orthologs": "Additional_file_28_AA_identity_1to1_orthologs.csv",
+}
+
+
+@st.cache_data(show_spinner=False)
+def ex_load_identity(fname):
+    path = os.path.join(SUPP_DIR, fname)
+    if not os.path.exists(path):
+        return pd.DataFrame()
+    return pd.read_csv(path)
+
+
+def ex_tab_identity():
+    st.subheader("Amino-acid identity")
+    st.markdown(
+        "Pairwise amino-acid identity within each chemosensory family "
+        "(Additional files 12–18) and between the 1:1 orthologs "
+        "(Additional file 28). Use it to ask how similar two paralogs really are."
+    )
+    fam = st.selectbox("Family", list(IDENTITY_FILES.keys()), key="ex_id_fam")
+    df = ex_load_identity(IDENTITY_FILES[fam])
+    if df.empty:
+        st.info("That matrix is not available.")
+        return
+    first = df.columns[0]
+    flt = st.text_input("Filter rows by name", "", key="ex_id_flt")
+    sub = df[df[first].astype(str).str.contains(flt.strip(), case=False, na=False)] \
+        if flt.strip() else df
+    st.caption(f"{len(sub):,} rows x {len(df.columns) - 1:,} columns")
+    st.dataframe(sub, use_container_width=True, height=420)
+    ex_download(sub, "Download this matrix (CSV)", IDENTITY_FILES[fam])
+
+
+def render_explorer_tab():
+    st.header("Data Explorer")
+    st.caption(
+        "Every table behind the manuscript — searchable, filterable and "
+        "downloadable as CSV. Significance thresholds are yours to set."
+    )
+    padj_thr = st.sidebar.number_input(
+        "padj threshold", value=0.001, min_value=1e-10, max_value=0.1,
+        format="%.4g", key="ex_padj_thr")
+    lfc_thr = st.sidebar.number_input(
+        "|log2FC| threshold", value=1.0, min_value=0.0, max_value=10.0,
+        step=0.25, key="ex_lfc_thr")
+    st.sidebar.caption("Manuscript defaults: adjusted p < 0.001, |log₂FC| ≥ 1.")
+    by_tissue, _ = s1_load_all_contrasts(BASE_DIR, padj_thr, lfc_thr, 2.5)
+    tissue_cross = s1_compute_sex_mating_overlap(by_tissue)
+    t1, t2, t3, t4, t5, t6, t7 = st.tabs(
+        ["Response (lollipops)", "Mated-female-specific", "GO over-representation",
+         "Gene lookup", "Multivariate statistics", "Amino-acid identity",
+         "Comparative data"])
+    with t1:
+        ex_tab_chemo(by_tissue, padj_thr, lfc_thr)
+    with t2:
+        ex_tab_mfs(tissue_cross)
+    with t3:
+        ex_tab_go()
+    with t4:
+        ex_tab_gene(by_tissue)
+    with t5:
+        ex_tab_stats()
+    with t6:
+        ex_tab_identity()
+    with t7:
+        ex_tab_comparative()
+
+
+# =============================================================================
+# === PUBLIC ADDRESS ===
+# The deployed address, also cited in the manuscript.  Override it with the
+# APP_URL environment variable when running a private or local instance.
+# =============================================================================
+APP_URL = os.environ.get(
+    "APP_URL",
+    "https://hillucensolfactomeapp-rk3chuhczmmvbpfq2ctvan.streamlit.app/",
+)
+
+
+def render_open_on_desktop():
+    """Small sidebar helper: the browser is cramped on a phone, so offer an
+    easy way to move the link to a computer."""
+    with st.sidebar.expander("Open on a computer", expanded=False):
+        st.caption(
+            "The heatmaps, trees and volcano plots need a wide screen. "
+            "Mail yourself the link and open it on a desktop."
+        )
+        subject = "H. illucens olfactome browser"
+        body = (
+            "Open this on a computer for the full interactive view:\n\n"
+            f"{APP_URL}\n\n"
+            "Data browser for Perets et al. 2026, chemosensory transcriptomes of "
+            "the antenna, maxillary palp and tarsi of Hermetia illucens."
+        )
+        href = f"mailto:?subject={quote(subject)}&body={quote(body)}"
+        st.markdown(
+            f'<a href="{href}" target="_blank" rel="noopener" '
+            'style="display:inline-block;padding:0.45rem 0.9rem;border-radius:0.4rem;'
+            'background:#01045A;color:#fff;text-decoration:none;font-weight:600;">'
+            'Email me this link</a>',
+            unsafe_allow_html=True,
+        )
+        st.caption("Or copy it:")
+        st.code(APP_URL, language=None)
+
 
 section = st.sidebar.radio(
     "Section",
@@ -5067,10 +6139,13 @@ section = st.sidebar.radio(
         "Appendage Comparison",
         "Sex & Mating Analysis",
         "Chemosensory Heatmap",
+        "Data Explorer",
         "Figures & Data",
     ],
     key="main_section",
 )
+
+render_open_on_desktop()
 
 if section == "Phylogenetic Trees":
     render_trees_tab()
@@ -5082,6 +6157,8 @@ elif section == "Sex & Mating Analysis":
     render_s1_tab()
 elif section == "Chemosensory Heatmap":
     render_h1_tab()
+elif section == "Data Explorer":
+    render_explorer_tab()
 else:
     render_figures_tab()
 

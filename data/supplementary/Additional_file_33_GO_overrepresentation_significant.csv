@@ -1,0 +1,177 @@
+Gene_set,Appendage,GO_domain,GO_term,k_in_set,n_set,K_background,N_background,pct_of_set,pct_of_background,odds_ratio,p_Fisher,q_BH
+Antenna-biased (consensus),Antenna,Molecular function,olfactory receptor activity,127,278,186,12026,45.68,1.547,166.630,2.810e-174,1.169e-171
+Antenna-biased (consensus),Antenna,Molecular function,osmosensor activity,4,278,6,12026,1.44,0.050,85.737,4.042e-06,8.408e-04
+Antenna-biased (consensus),Antenna,Molecular function,glutamate-gated receptor activity,6,278,32,12026,2.16,0.266,9.945,7.898e-05,1.095e-02
+Antenna-biased (consensus),Antenna,Molecular function,odorant binding,8,278,65,12026,2.88,0.540,6.077,1.188e-04,1.235e-02
+Antenna-biased (consensus),Antenna,Molecular function,"tryptophan 2,3-dioxygenase activity",2,278,2,12026,0.72,0.017,212.450,5.325e-04,4.430e-02
+Antenna-biased (consensus),Antenna,Cellular component,plasma membrane,21,105,385,5075,20.00,7.586,3.163,2.910e-05,2.137e-03
+Antenna-biased (consensus),Antenna,Cellular component,spindle pole,3,105,4,5075,2.86,0.079,146.147,3.392e-05,2.137e-03
+Antenna-biased (consensus),Antenna,Cellular component,cilium,4,105,13,5075,3.81,0.256,21.831,1.072e-04,4.501e-03
+Antenna-biased (consensus),Antenna,Cellular component,centrosome,2,105,3,5075,1.90,0.059,96.485,1.255e-03,3.953e-02
+Antenna-biased (consensus),Antenna,Biological process,protein dephosphorylation,7,21,19,1972,33.33,0.963,80.792,2.387e-10,6.350e-08
+Antenna-biased (consensus),Antenna,Biological process,neurotransmitter transport,3,21,12,1972,14.29,0.609,35.963,2.155e-04,2.866e-02
+Maxillary palp-biased (consensus),Maxillary palp,Molecular function,solute:inorganic anion antiporter activity,12,230,22,12026,5.22,0.183,64.877,9.823e-16,4.086e-13
+Maxillary palp-biased (consensus),Maxillary palp,Molecular function,odorant binding,14,230,65,12026,6.09,0.540,14.926,1.517e-11,3.155e-09
+Maxillary palp-biased (consensus),Maxillary palp,Molecular function,structural constituent of cuticle,19,230,167,12026,8.26,1.389,7.087,4.212e-10,5.534e-08
+Maxillary palp-biased (consensus),Maxillary palp,Molecular function,structural constituent of ribosome,16,230,115,12026,6.96,0.956,8.834,5.321e-10,5.534e-08
+Maxillary palp-biased (consensus),Maxillary palp,Molecular function,monooxygenase activity,23,230,279,12026,10.00,2.320,5.009,3.627e-09,3.017e-07
+Maxillary palp-biased (consensus),Maxillary palp,Molecular function,hyalurononglucosaminidase activity,3,230,3,12026,1.30,0.025,362.969,6.906e-06,4.788e-04
+Maxillary palp-biased (consensus),Maxillary palp,Molecular function,RNA binding,11,230,170,12026,4.78,1.414,3.676,4.232e-04,2.515e-02
+Maxillary palp-biased (consensus),Maxillary palp,Cellular component,nascent polypeptide-associated complex,3,135,3,5075,2.22,0.059,261.008,1.842e-05,2.321e-03
+Maxillary palp-biased (consensus),Maxillary palp,Cellular component,mitochondrion,16,135,238,5075,11.85,4.690,2.857,5.101e-04,3.214e-02
+Tarsi-biased (consensus),Tarsi,Molecular function,G protein-coupled receptor activity,129,2270,213,12026,5.68,1.771,6.938,7.378e-42,3.069e-39
+Tarsi-biased (consensus),Tarsi,Molecular function,"DNA-binding transcription factor activity, RNA polymerase II-specific",89,2270,172,12026,3.92,1.430,4.756,1.793e-22,3.730e-20
+Tarsi-biased (consensus),Tarsi,Molecular function,transmembrane signaling receptor activity,61,2270,126,12026,2.69,1.048,4.117,4.314e-14,5.982e-12
+Tarsi-biased (consensus),Tarsi,Molecular function,neuropeptide hormone activity,12,2270,12,12026,0.53,0.100,107.998,1.998e-09,2.078e-07
+Tarsi-biased (consensus),Tarsi,Molecular function,calcium ion binding,96,2270,297,12026,4.23,2.470,2.099,1.496e-08,1.245e-06
+Tarsi-biased (consensus),Tarsi,Molecular function,voltage-gated calcium channel activity,10,2270,10,12026,0.44,0.083,90.638,5.650e-08,3.451e-06
+Tarsi-biased (consensus),Tarsi,Molecular function,monoatomic ion channel activity,73,2270,213,12026,3.22,1.771,2.282,5.807e-08,3.451e-06
+Tarsi-biased (consensus),Tarsi,Molecular function,"3',5'-cyclic-nucleotide phosphodiesterase activity",30,2270,62,12026,1.32,0.516,4.070,1.265e-07,6.580e-06
+Tarsi-biased (consensus),Tarsi,Molecular function,poly(ADP-ribose) glycohydrolase activity,10,2270,12,12026,0.44,0.100,21.580,2.564e-06,1.185e-04
+Tarsi-biased (consensus),Tarsi,Molecular function,NAD+ nucleosidase activity,7,2270,7,12026,0.31,0.058,64.655,8.474e-06,3.525e-04
+Tarsi-biased (consensus),Tarsi,Molecular function,sodium channel activity,20,2270,42,12026,0.88,0.349,3.933,2.145e-05,8.111e-04
+Tarsi-biased (consensus),Tarsi,Molecular function,serine-type endopeptidase activity,100,2270,366,12026,4.41,3.043,1.644,3.893e-05,1.350e-03
+Tarsi-biased (consensus),Tarsi,Molecular function,glutaminase activity,7,2270,8,12026,0.31,0.067,30.175,5.662e-05,1.812e-03
+Tarsi-biased (consensus),Tarsi,Molecular function,metallocarboxypeptidase activity,9,2270,14,12026,0.40,0.116,7.763,2.388e-04,6.622e-03
+Tarsi-biased (consensus),Tarsi,Molecular function,adenosine deaminase activity,5,2270,5,12026,0.22,0.042,47.372,2.388e-04,6.622e-03
+Tarsi-biased (consensus),Tarsi,Molecular function,glutamate-gated receptor activity,15,2270,32,12026,0.66,0.266,3.811,2.860e-04,7.436e-03
+Tarsi-biased (consensus),Tarsi,Molecular function,lyase activity,8,2270,12,12026,0.35,0.100,8.622,3.808e-04,9.319e-03
+Tarsi-biased (consensus),Tarsi,Molecular function,phosphoprotein phosphatase activity,32,2270,96,12026,1.41,0.798,2.165,5.177e-04,1.197e-02
+Tarsi-biased (consensus),Tarsi,Molecular function,amyloid-beta binding,5,2270,6,12026,0.22,0.050,21.534,1.208e-03,2.644e-02
+Tarsi-biased (consensus),Tarsi,Molecular function,adenylate cyclase activity,8,2270,14,12026,0.35,0.116,5.747,1.609e-03,3.348e-02
+Tarsi-biased (consensus),Tarsi,Cellular component,plasma membrane,107,725,385,5075,14.76,7.586,2.536,4.293e-13,5.409e-11
+Tarsi-biased (consensus),Tarsi,Cellular component,organelle,10,725,12,5075,1.38,0.236,30.406,1.683e-07,1.060e-05
+Tarsi-biased (consensus),Tarsi,Cellular component,cytoskeleton,19,725,42,5075,2.62,0.828,5.063,1.222e-06,5.131e-05
+Tarsi-biased (consensus),Tarsi,Cellular component,troponin complex,6,725,6,5075,0.83,0.118,78.605,8.350e-06,2.630e-04
+Tarsi-biased (consensus),Tarsi,Cellular component,extracellular region,76,725,344,5075,10.48,6.778,1.784,3.369e-05,8.491e-04
+Tarsi-biased (consensus),Tarsi,Cellular component,endoplasmic reticulum membrane,11,725,27,5075,1.52,0.532,4.173,6.863e-04,1.392e-02
+Tarsi-biased (consensus),Tarsi,Cellular component,membrane,302,725,1843,5075,41.66,36.315,1.301,7.734e-04,1.392e-02
+Tarsi-biased (consensus),Tarsi,Biological process,"regulation of alternative mRNA splicing, via spliceosome",30,328,47,1972,9.15,2.383,9.635,2.394e-13,6.369e-11
+Tarsi-biased (consensus),Tarsi,Biological process,developmental process involved in reproduction,29,328,61,1972,8.84,3.093,4.886,1.082e-08,1.280e-06
+Tarsi-biased (consensus),Tarsi,Biological process,potassium ion transport,10,328,10,1972,3.05,0.507,108.429,1.444e-08,1.280e-06
+Tarsi-biased (consensus),Tarsi,Biological process,cell-matrix adhesion,5,328,5,1972,1.52,0.254,55.918,1.241e-04,6.602e-03
+Tarsi-biased (consensus),Tarsi,Biological process,glycogen biosynthetic process,5,328,5,1972,1.52,0.254,55.918,1.241e-04,6.602e-03
+Tarsi-biased (consensus),Tarsi,Biological process,mitotic cell cycle,9,328,15,1972,2.74,0.761,7.702,1.728e-04,7.659e-03
+Tarsi-biased (consensus),Tarsi,Biological process,proteolysis,28,328,88,1972,8.54,4.462,2.464,2.430e-04,9.234e-03
+Antenna sex-biased,Antenna,Molecular function,olfactory receptor activity,22,279,162,11067,7.89,1.464,6.511,1.028e-10,4.196e-08
+Antenna sex-biased,Antenna,Molecular function,potassium channel activity,11,279,39,11067,3.94,0.352,15.773,1.924e-09,3.924e-07
+Antenna sex-biased,Antenna,Molecular function,channel activity,5,279,10,11067,1.79,0.090,39.354,2.232e-06,3.036e-04
+Antenna sex-biased,Antenna,Molecular function,calcium ion binding,21,279,287,11067,7.53,2.593,3.220,1.183e-05,1.206e-03
+Antenna sex-biased,Antenna,Molecular function,GTPase activity,12,279,124,11067,4.30,1.120,4.284,6.714e-05,5.478e-03
+Antenna sex-biased,Antenna,Molecular function,monooxygenase activity,16,279,222,11067,5.73,2.006,3.125,1.570e-04,1.065e-02
+Antenna sex-biased,Antenna,Molecular function,nucleotide binding,64,279,1643,11067,22.94,14.846,1.736,1.827e-04,1.065e-02
+Antenna sex-biased,Antenna,Cellular component,organelle,10,106,11,4708,9.43,0.234,479.271,2.355e-16,2.873e-14
+Antenna sex-biased,Antenna,Cellular component,extracellular space,7,106,23,4708,6.60,0.489,20.266,4.382e-07,2.673e-05
+Antenna sex-biased,Antenna,Cellular component,lysosome,6,106,17,4708,5.66,0.361,25.042,1.144e-06,4.652e-05
+Antenna sex-biased,Antenna,Cellular component,spindle pole,3,106,4,4708,2.83,0.085,134.010,4.367e-05,1.332e-03
+Antenna sex-biased,Antenna,Cellular component,plasma membrane,19,106,357,4708,17.92,7.583,2.755,3.121e-04,7.616e-03
+Antenna sex-biased,Antenna,Biological process,localization,4,15,22,1809,26.67,1.216,35.879,2.056e-05,5.365e-03
+Antenna mating-responsive,Antenna,Molecular function,structural constituent of cuticle,33,94,119,11509,35.11,1.034,71.265,3.681e-43,1.520e-40
+Antenna mating-responsive,Antenna,Molecular function,channel activity,5,94,10,11509,5.32,0.087,128.202,7.966e-09,1.645e-06
+Antenna mating-responsive,Antenna,Molecular function,nucleoside transmembrane transporter activity,5,94,11,11509,5.32,0.096,106.826,1.451e-08,1.998e-06
+Antenna mating-responsive,Antenna,Molecular function,"homogentisate 1,2-dioxygenase activity",2,94,2,11509,2.13,0.017,617.054,6.600e-05,5.452e-03
+Antenna mating-responsive,Antenna,Molecular function,triacylglycerol lipase activity,2,94,2,11509,2.13,0.017,617.054,6.600e-05,5.452e-03
+Antenna mating-responsive,Antenna,Molecular function,monooxygenase activity,9,94,248,11509,9.57,2.155,4.951,1.871e-04,1.162e-02
+Antenna mating-responsive,Antenna,Molecular function,chitin synthase activity,2,94,3,11509,2.13,0.026,248.130,1.970e-04,1.162e-02
+Antenna mating-responsive,Antenna,Cellular component,extracellular region,23,37,282,4881,62.16,5.778,29.083,4.063e-20,5.120e-18
+Antenna sex-biased only,Antenna,Molecular function,olfactory receptor activity,22,259,162,11025,8.49,1.469,7.046,2.577e-11,1.049e-08
+Antenna sex-biased only,Antenna,Molecular function,potassium channel activity,11,259,39,11025,4.25,0.354,17.010,9.114e-10,1.855e-07
+Antenna sex-biased only,Antenna,Molecular function,calcium ion binding,21,259,287,11025,8.11,2.603,3.483,3.947e-06,5.355e-04
+Antenna sex-biased only,Antenna,Molecular function,GTPase activity,12,259,124,11025,4.63,1.125,4.621,3.381e-05,3.440e-03
+Antenna sex-biased only,Antenna,Molecular function,monooxygenase activity,15,259,217,11025,5.79,1.968,3.215,1.840e-04,1.498e-02
+Antenna sex-biased only,Antenna,Cellular component,organelle,10,93,11,4697,10.75,0.234,554.578,6.130e-17,7.478e-15
+Antenna sex-biased only,Antenna,Cellular component,extracellular space,7,93,23,4697,7.53,0.490,23.340,1.800e-07,1.098e-05
+Antenna sex-biased only,Antenna,Cellular component,lysosome,6,93,17,4697,6.45,0.362,28.796,5.321e-07,2.164e-05
+Antenna sex-biased only,Antenna,Cellular component,spindle pole,3,93,4,4697,3.23,0.085,153.433,2.964e-05,9.041e-04
+Antenna sex-biased only,Antenna,Cellular component,plasma membrane,17,93,356,4697,18.28,7.579,2.814,5.043e-04,1.231e-02
+Antenna sex-biased only,Antenna,Biological process,localization,4,15,22,1801,26.67,1.222,35.717,2.092e-05,5.459e-03
+Antenna mating-responsive only,Antenna,Molecular function,structural constituent of cuticle,30,74,103,11025,40.54,0.934,101.600,4.356e-43,1.773e-40
+Antenna mating-responsive only,Antenna,Molecular function,nucleoside transmembrane transporter activity,5,74,11,11025,6.76,0.100,132.186,5.318e-09,1.082e-06
+Antenna mating-responsive only,Antenna,Molecular function,"homogentisate 1,2-dioxygenase activity",2,74,2,11025,2.70,0.018,755.276,4.445e-05,4.522e-03
+Antenna mating-responsive only,Antenna,Molecular function,triacylglycerol lipase activity,2,74,2,11025,2.70,0.018,755.276,4.445e-05,4.522e-03
+Antenna mating-responsive only,Antenna,Molecular function,monooxygenase activity,8,74,217,11025,10.81,1.968,6.230,9.775e-05,7.957e-03
+Antenna mating-responsive only,Antenna,Molecular function,chitin synthase activity,2,74,3,11025,2.70,0.027,304.167,1.328e-04,9.005e-03
+Antenna mating-responsive only,Antenna,Cellular component,extracellular region,14,24,238,4697,58.33,5.067,27.806,6.308e-13,7.696e-11
+Antenna sex and mating,Antenna,Molecular function,channel activity,5,20,10,11025,25.00,0.091,733.333,2.865e-12,1.166e-09
+Antenna sex and mating,Antenna,Cellular component,extracellular region,9,13,238,4697,69.23,5.067,43.772,1.137e-09,1.388e-07
+Maxillary palp sex-biased,Maxillary palp,Molecular function,structural constituent of cuticle,35,233,100,10787,15.02,0.927,28.525,1.230e-33,5.055e-31
+Maxillary palp sex-biased,Maxillary palp,Molecular function,glutamine-fructose-6-phosphate transaminase (isomerizing) activity,8,233,8,10787,3.43,0.074,795.683,4.207e-14,8.646e-12
+Maxillary palp sex-biased,Maxillary palp,Molecular function,DNA-binding transcription factor activity,13,233,79,10787,5.58,0.732,9.390,1.192e-08,1.504e-06
+Maxillary palp sex-biased,Maxillary palp,Molecular function,odorant binding,10,233,42,10787,4.29,0.389,14.745,1.464e-08,1.504e-06
+Maxillary palp sex-biased,Maxillary palp,Molecular function,calcium ion binding,20,233,276,10787,8.58,2.559,3.777,2.154e-06,1.771e-04
+Maxillary palp sex-biased,Maxillary palp,Molecular function,sodium channel activity,7,233,32,10787,3.00,0.297,13.045,4.257e-06,2.916e-04
+Maxillary palp sex-biased,Maxillary palp,Molecular function,catalase activity,3,233,3,10787,1.29,0.028,320.527,9.951e-06,5.843e-04
+Maxillary palp sex-biased,Maxillary palp,Molecular function,monooxygenase activity,16,233,224,10787,6.87,2.077,3.667,2.764e-05,1.420e-03
+Maxillary palp sex-biased,Maxillary palp,Molecular function,cis-regulatory region sequence-specific DNA binding,4,233,13,10787,1.72,0.121,20.466,1.301e-04,5.942e-03
+Maxillary palp sex-biased,Maxillary palp,Cellular component,extracellular region,36,103,209,4617,34.95,4.527,13.483,1.108e-23,1.341e-21
+Maxillary palp sex-biased,Maxillary palp,Cellular component,extracellular space,12,103,24,4617,11.65,0.520,49.473,1.717e-14,1.039e-12
+Maxillary palp sex-biased,Maxillary palp,Biological process,regulation of transcription by RNA polymerase II,8,34,20,1811,23.53,1.104,45.256,6.932e-10,1.802e-07
+Maxillary palp sex-biased,Maxillary palp,Biological process,embryonic development via the syncytial blastoderm,2,34,2,1811,5.88,0.110,273.462,3.423e-04,4.450e-02
+Maxillary palp mating-responsive,Maxillary palp,Molecular function,structural constituent of cuticle,59,169,98,10997,34.91,0.891,148.380,2.607e-85,1.074e-82
+Maxillary palp mating-responsive,Maxillary palp,Molecular function,glutamine-fructose-6-phosphate transaminase (isomerizing) activity,8,169,8,10997,4.73,0.073,1139.842,2.636e-15,5.430e-13
+Maxillary palp mating-responsive,Maxillary palp,Molecular function,asparaginase activity,6,169,11,10997,3.55,0.100,79.679,5.226e-09,7.177e-07
+Maxillary palp mating-responsive,Maxillary palp,Molecular function,metalloendopeptidase activity,10,169,98,10997,5.92,0.891,7.676,2.460e-06,2.534e-04
+Maxillary palp mating-responsive,Maxillary palp,Molecular function,triacylglycerol lipase activity,2,169,2,10997,1.18,0.018,323.239,2.348e-04,1.935e-02
+Maxillary palp mating-responsive,Maxillary palp,Molecular function,chitin synthase activity,2,169,3,10997,1.18,0.027,129.665,6.972e-04,4.788e-02
+Maxillary palp mating-responsive,Maxillary palp,Cellular component,extracellular region,30,50,231,4702,60.00,4.913,33.216,1.692e-27,2.081e-25
+Maxillary palp mating-responsive,Maxillary palp,Biological process,proteolysis,6,13,78,1846,46.15,4.225,20.964,6.369e-06,1.662e-03
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,DNA-binding transcription factor activity,13,154,79,10773,8.44,0.733,14.742,7.323e-11,3.002e-08
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,odorant binding,8,154,41,10773,5.19,0.381,17.577,9.309e-08,1.908e-05
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,structural constituent of cuticle,10,154,98,10773,6.49,0.910,8.310,1.268e-06,1.733e-04
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,catalase activity,3,154,3,10773,1.95,0.028,490.670,2.865e-06,2.647e-04
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,monooxygenase activity,14,154,221,10773,9.09,2.051,5.030,3.228e-06,2.647e-04
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,cis-regulatory region sequence-specific DNA binding,4,154,13,10773,2.60,0.121,31.437,2.597e-05,1.775e-03
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,sodium channel activity,5,154,32,10773,3.25,0.297,13.164,8.247e-05,4.831e-03
+Maxillary palp sex-biased only,Maxillary palp,Molecular function,calcium ion binding,13,154,275,10773,8.44,2.553,3.645,1.552e-04,7.955e-03
+Maxillary palp sex-biased only,Maxillary palp,Cellular component,extracellular space,12,81,24,4616,14.81,0.520,65.551,8.401e-16,1.016e-13
+Maxillary palp sex-biased only,Maxillary palp,Cellular component,extracellular region,19,81,208,4616,23.46,4.506,7.047,1.494e-09,9.039e-08
+Maxillary palp sex-biased only,Maxillary palp,Cellular component,plasma membrane,15,81,351,4616,18.52,7.604,2.840,9.592e-04,3.869e-02
+Maxillary palp sex-biased only,Maxillary palp,Biological process,regulation of transcription by RNA polymerase II,8,29,20,1809,27.59,1.106,56.127,1.703e-10,4.428e-08
+Maxillary palp sex-biased only,Maxillary palp,Biological process,embryonic development via the syncytial blastoderm,2,29,2,1809,6.90,0.111,323.727,2.483e-04,3.227e-02
+Maxillary palp sex-biased only,Maxillary palp,Biological process,lipid metabolic process,7,29,98,1809,24.14,5.417,5.906,6.446e-04,4.793e-02
+Maxillary palp sex-biased only,Maxillary palp,Biological process,oligopeptide transport,2,29,3,1809,6.90,0.166,131.778,7.374e-04,4.793e-02
+Maxillary palp mating-responsive only,Maxillary palp,Molecular function,structural constituent of cuticle,34,88,98,10773,38.64,0.910,104.489,1.237e-48,5.073e-46
+Maxillary palp mating-responsive only,Maxillary palp,Molecular function,asparaginase activity,6,88,11,10773,6.82,0.102,156.293,1.118e-10,2.291e-08
+Maxillary palp mating-responsive only,Maxillary palp,Molecular function,metalloendopeptidase activity,7,88,97,10773,7.95,0.900,10.174,1.351e-05,1.846e-03
+Maxillary palp mating-responsive only,Maxillary palp,Molecular function,triacylglycerol lipase activity,2,88,2,10773,2.27,0.019,617.659,6.597e-05,6.762e-03
+Maxillary palp mating-responsive only,Maxillary palp,Molecular function,serine-type carboxypeptidase activity,2,88,4,10773,2.27,0.037,124.221,3.916e-04,3.211e-02
+Maxillary palp mating-responsive only,Maxillary palp,Cellular component,extracellular region,13,28,208,4616,46.43,4.506,19.524,4.492e-11,5.435e-09
+Maxillary palp mating-responsive only,Maxillary palp,Biological process,cell adhesion,3,8,23,1809,37.50,1.271,53.430,9.657e-05,2.511e-02
+Maxillary palp sex and mating,Maxillary palp,Molecular function,structural constituent of cuticle,25,79,98,10773,31.65,0.910,67.358,5.908e-33,2.422e-30
+Maxillary palp sex and mating,Maxillary palp,Molecular function,glutamine-fructose-6-phosphate transaminase (isomerizing) activity,8,79,8,10773,10.13,0.074,2542.748,5.813e-18,1.192e-15
+Maxillary palp sex and mating,Maxillary palp,Molecular function,chitin synthase activity,2,79,3,10773,2.53,0.028,277.740,1.585e-04,2.167e-02
+Maxillary palp sex and mating,Maxillary palp,Cellular component,extracellular region,17,22,208,4616,77.27,4.506,78.378,1.476e-19,1.786e-17
+Maxillary palp sex and mating,Maxillary palp,Biological process,proteolysis,5,5,73,1809,100.00,4.035,278.854,9.356e-08,2.432e-05
+Tarsi sex-biased,Tarsi,Molecular function,DNA binding,45,156,644,10825,28.85,5.949,6.815,1.129e-19,4.571e-17
+Tarsi sex-biased,Tarsi,Molecular function,calcium ion binding,26,156,284,10825,16.67,2.624,8.071,3.388e-14,6.861e-12
+Tarsi sex-biased,Tarsi,Molecular function,"DNA-binding transcription factor activity, RNA polymerase II-specific",16,156,157,10825,10.26,1.450,8.533,8.228e-10,1.111e-07
+Tarsi sex-biased,Tarsi,Molecular function,monooxygenase activity,13,156,189,10825,8.33,1.746,5.420,3.263e-06,3.303e-04
+Tarsi sex-biased,Tarsi,Molecular function,odorant binding,6,156,36,10825,3.85,0.333,14.185,1.108e-05,8.978e-04
+Tarsi sex-biased,Tarsi,Molecular function,lipid transporter activity,3,156,11,10825,1.92,0.102,26.130,4.450e-04,3.004e-02
+Tarsi sex-biased,Tarsi,Cellular component,extracellular region,8,28,233,4627,28.57,5.036,7.776,4.741e-05,5.736e-03
+Tarsi sex-biased,Tarsi,Biological process,defense response,4,18,4,1800,22.22,0.222,1106.379,7.019e-09,1.565e-06
+Tarsi sex-biased,Tarsi,Biological process,MAPK cascade,7,18,34,1800,38.89,1.889,41.364,1.232e-08,1.565e-06
+Tarsi mating-responsive,Tarsi,Molecular function,monooxygenase activity,20,84,209,11042,23.81,1.893,17.806,5.179e-17,2.103e-14
+Tarsi mating-responsive,Tarsi,Molecular function,structural constituent of cuticle,8,84,96,11042,9.52,0.869,13.002,6.159e-07,1.250e-04
+Tarsi mating-responsive,Tarsi,Molecular function,cystathionine beta-synthase activity,3,84,5,11042,3.57,0.045,202.889,4.201e-06,5.685e-04
+Tarsi mating-responsive,Tarsi,Molecular function,lipid transporter activity,3,84,11,11042,3.57,0.100,50.694,6.706e-05,6.807e-03
+Tarsi mating-responsive,Tarsi,Molecular function,odorant binding,4,84,38,11042,4.76,0.344,16.065,1.889e-04,1.534e-02
+Tarsi mating-responsive,Tarsi,Cellular component,extracellular region,18,42,257,4733,42.86,5.430,13.971,1.026e-12,1.252e-10
+Tarsi mating-responsive,Tarsi,Cellular component,plasma membrane,10,42,352,4733,23.81,7.437,3.974,7.773e-04,4.741e-02
+Tarsi mating-responsive,Tarsi,Biological process,"regulation of alternative mRNA splicing, via spliceosome",29,48,47,1843,60.42,2.550,150.681,9.652e-39,2.481e-36
+Tarsi mating-responsive,Tarsi,Biological process,defense response,4,48,6,1843,8.33,0.326,81.500,5.860e-06,7.531e-04
+Tarsi mating-responsive,Tarsi,Biological process,MAPK cascade,7,48,34,1843,14.58,1.845,11.180,1.639e-05,1.404e-03
+Tarsi sex-biased only,Tarsi,Molecular function,DNA binding,45,138,644,10822,32.61,5.951,8.147,4.431e-22,1.795e-19
+Tarsi sex-biased only,Tarsi,Molecular function,calcium ion binding,25,138,284,10822,18.12,2.624,8.905,1.469e-14,2.974e-12
+Tarsi sex-biased only,Tarsi,Molecular function,"DNA-binding transcription factor activity, RNA polymerase II-specific",16,138,157,10822,11.59,1.451,9.806,1.304e-10,1.760e-08
+Tarsi mating-responsive only,Tarsi,Molecular function,monooxygenase activity,15,69,189,10822,21.74,1.746,16.889,6.101e-13,2.471e-10
+Tarsi mating-responsive only,Tarsi,Molecular function,structural constituent of cuticle,8,69,92,10822,11.59,0.850,16.657,1.096e-07,2.219e-05
+Tarsi mating-responsive only,Tarsi,Molecular function,cystathionine beta-synthase activity,3,69,5,10822,4.35,0.046,244.341,2.458e-06,3.319e-04
+Tarsi mating-responsive only,Tarsi,Cellular component,extracellular region,12,32,233,4626,37.50,5.037,11.872,1.854e-08,2.244e-06
+Tarsi mating-responsive only,Tarsi,Cellular component,plasma membrane,9,32,340,4626,28.12,7.350,5.040,3.462e-04,2.095e-02
+Tarsi mating-responsive only,Tarsi,Biological process,"regulation of alternative mRNA splicing, via spliceosome",29,37,47,1800,78.38,2.611,351.424,7.148e-44,1.816e-41
+Tarsi sex and mating,Tarsi,Molecular function,lipid transporter activity,3,15,11,10822,20.00,0.102,337.469,3.531e-07,1.430e-04
+Tarsi sex and mating,Tarsi,Molecular function,monooxygenase activity,5,15,189,10822,33.33,1.746,28.867,4.015e-06,8.130e-04
+Tarsi sex and mating,Tarsi,Cellular component,extracellular region,6,9,233,4626,66.67,5.037,38.678,1.133e-06,1.371e-04
+Tarsi sex and mating,Tarsi,Biological process,MAPK cascade,7,11,34,1800,63.64,1.889,114.204,1.402e-10,3.562e-08
+Tarsi sex and mating,Tarsi,Biological process,defense response,4,11,4,1800,36.36,0.222,2147.400,7.570e-10,9.614e-08
