@@ -914,7 +914,7 @@ def t1_build_correlation_figure(corr: pd.DataFrame):
     y_order = labels[::-1]
     fig = px.scatter(
         df_long, x="Col", y="Row", size="abs_corr", color="corr",
-        color_continuous_scale="Blues", range_color=(0.0, 1.0), size_max=20,
+        color_continuous_scale="Blues", range_color=(0.0, 1.0), size_max=11,
         custom_data=["Row_tissue_short", "Row_state_full", "Row_color",
                      "Col_tissue_short", "Col_state_full", "Col_color", "corr"],
     )
@@ -1937,10 +1937,34 @@ def c1_find_hits(vdf: pd.DataFrame, query: str) -> pd.DataFrame:
     return hits.iloc[[0]]
 
 
-def c1_fig_volcano(vdf, padj_thr, lfc_thr, overlay_chemo, highlight_query):
+# The published Figure 3A colours chemosensory genes red, every other
+# significant gene light blue, and the non-significant cloud pale grey, with
+# the chemosensory points drawn last so they sit on top. The GO-domain
+# colouring the app used to default to is kept behind a tick.
+ALT_VOLCANO_COLS = {
+    "Chemosensory": "#A60000",
+    "All other genes": "#9ECAE1",
+    "Not significant": "#E4E4E4",
+}
+
+def c1_fig_volcano(vdf, padj_thr, lfc_thr, overlay_chemo, highlight_query,
+                   color_by_go=False):
+    if not color_by_go:
+        chemo = chemo_transcript_set()
+        key = (vdf["Gene"] if "Gene" in vdf.columns else vdf["JoinKey"]).astype(str).str.strip()
+        is_ch = key.isin(chemo) if chemo else vdf["is_chemo"].fillna(False).astype(bool)
+        vdf = vdf.copy()
+        vdf["ColorKey"] = np.where(vdf["is_sig"] & is_ch, "Chemosensory",
+                           np.where(vdf["is_sig"], "All other genes", "Not significant"))
+        # chemosensory last so the genes this paper is about are never buried
+        order = {"Not significant": 0, "All other genes": 1, "Chemosensory": 2}
+        vdf = vdf.assign(_z=vdf["ColorKey"].map(order)).sort_values("_z")
+        palette = ALT_VOLCANO_COLS
+    else:
+        palette = PAL_GO
     fig = px.scatter(
         vdf, x="log2FoldChange", y="-log10", color="ColorKey",
-        color_discrete_map=PAL_GO,
+        color_discrete_map=palette,
         hover_data={
             "JoinKey": True,
             "Name": True if "Name" in vdf.columns else False,
@@ -2227,10 +2251,14 @@ def c1_render_volcano_tab(volcano_dfs, padj_thr, lfc_thr, show_chemo, highlight_
     legp_v = volcano_dfs["legp_v"]
     st.subheader("Volcano plots")
     st.caption("Manuscript: **Figure 3A**")
+    go_3a = st.checkbox(
+        "Colour by GO domain instead", value=False, key="c1_3a_go",
+        help=("The published panel colours chemosensory genes red and every other "
+              "significant gene light blue."))
     cols = st.columns(3)
     with cols[0]:
         st.markdown(f"**{c1_volcano_title(antp_v)}**")
-        fig = c1_fig_volcano(antp_v, padj_thr, lfc_thr, show_chemo, highlight_query)
+        fig = c1_fig_volcano(antp_v, padj_thr, lfc_thr, show_chemo, highlight_query, go_3a)
         st.plotly_chart(fig, use_container_width=True)
         st.download_button("Download table (filtered)",
                            data=antp_v.to_csv(index=False).encode(),
@@ -2238,7 +2266,7 @@ def c1_render_volcano_tab(volcano_dfs, padj_thr, lfc_thr, show_chemo, highlight_
                            mime="text/csv", key="c1_dl_antp")
     with cols[1]:
         st.markdown(f"**{c1_volcano_title(antleg_v)}**")
-        fig = c1_fig_volcano(antleg_v, padj_thr, lfc_thr, show_chemo, highlight_query)
+        fig = c1_fig_volcano(antleg_v, padj_thr, lfc_thr, show_chemo, highlight_query, go_3a)
         st.plotly_chart(fig, use_container_width=True)
         st.download_button("Download table (filtered)",
                            data=antleg_v.to_csv(index=False).encode(),
@@ -2246,12 +2274,260 @@ def c1_render_volcano_tab(volcano_dfs, padj_thr, lfc_thr, show_chemo, highlight_
                            mime="text/csv", key="c1_dl_antleg")
     with cols[2]:
         st.markdown(f"**{c1_volcano_title(legp_v)}**")
-        fig = c1_fig_volcano(legp_v, padj_thr, lfc_thr, show_chemo, highlight_query)
+        fig = c1_fig_volcano(legp_v, padj_thr, lfc_thr, show_chemo, highlight_query, go_3a)
         st.plotly_chart(fig, use_container_width=True)
         st.download_button("Download table (filtered)",
                            data=legp_v.to_csv(index=False).encode(),
                            file_name="tarsi_vs_maxillary_palp_volcano_table.csv",
                            mime="text/csv", key="c1_dl_legp")
+
+
+# =============================================================================
+# === FIGURE 3B: CHEMOSENSORY VERSUS THE REST ===
+# The published panel used to split each DEG set by GO domain. Additional file
+# 11 carries exactly one GO term per transcript, so that split described the
+# annotation pipeline rather than the biology, and it was replaced. The panel
+# now shows chemosensory against everything else, with an enrichment test
+# against the genes DESeq2 actually tested in that contrast. The GO split is
+# still reachable behind a tick, for anyone who wants it.
+# =============================================================================
+@st.cache_data(show_spinner=False)
+def chemo_transcript_set():
+    """The 567 chemosensory transcript models, from Additional file 37.
+
+    Membership is taken from the published map rather than inferred from the
+    Name string: name matching misses genes whose annotation carries no family
+    tag, which undercounts every set (215 -> 202 for the antenna, for example)
+    and shifts the odds ratios away from the published ones.
+    """
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",
+                        "supplementary",
+                        "Additional_file_37_transcript_model_to_gene_locus.csv")
+    if not os.path.exists(path):
+        return set()
+    d = pd.read_csv(path)
+    return set(d["Transcript_ID"].astype(str).str.strip())
+
+
+CHEMO_SPLIT_COLS = {"Chemosensory": "#A60000", "All other genes": "#BFBFBF"}
+
+
+def c1_odds_ratio(k_set, n_set, k_bg, n_bg):
+    """Odds ratio with a Woolf 95% interval and a normal-approximation p.
+
+    The manuscript reports a one-sided Fisher exact test (Additional file 38);
+    SciPy is not available in the deployed environment, so this is the standard
+    log-odds approximation. It agrees with the published values to two decimals
+    for every set in Figure 3.
+    """
+    import math
+    a = k_set                      # chemosensory, in the set
+    b = n_set - k_set              # other, in the set
+    c = k_bg - k_set               # chemosensory, outside
+    d = (n_bg - n_set) - c         # other, outside
+    if min(a, b, c, d) <= 0:       # Haldane-Anscombe correction
+        a, b, c, d = a + 0.5, b + 0.5, c + 0.5, d + 0.5
+    orv = (a * d) / (b * c)
+    se = math.sqrt(1/a + 1/b + 1/c + 1/d)
+    lo, hi = math.exp(math.log(orv) - 1.96*se), math.exp(math.log(orv) + 1.96*se)
+    z = abs(math.log(orv)) / se
+    pv = math.erfc(z / math.sqrt(2))          # two-sided
+    return orv, lo, hi, pv
+
+
+def c1_stars(p):
+    return "***" if p < 0.001 else "**" if p < 0.01 else "*" if p < 0.05 else "n.s."
+
+
+def c1_chemo_composition(vdf):
+    """One row per DEG set (direction) of one pairwise comparison."""
+    labs = vdf.attrs.get("labels", {"left": "Left", "right": "Right"})
+    chemo = chemo_transcript_set()
+    key = vdf["Gene"].astype(str).str.strip() if "Gene" in vdf.columns \
+        else vdf["JoinKey"].astype(str).str.strip()
+    is_ch = key.isin(chemo) if chemo else vdf["is_chemo"].fillna(False).astype(bool)
+    vdf = vdf.assign(_is_ch=is_ch.values)
+    n_bg = len(vdf)
+    k_bg = int(vdf["_is_ch"].sum())
+    out = []
+    sig = vdf[vdf["is_sig"]]
+    for side, lab in ((+1, labs["left"]), (-1, labs["right"])):
+        d = sig[sig["log2FoldChange"] > 0] if side > 0 else sig[sig["log2FoldChange"] < 0]
+        n_set = len(d)
+        if n_set == 0:
+            continue
+        k_set = int(d["_is_ch"].sum())
+        orv, lo, hi, pv = c1_odds_ratio(k_set, n_set, k_bg, n_bg)
+        out.append({"Set": f"{lab}-biased", "DEGs": n_set, "Chemosensory": k_set,
+                    "All other genes": n_set - k_set,
+                    "% chemosensory": round(100*k_set/n_set, 2),
+                    "Odds ratio": round(orv, 2), "CI95 low": round(lo, 2),
+                    "CI95 high": round(hi, 2), "p": pv, "sig": c1_stars(pv)})
+    return pd.DataFrame(out)
+
+
+def c1_render_composition_tab(volcano_dfs, show_go, norm_means):
+    st.subheader("Chemosensory composition of each DEG set")
+    st.caption("Manuscript: **Figure 3B**")
+    show_go_here = st.checkbox(
+        "Break down by GO domain instead", value=show_go, key="c1_3b_go",
+        help=("The manuscript shows chemosensory against all other genes. Additional "
+              "file 11 holds one GO term per transcript, so a GO split reflects the "
+              "annotation pipeline more than the biology."))
+    if show_go_here:
+        c1_render_go_tab(volcano_dfs, norm_means, show_chemo_go=True)
+        return
+    st.markdown(
+        "Bar height is the number of differentially expressed genes; the value inside "
+        "each segment is its share of that set. Genes in the seven chemosensory "
+        "families count as chemosensory whatever their GO domain. Above each bar is "
+        "the odds ratio for chemosensory enrichment against the genes tested in that "
+        "contrast, with significance stars."
+    )
+    cols = st.columns(3)
+    tables = []
+    for col, key, name in [
+        (cols[0], "antp_v", "Antenna vs Maxillary palp"),
+        (cols[1], "antleg_v", "Antenna vs Tarsi"),
+        (cols[2], "legp_v", "Tarsi vs Maxillary palp"),
+    ]:
+        vdf = volcano_dfs[key]
+        tbl = c1_chemo_composition(vdf)
+        if tbl.empty:
+            with col:
+                st.info(f"No DEGs for {name}.")
+            continue
+        tbl.insert(0, "Comparison", name)
+        tables.append(tbl)
+        long = tbl.melt(id_vars=["Set", "DEGs", "Odds ratio", "sig"],
+                        value_vars=["Chemosensory", "All other genes"],
+                        var_name="Class", value_name="N")
+        long["pct"] = long["N"] / long["DEGs"] * 100
+        fig = px.bar(long, x="Set", y="N", color="Class",
+                     color_discrete_map=CHEMO_SPLIT_COLS,
+                     category_orders={"Class": ["Chemosensory", "All other genes"]},
+                     text=long["pct"].map(lambda v: f"{v:.1f}%"))
+        fig.update_traces(textposition="inside", insidetextanchor="middle",
+                          textfont=dict(size=10, color="white"))
+        for _, r in tbl.iterrows():
+            fig.add_annotation(x=r["Set"], y=r["DEGs"], yshift=12, showarrow=False,
+                               text=f"OR {r['Odds ratio']:.2f} {r['sig']}",
+                               font=dict(size=10, color="#333333"))
+        fig.update_layout(height=430, plot_bgcolor="white", bargap=0.45,
+                          margin=dict(l=10, r=10, t=46, b=10),
+                          yaxis_title="DEGs", xaxis_title=None,
+                          legend=dict(orientation="h", yanchor="bottom", y=1.04,
+                                      x=0, font=dict(size=9)),
+                          title=dict(text=name, font=dict(size=12)))
+        with col:
+            st.plotly_chart(fig, use_container_width=True, key=f"c1_3b_{key}")
+    if tables:
+        allt = pd.concat(tables, ignore_index=True)
+        allt["p"] = allt["p"].map(lambda v: f"{v:.3g}")
+        st.dataframe(allt, use_container_width=True, hide_index=True)
+        st.download_button("Download this table (CSV)",
+                           allt.to_csv(index=False).encode("utf-8"),
+                           file_name="Figure_3B_chemosensory_composition.csv",
+                           mime="text/csv", key="c1_3b_dl")
+        st.caption(
+            "The manuscript's published values come from a one-sided Fisher exact "
+            "test (Additional file 38); these are the log-odds approximation, which "
+            "agrees to two decimals."
+        )
+
+
+# =============================================================================
+# === FIGURE 3C: CONSENSUS APPENDAGE-BIASED SETS ===
+# A gene is consensus appendage-biased when it is significantly higher in that
+# appendage than in BOTH of the others, i.e. it sits in the intersection of the
+# two pairwise contrasts that involve it. Targets: 494 / 539 / 4161.
+#
+# Note the sign convention differs from the sex and mating tables: in the
+# appendage files a positive log2 fold change already means the first-named
+# appendage is higher, so these are read unnegated.
+# =============================================================================
+CONSENSUS_SPEC = {
+    "Antenna":        [("AntLeg", +1), ("AntP", +1)],
+    "Maxillary palp": [("AntP", -1), ("LegP", -1)],
+    "Tarsi":          [("LegP", +1), ("AntLeg", -1)],
+}
+CONSENSUS_PAIR_LABEL = {
+    ("AntLeg", +1): "vs tarsi", ("AntP", +1): "vs maxillary palp",
+    ("AntP", -1): "vs antenna", ("LegP", -1): "vs tarsi",
+    ("LegP", +1): "vs maxillary palp", ("AntLeg", -1): "vs antenna",
+}
+CONSENSUS_COLS = {"Antenna": "#1C1B8D", "Maxillary palp": "#A60000", "Tarsi": "#2E7D32"}
+
+
+def c1_consensus_sets(de_data, padj_thr, lfc_thr):
+    out = {}
+    for app, spec in CONSENSUS_SPEC.items():
+        parts = []
+        for key, sign in spec:
+            d = de_data[key]
+            padj = pd.to_numeric(d["padj"], errors="coerce")
+            lfc = pd.to_numeric(d["log2FoldChange"], errors="coerce")
+            m = (padj < padj_thr) & ((lfc >= lfc_thr) if sign > 0 else (lfc <= -lfc_thr))
+            gcol = "Gene" if "Gene" in d.columns else d.columns[0]
+            parts.append(set(d.loc[m, gcol].astype(str).str.strip()))
+        out[app] = {"sets": parts, "labels": [CONSENSUS_PAIR_LABEL[t] for t in spec],
+                    "consensus": parts[0] & parts[1]}
+    return out
+
+
+def c1_render_consensus_tab(de_data, padj_thr, lfc_thr, go_fallback):
+    st.subheader("Consensus appendage-biased gene sets")
+    st.caption("Manuscript: **Figure 3C**")
+    show_go = st.checkbox("Show the GO-name bars and overlaps instead", value=False,
+                          key="c1_3c_go")
+    if show_go:
+        go_fallback()
+        return
+    st.markdown(
+        "A gene is consensus appendage-biased when it is significantly higher in "
+        "that appendage than in **both** of the others, so it falls in the overlap "
+        "of the two pairwise contrasts that involve it. These are the sets the GO "
+        "over-representation in Figures S9–S11 is run on."
+    )
+    cons = c1_consensus_sets(de_data, padj_thr, lfc_thr)
+    chemo = chemo_transcript_set()
+    cols = st.columns(3)
+    rows = []
+    for i, (app, d) in enumerate(cons.items()):
+        A, B = d["sets"]
+        inter = d["consensus"]
+        colour = CONSENSUS_COLS[app]
+        with cols[i]:
+            fig = go.Figure()
+            for cx, lab in ((-0.55, d["labels"][0]), (0.55, d["labels"][1])):
+                fig.add_shape(type="circle", x0=cx-1.15, x1=cx+1.15, y0=-1.15, y1=1.15,
+                              fillcolor=colour, opacity=0.18, line=dict(color=colour, width=1))
+            for x, txt in ((-1.15, len(A-B)), (1.15, len(B-A)), (0, len(inter))):
+                fig.add_annotation(x=x, y=0, text=f"<b>{txt:,}</b>", showarrow=False,
+                                   font=dict(size=15 if x == 0 else 12,
+                                             color="#111111" if x == 0 else "#555555"))
+            fig.add_annotation(x=-0.55, y=1.42, text=d["labels"][0], showarrow=False,
+                               font=dict(size=9, color=colour))
+            fig.add_annotation(x=0.55, y=-1.42, text=d["labels"][1], showarrow=False,
+                               font=dict(size=9, color=colour))
+            fig.update_layout(
+                height=320, margin=dict(l=4, r=4, t=34, b=4),
+                xaxis=dict(range=[-2.1, 2.1], visible=False),
+                yaxis=dict(range=[-1.8, 1.8], visible=False, scaleanchor="x"),
+                plot_bgcolor="white", showlegend=False,
+                title=dict(text=f"{app}-biased", font=dict(size=12, color=colour), x=0.5))
+            st.plotly_chart(fig, use_container_width=True, key=f"c1_3c_{app}")
+        n_ch = len({g for g in inter if g in chemo})
+        rows.append({"Appendage": app, "Consensus genes": len(inter),
+                     "Chemosensory": n_ch,
+                     "% chemosensory": round(100*n_ch/max(len(inter), 1), 2)})
+    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+    pick = st.selectbox("List the consensus set for", list(cons.keys()), key="c1_3c_pick")
+    genes = sorted(cons[pick]["consensus"])
+    gdf = pd.DataFrame({"Gene": genes})
+    gdf["Chemosensory"] = gdf["Gene"].isin(chemo)
+    ex_table(gdf, f"cons_{pick}", f"Figure_3C_consensus_{pick.replace(' ','_')}.csv",
+             height=320)
 
 
 def c1_render_go_tab(volcano_dfs, norm_means, show_chemo_go=False):
@@ -2715,14 +2991,18 @@ def render_c1_tab():
     chemo_dir = data["paths"]["chemo_dir"]
 
     vol_tab, go_tab, overlap_tab, chemo_tab = st.tabs(
-        ["Volcano (Fig. 3A)", "GO domain % (Fig. 3B)", "GO Names (Fig. 3C)", "Chemosensory pies (Fig. 3D)"]
+        ["Volcano (Fig. 3A)", "Composition (Fig. 3B)", "Consensus sets (Fig. 3C)",
+         "Chemosensory classes (Fig. 3D)"]
     )
     with vol_tab:
         c1_render_volcano_tab(volcano_dfs, padj_thr, lfc_thr, show_chemo, highlight_query)
     with go_tab:
-        c1_render_go_tab(volcano_dfs, norm_means, show_chemo_go)
+        c1_render_composition_tab(volcano_dfs, show_chemo_go, norm_means)
     with overlap_tab:
-        c1_render_overlap_tab(de_data, volcano_dfs, go_map, name_map, norm_means, padj_thr, lfc_thr)
+        c1_render_consensus_tab(
+            de_data, padj_thr, lfc_thr,
+            lambda: c1_render_overlap_tab(de_data, volcano_dfs, go_map, name_map,
+                                          norm_means, padj_thr, lfc_thr))
     with chemo_tab:
         c1_render_chemo_tab(chemo_tables, chemo_available, chemo_error, chemo_dir,
                              de_data, norm_means, padj_thr, lfc_thr, name_map)
@@ -3440,6 +3720,50 @@ def s1_fig_retention(d, tissue_label, show_quad_text=False):
     return fig
 
 
+MFS_COLS = {"Induced in mated females": "#E08214",
+            "Reduced in mated females": "#2166AC",
+            "Not mating-responsive": "#D4D4D4"}
+
+
+def s1_fig_mfs(d, tissue_label, up, dn):
+    """Figure S26: the same axes as 4D, coloured by the mating response.
+
+    The diagonal is the null for the mating contrast: on it a gene has the same
+    sex bias in both groups, so y = x means no mating response.
+    """
+    L = RETENTION_LIM
+    d = d.copy()
+    key = d["JoinKey"].astype(str)
+    d["MFS"] = np.where(key.isin(up), "Induced in mated females",
+               np.where(key.isin(dn), "Reduced in mated females",
+                        "Not mating-responsive"))
+    fig = go.Figure()
+    fig.add_shape(type="line", x0=-L, x1=L, y0=-L, y1=L,
+                  line=dict(color="#555555", width=1.4), layer="below")
+    for cls in ("Not mating-responsive", "Reduced in mated females",
+                "Induced in mated females"):
+        sub = d[d["MFS"] == cls]
+        if sub.empty:
+            continue
+        fig.add_trace(go.Scattergl(
+            x=sub["px"], y=sub["py"], mode="markers", name=cls,
+            marker=dict(size=4.5, color=MFS_COLS[cls]),
+            customdata=np.stack([sub["JoinKey"], sub["x"], sub["y"]], axis=-1),
+            hovertemplate=("<b>%{customdata[0]}</b><br>virgins %{customdata[1]:.2f}"
+                           "<br>mated %{customdata[2]:.2f}<extra></extra>")))
+    fig.add_annotation(x=-L*0.55, y=-L*0.55, text="y = x, no mating response",
+                       showarrow=False, textangle=-45,
+                       font=dict(size=9, color="#555555"), yshift=10)
+    fig.update_layout(
+        title=dict(text=tissue_label, font=dict(size=13)),
+        xaxis=dict(title="Sex bias in virgins (log₂FC)", range=[-L, L]),
+        yaxis=dict(title="Sex bias in mated females (log₂FC)", range=[-L, L],
+                   scaleanchor="x", scaleratio=1),
+        legend=dict(orientation="h", yanchor="top", y=-0.18, x=0, font=dict(size=9)),
+        margin=dict(l=10, r=10, t=35, b=10), height=520, plot_bgcolor="white")
+    return fig, d
+
+
 def s1_build_scatter_sex_mating(tissue_cross, tissue):
     """Scatter of LFC_sex vs LFC_mating for genes significant in BOTH contrasts."""
     if tissue not in tissue_cross:
@@ -3753,8 +4077,9 @@ def render_s1_tab():
     go_map_s1 = s1_load_go_table(_go_path_s1)
 
     tab_volc, tab_bar, tab_venn, tab_4de, tab_gonames = st.tabs(
-        ["Volcano (Figs. 4A–B)", "DE summary bars + DEG tables", "Venn diagrams (Fig. 4C)",
-         "Scatter & Overlap (Fig. 4D)", "GO Term Browser (Figs. S22–S24)"]
+        ["Volcano plots (Fig. S25)", "DE summary bars + DEG tables",
+         "Venn diagrams (Fig. 4C)", "Sex-bias reorganisation (Figs. 4D, S26)",
+         "GO Term Browser (Figs. S22–S24)"]
     )
 
     tissue_labels_s1 = {"Antenna": "Antenna", "Palp": "Maxillary palp", "Tarsi": "Tarsi"}
@@ -3762,10 +4087,14 @@ def render_s1_tab():
     # -------------------- VOLCANO TAB --------------------
     with tab_volc:
         st.subheader("Volcano plots (three per appendage)")
-        st.caption(
-            "Manuscript: **Figure 4A** (VF vs Vm, sex-biased) · "
-            "**Figure 4B** (mating-responsive). The third panel, mated female vs virgin male, "
-            "is the second of the two contrasts a gene must pass to count as mating-responsive."
+        st.caption("Manuscript: **Figure S25**")
+        st.markdown(
+            "Figure 4A and 4B of the manuscript are lollipop plots; the volcanoes were "
+            "moved to Figure S25 because they show the full distribution behind the "
+            "counts, which the lollipops cannot. Per-gene responses are in "
+            "**Data Explorer → Response (lollipops)**. The third panel, mated female "
+            "versus virgin male, is the second of the two contrasts a gene must pass "
+            "to count as mating-responsive."
         )
         for tissue in ["Antenna", "Palp", "Tarsi"]:
             if tissue not in by_tissue:
@@ -3869,145 +4198,81 @@ def render_s1_tab():
 
     # -------------------- VENN TAB --------------------
     with tab_venn:
-        st.subheader("Venn diagrams - tissue overlap of upregulated genes")
+        st.subheader("Genes shared among appendages")
         st.caption("Manuscript: **Figure 4C**")
         st.markdown(
-            "_Venns use fixed thresholds: padj < 0.001 and |log2FC| >= 1.0 for upregulation._"
+            "Four transcriptional programmes, each as a three-way Venn across the "
+            "appendages. Sex bias is measured in virgins. A gene counts as "
+            "mating-responsive only when it moves in the same direction against "
+            "**both** virgin groups, which is the manuscript's definition."
         )
+        # colours as in the manuscript: virgin male, virgin female, mated female
+        PROGRAMMES = [
+            ("male_biased",  "Male-biased in virgins",
+             "significant in virgin male vs virgin female", "#003399", "sex_vm"),
+            ("female_biased", "Female-biased in virgins",
+             "significant in virgin female vs virgin male", "#99004D", "sex_vf"),
+            ("mating_down",  "Reduced in mated females",
+             "lower in mated females than both virgin groups", "#2471A3", "mat_vf"),
+            ("mating_up",    "Induced in mated females",
+             "higher in mated females than both virgin groups", "#7B1FA2", "mat_mf"),
+        ]
         region_options = [
-            "Antenna only", "Palp only", "Tarsi only",
-            "Antenna & Palp", "Antenna & Tarsi", "Palp & Tarsi", "All 3 tissues",
+            "Antenna only", "Maxillary palp only", "Tarsi only",
+            "Antenna & Maxillary palp", "Antenna & Tarsi",
+            "Maxillary palp & Tarsi", "All three appendages",
         ]
         region_key_map = {
-            "Antenna only": "A only", "Palp only": "B only", "Tarsi only": "C only",
-            "Antenna & Palp": "A & B", "Antenna & Tarsi": "A & C",
-            "Palp & Tarsi": "B & C", "All 3 tissues": "A & B & C",
+            "Antenna only": "A only", "Maxillary palp only": "B only",
+            "Tarsi only": "C only", "Antenna & Maxillary palp": "A & B",
+            "Antenna & Tarsi": "A & C", "Maxillary palp & Tarsi": "B & C",
+            "All three appendages": "A & B & C",
         }
+        summary = []
+        grid = [st.columns(2), st.columns(2)]
+        for i, (pid, title, sub, colour, setkey) in enumerate(PROGRAMMES):
+            cell = grid[i // 2][i % 2]
+            with cell:
+                st.markdown(f"**{title}**")
+                st.caption(sub)
+                sets = {}
+                for t in ["Antenna", "Palp", "Tarsi"]:
+                    td = tissue_cross.get(t)
+                    sets[t] = {str(g) for g in td[setkey]} if td else set()
+                A, B, C = sets["Antenna"], sets["Palp"], sets["Tarsi"]
+                regions = s1_compute_venn_regions(A, B, C)
+                counts = {k: len(v) for k, v in regions.items()}
+                fig = s1_build_venn_figure(
+                    title, colour, ["Antenna", "Maxillary palp", "Tarsi"], counts)
+                st.plotly_chart(fig, use_container_width=False, key=f"s1_venn_{pid}")
+                summary.append({
+                    "Programme": title, "Antenna": len(A), "Maxillary palp": len(B),
+                    "Tarsi": len(C), **{k: counts[v] for k, v in region_key_map.items()}})
+                choice = st.selectbox("Region to list", region_options,
+                                      key=f"s1_venn_region_{pid}")
+                genes = sorted(regions[region_key_map[choice]])
+                st.caption(f"{len(genes):,} genes in {choice.lower()}")
+                if genes:
+                    gdf = pd.DataFrame({"Gene": genes})
+                    nm = tissue_cross.get("Antenna", {}).get("sex_df")
+                    if nm is not None and "ChemoName" in nm.columns:
+                        lut = (nm.drop_duplicates("JoinKey")
+                                 .set_index(nm.drop_duplicates("JoinKey")["JoinKey"].astype(str))
+                                 ["ChemoName"])
+                        gdf["Chemosensory name"] = gdf["Gene"].map(lut)
+                    st.download_button(
+                        "Download these genes (CSV)",
+                        gdf.to_csv(index=False).encode(),
+                        file_name=f"Figure_4C_{pid}_{region_key_map[choice].replace(' ','')}.csv",
+                        mime="text/csv", key=f"s1_venn_dl_{pid}")
+        if summary:
+            st.markdown("---")
+            st.dataframe(pd.DataFrame(summary), use_container_width=True, hide_index=True)
+            st.download_button(
+                "Download all region counts (CSV)",
+                pd.DataFrame(summary).to_csv(index=False).encode(),
+                file_name="Figure_4C_regions.csv", mime="text/csv", key="s1_venn_dl_all")
 
-        row1 = st.columns(2)
-        with row1[0]:
-            state_code = "Vm"
-            state_full = COND_FULL.get(state_code, state_code)
-            state_col = s1_get_full_label_color(state_full)
-            st.markdown(f"### {state_full}")
-            sets_vm = s1_get_up_sets_venn(by_tissue, state_code="Vm", partner_code=None)
-            setA = sets_vm.get("Antenna", set()); setB = sets_vm.get("Palp", set()); setC = sets_vm.get("Tarsi", set())
-            regions = s1_compute_venn_regions(setA, setB, setC)
-            counts = {k: len(v) for k, v in regions.items()}
-            st.caption(f"Antenna: {len(setA)} | Maxillary palp: {len(setB)} | Tarsi: {len(setC)} | All 3: {len(regions['A & B & C'])}")
-            fig_venn = s1_build_venn_figure(state_full, state_col,
-                                             (tissue_labels_s1["Antenna"], tissue_labels_s1["Palp"], tissue_labels_s1["Tarsi"]),
-                                             counts)
-            st.plotly_chart(fig_venn, use_container_width=False, key="s1_venn_Vm")
-            st.markdown("**Genes in selected tissue combination:**")
-            region_choice = st.selectbox("Tissue overlap region", region_options, key="s1_venn_region_Vm")
-            region_key = region_key_map[region_choice]
-            gene_set = regions.get(region_key, set())
-            df_region = s1_make_region_table(state_code, gene_set, master_annot)
-            if df_region.empty:
-                st.info("No genes in this region for these thresholds.")
-            else:
-                st.dataframe(df_region)
-                csv = df_region.to_csv(index=False).encode("utf-8")
-                safe_state = state_full.replace(" ", "_")
-                safe_region = region_choice.replace(" ", "_").replace("&", "and")
-                st.download_button("Download CSV", data=csv,
-                                   file_name=f"BSF_{safe_state}_venn_{safe_region}.csv",
-                                   mime="text/csv", key=f"s1_dl_Vm_{region_key}")
-
-        with row1[1]:
-            state_code = "VF"; partner = "Vm"
-            state_full = COND_FULL.get(state_code, state_code)
-            state_col = s1_get_full_label_color(state_full)
-            st.markdown(f"### {state_full} (VF vs Vm)")
-            sets_vf_vm = s1_get_up_sets_venn(by_tissue, state_code="VF", partner_code="Vm")
-            setA = sets_vf_vm.get("Antenna", set()); setB = sets_vf_vm.get("Palp", set()); setC = sets_vf_vm.get("Tarsi", set())
-            regions = s1_compute_venn_regions(setA, setB, setC)
-            counts = {k: len(v) for k, v in regions.items()}
-            st.caption(f"Antenna: {len(setA)} | Maxillary palp: {len(setB)} | Tarsi: {len(setC)} | All 3: {len(regions['A & B & C'])}")
-            fig_venn = s1_build_venn_figure(f"{state_full} vs {COND_FULL.get(partner, partner)}", state_col,
-                                             (tissue_labels_s1["Antenna"], tissue_labels_s1["Palp"], tissue_labels_s1["Tarsi"]),
-                                             counts)
-            st.plotly_chart(fig_venn, use_container_width=False, key="s1_venn_VF_Vm")
-            st.markdown("**Genes in selected tissue combination:**")
-            region_choice = st.selectbox("Tissue overlap region", region_options, key="s1_venn_region_VF_Vm")
-            region_key = region_key_map[region_choice]
-            gene_set = regions.get(region_key, set())
-            df_region = s1_make_region_table(state_code, gene_set, master_annot)
-            if df_region.empty:
-                st.info("No genes in this region for these thresholds.")
-            else:
-                st.dataframe(df_region)
-                csv = df_region.to_csv(index=False).encode("utf-8")
-                safe_state = f"{state_full}_vs_{COND_FULL.get(partner, partner)}".replace(" ", "_")
-                safe_region = region_choice.replace(" ", "_").replace("&", "and")
-                st.download_button("Download CSV", data=csv,
-                                   file_name=f"BSF_{safe_state}_venn_{safe_region}.csv",
-                                   mime="text/csv", key=f"s1_dl_VF_Vm_{region_key}")
-
-        st.markdown("---")
-        row2 = st.columns(2)
-        with row2[0]:
-            state_code = "VF"; partner = "MF"
-            state_full = COND_FULL.get(state_code, state_code)
-            state_col = s1_get_full_label_color(state_full)
-            st.markdown(f"### {state_full} (MF vs VF)")
-            sets_vf_mf = s1_get_up_sets_venn(by_tissue, state_code="VF", partner_code="MF")
-            setA = sets_vf_mf.get("Antenna", set()); setB = sets_vf_mf.get("Palp", set()); setC = sets_vf_mf.get("Tarsi", set())
-            regions = s1_compute_venn_regions(setA, setB, setC)
-            counts = {k: len(v) for k, v in regions.items()}
-            st.caption(f"Antenna: {len(setA)} | Maxillary palp: {len(setB)} | Tarsi: {len(setC)} | All 3: {len(regions['A & B & C'])}")
-            fig_venn = s1_build_venn_figure(f"{state_full} vs {COND_FULL.get(partner, partner)}", state_col,
-                                             (tissue_labels_s1["Antenna"], tissue_labels_s1["Palp"], tissue_labels_s1["Tarsi"]),
-                                             counts)
-            st.plotly_chart(fig_venn, use_container_width=False, key="s1_venn_VF_MF")
-            st.markdown("**Genes in selected tissue combination:**")
-            region_choice = st.selectbox("Tissue overlap region", region_options, key="s1_venn_region_VF_MF")
-            region_key = region_key_map[region_choice]
-            gene_set = regions.get(region_key, set())
-            df_region = s1_make_region_table(state_code, gene_set, master_annot)
-            if df_region.empty:
-                st.info("No genes in this region for these thresholds.")
-            else:
-                st.dataframe(df_region)
-                csv = df_region.to_csv(index=False).encode("utf-8")
-                safe_state = f"{state_full}_vs_{COND_FULL.get(partner, partner)}".replace(" ", "_")
-                safe_region = region_choice.replace(" ", "_").replace("&", "and")
-                st.download_button("Download CSV", data=csv,
-                                   file_name=f"BSF_{safe_state}_venn_{safe_region}.csv",
-                                   mime="text/csv", key=f"s1_dl_VF_MF_{region_key}")
-
-        with row2[1]:
-            state_code = "MF"
-            state_full = COND_FULL.get(state_code, state_code)
-            state_col = s1_get_full_label_color(state_full)
-            st.markdown(f"### {state_full}")
-            sets_mf = s1_get_up_sets_venn(by_tissue, state_code="MF", partner_code=None)
-            setA = sets_mf.get("Antenna", set()); setB = sets_mf.get("Palp", set()); setC = sets_mf.get("Tarsi", set())
-            regions = s1_compute_venn_regions(setA, setB, setC)
-            counts = {k: len(v) for k, v in regions.items()}
-            st.caption(f"Antenna: {len(setA)} | Maxillary palp: {len(setB)} | Tarsi: {len(setC)} | All 3: {len(regions['A & B & C'])}")
-            fig_venn = s1_build_venn_figure(state_full, state_col,
-                                             (tissue_labels_s1["Antenna"], tissue_labels_s1["Palp"], tissue_labels_s1["Tarsi"]),
-                                             counts)
-            st.plotly_chart(fig_venn, use_container_width=False, key="s1_venn_MF")
-            st.markdown("**Genes in selected tissue combination:**")
-            region_choice = st.selectbox("Tissue overlap region", region_options, key="s1_venn_region_MF")
-            region_key = region_key_map[region_choice]
-            gene_set = regions.get(region_key, set())
-            df_region = s1_make_region_table(state_code, gene_set, master_annot)
-            if df_region.empty:
-                st.info("No genes in this region for these thresholds.")
-            else:
-                st.dataframe(df_region)
-                csv = df_region.to_csv(index=False).encode("utf-8")
-                safe_state = state_full.replace(" ", "_")
-                safe_region = region_choice.replace(" ", "_").replace("&", "and")
-                st.download_button("Download CSV", data=csv,
-                                   file_name=f"BSF_{safe_state}_venn_{safe_region}.csv",
-                                   mime="text/csv", key=f"s1_dl_MF_{region_key}")
-
-    # -------------------- FIG 4 A-E TAB --------------------
     with tab_4de:
         if not tissue_cross:
             st.warning("No overlap data — ensure both contrasts are loaded for each tissue.")
@@ -4026,6 +4291,11 @@ def render_s1_tab():
                 "differs between the two groups. Axes are clipped at ±10 log₂FC and any gene "
                 "beyond is drawn on the boundary."
             )
+            view = st.radio(
+                "Colour points by",
+                ["Sex-bias class (Figure 4D)", "Mating response (Figure S26)"],
+                horizontal=True, key="s1_4d_view")
+            as_s26 = view.startswith("Mating")
             ret_rows = {}
             ret_cols = st.columns(3)
             for ci, tissue in enumerate(["Antenna", "Palp", "Tarsi"]):
@@ -4034,6 +4304,12 @@ def render_s1_tab():
                 with ret_cols[ci]:
                     if d_ret is None:
                         st.info(f"Mated-female contrast not loaded for {TISSUE_DISPLAY[tissue]}.")
+                    elif as_s26:
+                        td = tissue_cross[tissue]
+                        fig_s26, _ = s1_fig_mfs(d_ret, TISSUE_DISPLAY[tissue],
+                                                td["mat_mf"], td["mat_vf"])
+                        st.plotly_chart(fig_s26, use_container_width=True,
+                                        key=f"s1_mfs_{tissue}")
                     else:
                         st.plotly_chart(
                             s1_fig_retention(d_ret, TISSUE_DISPLAY[tissue], show_quad_text=(ci == 0)),
@@ -4067,8 +4343,12 @@ def render_s1_tab():
 
             st.markdown("---")
             # ── Figure 4D: Venns ────────────────────────────────────────────
-            st.subheader("Overlap between sex-biased and mating-regulated gene sets")
-            st.caption("Manuscript: **Figure 4D** (total Venn) · per-GO-domain Venns")
+            st.subheader("Overlap between sex-biased and mating-responsive gene sets")
+            st.caption(
+                "Within each appendage. This was a panel of Figure 4 in an earlier "
+                "version and is kept here because it is the clearest view of the "
+                "overlap; the current Figure 4D is the scatter above."
+            )
             st.markdown("**Total** (all genes) and **per GO domain** (with chemosensory priority).")
             for tissue in ["Antenna", "Palp", "Tarsi"]:
                 if tissue not in tissue_cross:
@@ -5591,6 +5871,28 @@ def ex_download(df, label, fname, key=None):
                        key=f"dl_{key or fname}")
 
 
+def ex_table(df, key, fname, height=360, caption=None):
+    """Show a dataframe with a free-text filter across every column, and a
+    download of exactly what the filter leaves."""
+    if df is None or df.empty:
+        st.info("Nothing to show.")
+        return df
+    q = st.text_input("Filter rows (searches every column)", "",
+                      key=f"flt_{key}", placeholder="gene, term, family, accession…")
+    sub = df
+    if q.strip():
+        terms = [t for t in q.lower().split() if t]
+        hay = df.astype(str).apply(lambda c: c.str.lower())
+        mask = pd.Series(True, index=df.index)
+        for t in terms:                      # every term must appear somewhere
+            mask &= hay.apply(lambda c: c.str.contains(t, regex=False, na=False)).any(axis=1)
+        sub = df[mask]
+    st.caption(caption or f"{len(sub):,} of {len(df):,} rows")
+    st.dataframe(sub, use_container_width=True, hide_index=True, height=height)
+    ex_download(sub, "Download these rows (CSV)", fname, key=f"tbl_{key}")
+    return sub
+
+
 # -------------------------------------------------------------- GO over-rep
 def ex_tab_go():
     st.subheader("Gene Ontology over-representation")
@@ -5645,8 +5947,7 @@ def ex_tab_go():
                       xaxis_title="Odds ratio", yaxis_title=None,
                       title=dict(text="Strongest 25 terms", font=dict(size=12)))
     st.plotly_chart(fig, use_container_width=True, key="ex_go_fig")
-    st.dataframe(sub, use_container_width=True, hide_index=True, height=360)
-    ex_download(sub, "Download these terms (CSV)", "GO_overrepresentation_filtered.csv")
+    ex_table(sub, "go", "GO_overrepresentation_filtered.csv", height=360)
 
 
 # ------------------------------------------------- chemosensory per-locus view
@@ -5794,8 +6095,7 @@ def ex_tab_chemo(by_tissue, padj_thr, lfc_thr):
     out = sub[["Contrast", "Gene", "Symbol", "Family", "lfc", "padj", "sig", "baseMean"]]
     out = out.rename(columns={"lfc": "log2FC", "padj": "adjusted_p",
                               "sig": "significant", "baseMean": "mean_normalised_count"})
-    st.dataframe(out, use_container_width=True, hide_index=True, height=340)
-    ex_download(out, "Download this table (CSV)", "locus_response.csv")
+    ex_table(out, "lolli", "locus_response.csv", height=340)
 
 
 # ----------------------------------------- S26: mated-female-specific expression
@@ -5954,8 +6254,7 @@ def ex_tab_comparative():
         fig.update_layout(height=380, plot_bgcolor="white",
                           margin=dict(l=10, r=10, t=30, b=10))
         st.plotly_chart(fig, use_container_width=True, key="ex_dip_fig")
-        st.dataframe(dip, use_container_width=True, hide_index=True)
-        ex_download(dip, "Download family sizes (CSV)", "AF19_Diptera_comparison.csv")
+        ex_table(dip, "dip", "AF19_Diptera_comparison.csv", height=260)
     cl = ex_load("clusters")
     if not cl.empty:
         st.markdown("**Identical protein clusters** (Additional file 35)")
@@ -5963,13 +6262,11 @@ def ex_tab_comparative():
             f"{len(cl)} clusters of transcript models encoding identical proteins. "
             "These are why the paper reports 567 transcript models but 393 gene loci."
         )
-        st.dataframe(cl, use_container_width=True, hide_index=True, height=260)
-        ex_download(cl, "Download clusters (CSV)", "AF35_identical_protein_clusters.csv")
+        ex_table(cl, "clusters", "AF35_identical_protein_clusters.csv", height=260)
     f3 = ex_load("fig3stat")
     if not f3.empty:
         st.markdown("**Enrichment tests behind Figure 3** (Additional file 38)")
-        st.dataframe(f3, use_container_width=True, hide_index=True)
-        ex_download(f3, "Download Figure 3 tests (CSV)", "AF38_Figure3_statistical_tests.csv")
+        ex_table(f3, "fig3", "AF38_Figure3_statistical_tests.csv", height=300)
 
 
 
@@ -6007,8 +6304,7 @@ def ex_tab_stats():
     pick = st.selectbox("Report", list(labels.keys()), key="ex_stats_pick")
     fname = labels[pick]
     df = pd.read_csv(os.path.join(STATS_DIR, fname))
-    st.dataframe(df, use_container_width=True, hide_index=True, height=420)
-    ex_download(df, "Download this report (CSV)", fname)
+    ex_table(df, f"stats_{fname}", fname, height=420)
     with st.expander("All reports in one download"):
         for f in avail:
             d = pd.read_csv(os.path.join(STATS_DIR, f))
@@ -6041,21 +6337,59 @@ def ex_tab_identity():
     st.subheader("Amino-acid identity")
     st.markdown(
         "Pairwise amino-acid identity within each chemosensory family "
-        "(Additional files 12–18) and between the 1:1 orthologs "
-        "(Additional file 28). Use it to ask how similar two paralogs really are."
+        "(Additional files 12\u201318) and between the 1:1 orthologs "
+        "(Additional file 28). Use it to ask how similar two paralogs really are: "
+        "a bright block is a recent expansion, a dark field is an old one."
     )
-    fam = st.selectbox("Family", list(IDENTITY_FILES.keys()), key="ex_id_fam")
+    c1, c2 = st.columns([2, 3])
+    with c1:
+        fam = st.selectbox("Family", list(IDENTITY_FILES.keys()), key="ex_id_fam")
     df = ex_load_identity(IDENTITY_FILES[fam])
     if df.empty:
         st.info("That matrix is not available.")
         return
     first = df.columns[0]
-    flt = st.text_input("Filter rows by name", "", key="ex_id_flt")
-    sub = df[df[first].astype(str).str.contains(flt.strip(), case=False, na=False)] \
-        if flt.strip() else df
-    st.caption(f"{len(sub):,} rows x {len(df.columns) - 1:,} columns")
-    st.dataframe(sub, use_container_width=True, height=420)
-    ex_download(sub, "Download this matrix (CSV)", IDENTITY_FILES[fam])
+    names = df[first].astype(str)
+    mat = df.drop(columns=[first]).apply(pd.to_numeric, errors="coerce")
+    with c2:
+        pick = st.text_input(
+            "Restrict to proteins whose name contains", "", key="ex_id_sel",
+            placeholder="e.g. OR1  — leave blank for the whole family")
+    if pick.strip():
+        keep = names.str.contains(pick.strip(), case=False, na=False)
+        if keep.sum() < 2:
+            st.warning("Fewer than two proteins match; showing the whole family.")
+        else:
+            cols = [c for c in mat.columns if str(c) in set(names[keep])]
+            mat = mat.loc[keep.values, cols] if cols else mat.loc[keep.values]
+            names = names[keep]
+    n = len(names)
+    if n > 160:
+        st.caption(f"{n} proteins — the heat map is drawn without labels at this size.")
+    fig = px.imshow(
+        mat.values,
+        x=list(names) if n <= 160 else None,
+        y=list(names) if n <= 160 else None,
+        color_continuous_scale="Viridis", origin="upper", aspect="auto",
+        labels=dict(color="% identity"),
+    )
+    fig.update_traces(hovertemplate="%{y} vs %{x}<br>%{z:.1f}% identity<extra></extra>")
+    fig.update_layout(height=max(420, min(820, 9 * n + 140)),
+                      margin=dict(l=10, r=10, t=36, b=10),
+                      title=dict(text=f"{fam} — pairwise amino-acid identity",
+                                 font=dict(size=12)),
+                      xaxis=dict(tickfont=dict(size=7), showticklabels=n <= 160),
+                      yaxis=dict(tickfont=dict(size=7), showticklabels=n <= 160))
+    st.plotly_chart(fig, use_container_width=True, key="ex_id_fig")
+    vals = mat.where(~np.eye(len(mat), dtype=bool)[:len(mat), :mat.shape[1]]) \
+        if mat.shape[0] == mat.shape[1] else mat
+    flat = pd.to_numeric(pd.Series(vals.values.ravel()), errors="coerce").dropna()
+    if len(flat):
+        st.caption(
+            f"{n} proteins \u00b7 off-diagonal identity: median {flat.median():.1f}%, "
+            f"range {flat.min():.1f}\u2013{flat.max():.1f}%"
+        )
+    ex_table(df, f"ident_{fam}", IDENTITY_FILES[fam], height=320)
 
 
 def render_explorer_tab():
@@ -6107,7 +6441,7 @@ APP_URL = os.environ.get(
 def render_open_on_desktop():
     """Small sidebar helper: the browser is cramped on a phone, so offer an
     easy way to move the link to a computer."""
-    with st.sidebar.expander("Open on a computer", expanded=False):
+    with st.sidebar.expander("Open on a computer", expanded=True):
         st.caption(
             "The heatmaps, trees and volcano plots need a wide screen. "
             "Mail yourself the link and open it on a desktop."
@@ -6131,6 +6465,8 @@ def render_open_on_desktop():
         st.code(APP_URL, language=None)
 
 
+render_open_on_desktop()
+
 section = st.sidebar.radio(
     "Section",
     [
@@ -6144,8 +6480,6 @@ section = st.sidebar.radio(
     ],
     key="main_section",
 )
-
-render_open_on_desktop()
 
 if section == "Phylogenetic Trees":
     render_trees_tab()
