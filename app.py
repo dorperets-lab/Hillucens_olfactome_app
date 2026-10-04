@@ -22,12 +22,14 @@ from typing import List
 
 # === PAGE CONFIG (must be first Streamlit call) ===
 st.set_page_config(
-    page_title="H. illucens Olfactome | Perets et al. 2026",
+    page_title="Appendage identity dominates chemosensory transcriptomic "
+               "organization in the black soldier fly | Perets et al. 2026",
     page_icon="🪰",
     layout="wide",
 )
-st.markdown("# Tissue-Specific Chemosensory Transcriptomics Across Sex and Reproductive States in *Hermetia illucens*")
-st.caption( "Interactive data companion")
+st.markdown("# Appendage identity dominates chemosensory transcriptomic "
+            "organization in the black soldier fly")
+st.caption("Perets *et al.* 2026 · data browser")
 
 st.markdown("""
 <style>
@@ -113,7 +115,16 @@ TISSUE_PREFIXES = {
     "Tarsi": ["Leg_", "Tar_"],
 }
 
+# Figure 2C partitions variance three ways - appendage, sex and mating status -
+# plus the unexplained remainder. The app used to read the 2-way model from
+# Additional file 32, which merged sex and mating into one slice.
 VP_PIE_COLORS = {
+    "Appendage identity": "#07045F",
+    "Sex": "#00C9FB",
+    "Mating status": "#7B1FA2",
+    "Shared / confounded": "#9E9E9E",
+    "Unexplained": "#D6D6D6",
+    # retained so the Python fallback keeps its colours
     "Appendage (unique effect)": "#07045F",
     "Reproductive state (unique effect)": "#00C9FB",
     "Unexplained variance (other factors)": "#D6D6D6",
@@ -1686,19 +1697,28 @@ def render_t1_tab():
             return pd.DataFrame()
         df = pd.read_csv(csv_path)
         mask = df["dataset"].str.strip() == dataset_filter
-        sub = df[mask & df["model"].str.contains("2-way", na=False)].copy()
+        sub = df[mask & df["model"].str.contains("3-way", na=False)].copy()
         if sub.empty:
             return pd.DataFrame()
         comp_map = {
-            "Appendage unique": "Appendage (unique effect)",
-            "Sex / mating-status unique": "Reproductive state (unique effect)",
-            "Unexplained": "Unexplained variance (other factors)",
+            "Appendage unique": "Appendage identity",
+            "Sex unique": "Sex",
+            "Mating unique": "Mating status",
+            "Shared/confounded": "Shared / confounded",
+            "Unexplained": "Unexplained",
         }
+        order = ["Appendage identity", "Sex", "Mating status",
+                 "Shared / confounded", "Unexplained"]
         rows = []
         for _, r in sub.iterrows():
             comp = comp_map.get(r["component"].strip(), r["component"].strip())
-            rows.append({"Component": comp, "Fraction": max(0.0, float(r["adj_r2_fraction"]))})
-        return pd.DataFrame(rows)
+            frac = max(0.0, float(r["adj_r2_fraction"]))
+            if comp == "Shared / confounded" and frac <= 0:
+                continue          # it is exactly zero here; an empty wedge helps nobody
+            rows.append({"Component": comp, "Fraction": frac})
+        out = pd.DataFrame(rows)
+        out["_o"] = out["Component"].map({c: i for i, c in enumerate(order)})
+        return out.sort_values("_o").drop(columns="_o").reset_index(drop=True)
 
     pie_all   = _load_vp_from_csv(_vp_csv, "ALL GENES")
     pie_chemo = _load_vp_from_csv(_vp_csv, "CHEMOSENSORY GENES (Name non-empty)")
@@ -1724,9 +1744,11 @@ def render_t1_tab():
         st.plotly_chart(fig, use_container_width=False, key=f"vp_pie_{key_suffix}")
 
     with col_vp1:
-        _render_vp_pie(pie_all, "All genes (n = 24,608; Ezekiel adj. R²; RDA, vegan)", "all")
+        _render_vp_pie(pie_all, "All genes (n = 24,608; Ezekiel adj. R²; RDA, vegan). "
+                                "Three-way model: appendage, sex and mating status.", "all")
     with col_vp2:
-        _render_vp_pie(pie_chemo, "Chemosensory genes only (n ≈ 553)", "chemo")
+        _render_vp_pie(pie_chemo, "Chemosensory genes only. "
+                                  "Three-way model: appendage, sex and mating status.", "chemo")
 
 # =============================================================================
 # === APP_C1 FUNCTIONS ===
@@ -3631,7 +3653,9 @@ def s1_build_retention(tissue_cross, tissue):
     msex_df = td.get("msex_df")
     if msex_df is None:
         return None
-    sx = td["sex_df"][["JoinKey", "log2FoldChange", "padj", "is_sig", "ChemoName"]].copy()
+    keep = [c for c in ("JoinKey", "log2FoldChange", "padj", "is_sig", "ChemoName",
+                        "Name", "GO_Name") if c in td["sex_df"].columns]
+    sx = td["sex_df"][keep].copy()
     sx = sx.drop_duplicates("JoinKey").rename(
         columns={"log2FoldChange": "x", "padj": "padj_virgin", "is_sig": "sig_v"})
     mx = msex_df[["JoinKey", "log2FoldChange", "padj", "is_sig"]].copy()
@@ -3656,10 +3680,64 @@ def s1_build_retention(tissue_cross, tissue):
         [(d.x < 0) & (d.y > 0), (d.x > 0) & (d.y > 0),
          (d.x < 0) & (d.y < 0), (d.x > 0) & (d.y < 0)],
         ["x- y+", "x+ y+", "x- y-", "x+ y-"], default="axis")
+    # family membership from Additional file 37, which is authoritative
+    fam, sym = ex_family_map()
+    gk = d["JoinKey"].astype(str)
+    d["Family"] = gk.map(fam).fillna("")
+    d["Symbol"] = gk.map(sym).fillna("")
+    d["is_chemo"] = d["Family"].astype(bool)
+    if "Name" not in d.columns:
+        d["Name"] = ""
+    d["Label"] = np.where(d["Symbol"].astype(bool), d["Symbol"],
+                  np.where(d["ChemoName"].notna(), d["ChemoName"].astype(str), gk))
+    d["hover"] = (
+        "<b>" + d["Label"].astype(str) + "</b><br>" + gk
+        + np.where(d["Family"].astype(bool), "  ·  " + d["Family"].astype(str), "")
+        + "<br>virgins "   + d["x"].round(2).astype(str)
+        + "  (q " + d["padj_virgin"].map(lambda v: f"{v:.1e}" if pd.notna(v) else "NA") + ")"
+        + "<br>mated "     + d["y"].round(2).astype(str)
+        + "  (q " + d["padj_mated"].map(lambda v: f"{v:.1e}" if pd.notna(v) else "NA") + ")"
+        + "<br>shift "     + (d["y"] - d["x"]).round(2).astype(str)
+        + np.where(d["reversed"], "<br><b>sex bias reverses after mating</b>", "")
+        + np.where(d["Name"].astype(str).str.len() > 0,
+                   "<br>" + d["Name"].astype(str).str.slice(0, 60), "")
+    )
     return d
 
 
-def s1_fig_retention(d, tissue_label, show_quad_text=False):
+def s1_scatter_overlays(fig, d, mark_chemo, search):
+    """Optional marks on the 4D / S26 scatter: chemosensory genes, and a search.
+
+    Both are drawn as open rings rather than new colours, so they stack on top
+    of whatever the points already encode instead of competing with it.
+    """
+    if mark_chemo and "is_chemo" in d.columns:
+        ch = d[d["is_chemo"]]
+        if not ch.empty:
+            fig.add_trace(go.Scattergl(
+                x=ch["px"], y=ch["py"], mode="markers", name="Chemosensory",
+                marker=dict(size=9, color="rgba(0,0,0,0)",
+                            line=dict(width=1.2, color="#A60000")),
+                text=ch["hover"], hovertemplate="%{text}<extra></extra>"))
+    q = (search or "").strip().lower()
+    if q:
+        hay = (d["JoinKey"].astype(str) + " " + d["Label"].astype(str) + " "
+               + d.get("Name", pd.Series("", index=d.index)).astype(str) + " "
+               + d.get("Family", pd.Series("", index=d.index)).astype(str)).str.lower()
+        hit = d[hay.str.contains(q, regex=False, na=False)]
+        if not hit.empty:
+            fig.add_trace(go.Scattergl(
+                x=hit["px"], y=hit["py"], mode="markers+text",
+                name=f"matches “{search.strip()}”",
+                marker=dict(size=13, color="rgba(0,0,0,0)",
+                            line=dict(width=2.0, color="#00A878"), symbol="circle"),
+                text=hit["Label"].astype(str), textposition="top center",
+                textfont=dict(size=9, color="#00634A"),
+                hovertext=hit["hover"], hovertemplate="%{hovertext}<extra></extra>"))
+
+
+def s1_fig_retention(d, tissue_label, show_quad_text=False,
+                     mark_chemo=False, search=""):
     L = RETENTION_LIM
     fig = go.Figure()
     # shade the two quadrants where the direction of bias differs between groups
@@ -3677,12 +3755,8 @@ def s1_fig_retention(d, tissue_label, show_quad_text=False):
             continue
         fig.add_trace(go.Scattergl(
             x=sub["px"], y=sub["py"], mode="markers", name=cls,
-            marker=dict(size=4.5, color=RETENTION_COLORS[cls],
-                        line=dict(width=0)),
-            customdata=np.stack([sub["JoinKey"], sub["x"], sub["y"]], axis=-1),
-            hovertemplate=("<b>%{customdata[0]}</b><br>"
-                           "virgins %{customdata[1]:.2f}<br>"
-                           "mated %{customdata[2]:.2f}<extra></extra>"),
+            marker=dict(size=4.5, color=RETENTION_COLORS[cls], line=dict(width=0)),
+            text=sub["hover"], hovertemplate="%{text}<extra></extra>",
         ))
     rev = d[d["reversed"]]
     if not rev.empty:
@@ -3690,11 +3764,9 @@ def s1_fig_retention(d, tissue_label, show_quad_text=False):
             x=rev["px"], y=rev["py"], mode="markers", name="Direction reversed",
             marker=dict(size=10, color="rgba(0,0,0,0)",
                         line=dict(width=1.3, color="#111111")),
-            customdata=np.stack([rev["JoinKey"], rev["x"], rev["y"]], axis=-1),
-            hovertemplate=("<b>%{customdata[0]}</b> — reversed<br>"
-                           "virgins %{customdata[1]:.2f}<br>"
-                           "mated %{customdata[2]:.2f}<extra></extra>"),
+            text=rev["hover"], hovertemplate="%{text}<extra></extra>",
         ))
+    s1_scatter_overlays(fig, d, mark_chemo, search)
     # quadrant counts; the wording is spelled out only in the first panel
     for key, (qx, qy, ax_, ay) in {
         "x- y+": (-L * 0.96,  L * 0.96, "left", "top"),
@@ -3725,7 +3797,7 @@ MFS_COLS = {"Induced in mated females": "#E08214",
             "Not mating-responsive": "#D4D4D4"}
 
 
-def s1_fig_mfs(d, tissue_label, up, dn):
+def s1_fig_mfs(d, tissue_label, up, dn, mark_chemo=False, search=""):
     """Figure S26: the same axes as 4D, coloured by the mating response.
 
     The diagonal is the null for the mating contrast: on it a gene has the same
@@ -3748,9 +3820,8 @@ def s1_fig_mfs(d, tissue_label, up, dn):
         fig.add_trace(go.Scattergl(
             x=sub["px"], y=sub["py"], mode="markers", name=cls,
             marker=dict(size=4.5, color=MFS_COLS[cls]),
-            customdata=np.stack([sub["JoinKey"], sub["x"], sub["y"]], axis=-1),
-            hovertemplate=("<b>%{customdata[0]}</b><br>virgins %{customdata[1]:.2f}"
-                           "<br>mated %{customdata[2]:.2f}<extra></extra>")))
+            text=sub["hover"], hovertemplate="%{text}<extra></extra>"))
+    s1_scatter_overlays(fig, d, mark_chemo, search)
     fig.add_annotation(x=-L*0.55, y=-L*0.55, text="y = x, no mating response",
                        showarrow=False, textangle=-45,
                        font=dict(size=9, color="#555555"), yshift=10)
@@ -4296,6 +4367,19 @@ def render_s1_tab():
                 ["Sex-bias class (Figure 4D)", "Mating response (Figure S26)"],
                 horizontal=True, key="s1_4d_view")
             as_s26 = view.startswith("Mating")
+            o1, o2 = st.columns([1, 2])
+            with o1:
+                mark_chemo = st.checkbox("Mark chemosensory genes", value=False,
+                                         key="s1_4d_chemo")
+            with o2:
+                scatter_q = st.text_input(
+                    "Find genes in the scatter", "", key="s1_4d_search",
+                    placeholder="ORco, OBP34, XM_038066019.1, or a family such as OR")
+            st.caption(
+                "Hover any point for its accession, family, both fold changes with "
+                "their adjusted p values, and the shift between them. Matches to the "
+                "search are ringed in green and labelled."
+            )
             ret_rows = {}
             ret_cols = st.columns(3)
             for ci, tissue in enumerate(["Antenna", "Palp", "Tarsi"]):
@@ -4307,13 +4391,40 @@ def render_s1_tab():
                     elif as_s26:
                         td = tissue_cross[tissue]
                         fig_s26, _ = s1_fig_mfs(d_ret, TISSUE_DISPLAY[tissue],
-                                                td["mat_mf"], td["mat_vf"])
+                                                td["mat_mf"], td["mat_vf"],
+                                                mark_chemo, scatter_q)
                         st.plotly_chart(fig_s26, use_container_width=True,
                                         key=f"s1_mfs_{tissue}")
                     else:
                         st.plotly_chart(
-                            s1_fig_retention(d_ret, TISSUE_DISPLAY[tissue], show_quad_text=(ci == 0)),
+                            s1_fig_retention(d_ret, TISSUE_DISPLAY[tissue],
+                                             show_quad_text=(ci == 0),
+                                             mark_chemo=mark_chemo, search=scatter_q),
                             use_container_width=True, key=f"s1_retention_{tissue}")
+            if scatter_q.strip():
+                hits = []
+                for tissue, d_ret in ret_rows.items():
+                    if d_ret is None:
+                        continue
+                    hay = (d_ret["JoinKey"].astype(str) + " " + d_ret["Label"].astype(str)
+                           + " " + d_ret["Family"].astype(str)).str.lower()
+                    h = d_ret[hay.str.contains(scatter_q.strip().lower(), regex=False, na=False)]
+                    if not h.empty:
+                        hits.append(h.assign(Appendage=TISSUE_DISPLAY[tissue])[
+                            ["Appendage", "JoinKey", "Label", "Family", "x", "y",
+                             "padj_virgin", "padj_mated", "reversed"]])
+                if hits:
+                    hv = pd.concat(hits, ignore_index=True).rename(columns={
+                        "JoinKey": "Gene", "Label": "Name", "x": "log₂FC virgins",
+                        "y": "log₂FC mated females", "padj_virgin": "q virgins",
+                        "padj_mated": "q mated", "reversed": "Reversed"})
+                    st.dataframe(hv.round(3), use_container_width=True, hide_index=True)
+                    st.download_button(
+                        "Download these matches (CSV)", hv.to_csv(index=False).encode(),
+                        file_name="Figure_4D_search_matches.csv", mime="text/csv",
+                        key="s1_4d_search_dl")
+                else:
+                    st.info(f"Nothing in the scatter matches “{scatter_q.strip()}”.")
             summary = []
             for tissue, d_ret in ret_rows.items():
                 if d_ret is None:
@@ -5999,17 +6110,32 @@ def ex_load_contrast(fname, padj_thr, lfc_thr, chemo_only):
     return d.drop(columns=["log2FoldChange"], errors="ignore")
 
 
-def ex_lollipop(d, title, n_max):
-    """Stems from no change to the log2 fold change, as in Figure 4A."""
+# Figure 4A/4B colour every stem by the appendage it belongs to:
+# antenna dark blue, maxillary palp mid blue, tarsi grey.
+APPENDAGE_COLS = {"Antenna": "#08306B", "Maxillary palp": "#4292C6", "Tarsi": "#737373"}
+
+def ex_lollipop(d, title, n_max, colour_appendage=None):
+    """Stems from no change to the log2 fold change, as in Figure 4A.
+
+    Dot colour is the appendage, matching the published panels. For an
+    appendage-versus-appendage contrast there is no single appendage, so the
+    dot takes the colour of whichever appendage the gene is higher in.
+    """
     d = d.sort_values("lfc")
     if len(d) > n_max:
         keep = pd.concat([d.head(n_max // 2), d.tail(n_max - n_max // 2)])
         d = keep.sort_values("lfc")
     lab = d["Symbol"].fillna(d["Gene"]).astype(str)
-    if "Appendage" in d.columns:
-        lab = lab + "  (" + d["Appendage"].astype(str) + ")"
     fig = go.Figure()
-    for x, y in zip(d["lfc"], lab):
+    if colour_appendage is None:
+        cols = pd.Series("#737373", index=d.index)
+    elif isinstance(colour_appendage, tuple):          # (positive side, negative side)
+        hi, lo = colour_appendage
+        cols = pd.Series(np.where(d["lfc"] > 0, APPENDAGE_COLS.get(hi, "#737373"),
+                                  APPENDAGE_COLS.get(lo, "#737373")), index=d.index)
+    else:
+        cols = pd.Series(APPENDAGE_COLS.get(colour_appendage, "#737373"), index=d.index)
+    for x, y, c in zip(d["lfc"], lab, cols):
         fig.add_shape(type="line", x0=0, x1=x, y0=y, y1=y,
                       line=dict(color="#C9C9C9", width=1))
     size = 8.0
@@ -6019,13 +6145,13 @@ def ex_lollipop(d, title, n_max):
             np.log10(bm).max() - np.log10(bm).min(), 1e-9)
     fig.add_trace(go.Scatter(
         x=d["lfc"], y=lab, mode="markers",
-        marker=dict(size=size, color=d["lfc"], colorscale="RdBu_r", cmid=0,
+        marker=dict(size=size, color=list(cols),
                     line=dict(width=0.5, color="#3A3A3A")),
         customdata=np.stack([d["Gene"], d["padj"].fillna(1),
                              d.get("Family", pd.Series("", index=d.index))], axis=-1),
         hovertemplate=("<b>%{y}</b><br>log₂FC %{x:.2f}<br>"
-                       "%{customdata[0]}<br>adjusted p %{customdata[1]:.3g}"
-                       "<extra></extra>")))
+                       "%{customdata[0]} · %{customdata[2]}<br>"
+                       "adjusted p %{customdata[1]:.3g}<extra></extra>")))
     fig.add_vline(x=0, line_width=1, line_color="#555555")
     fig.update_layout(height=max(340, 15 * len(d) + 110), plot_bgcolor="white",
                       margin=dict(l=10, r=10, t=40, b=10), showlegend=False,
@@ -6086,12 +6212,23 @@ def ex_tab_chemo(by_tissue, padj_thr, lfc_thr):
         st.info("Nothing matches these filters. Try clearing 'Significant only'.")
         return
     st.caption(f"{len(sub):,} loci across {sub['Contrast'].nunique()} contrast(s)")
+    pair = {"Antenna vs Tarsi": ("Antenna", "Tarsi"),
+            "Antenna vs Maxillary palp": ("Antenna", "Maxillary palp"),
+            "Tarsi vs Maxillary palp": ("Tarsi", "Maxillary palp")}
     for name in picks:
         part = sub[sub["Contrast"] == name]
         if part.empty:
             continue
-        st.plotly_chart(ex_lollipop(part.drop(columns=["Appendage"]), name, n_max),
-                        use_container_width=True, key=f"ex_ll_{name}")
+        colour = pair.get(name) or name.split(" \u2014 ")[0]
+        st.plotly_chart(
+            ex_lollipop(part.drop(columns=["Appendage"]), name, n_max, colour),
+            use_container_width=True, key=f"ex_ll_{name}")
+    st.caption(
+        "Dot colour is the appendage, as in Figure 4A and 4B: antenna dark blue, "
+        "maxillary palp mid blue, tarsi grey. For an appendage-versus-appendage "
+        "contrast the dot takes the colour of the appendage the gene is higher in. "
+        "Dot area is mean normalised expression."
+    )
     out = sub[["Contrast", "Gene", "Symbol", "Family", "lfc", "padj", "sig", "baseMean"]]
     out = out.rename(columns={"lfc": "log2FC", "padj": "adjusted_p",
                               "sig": "significant", "baseMean": "mean_normalised_count"})
