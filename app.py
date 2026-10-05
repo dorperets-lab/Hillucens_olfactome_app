@@ -5418,19 +5418,20 @@ MAIN_FIGURE_CAPTIONS = {
         "hypothesise became stabilised early in dipteran evolution. The present data establish that these "
         "identities are invariant across sex and reproductive state in H. illucens; dating their origin "
         "requires appendage-resolved data from further lineages. (2) Molecular diversification "
-        "(intermediate evolutionary timescale): within these conserved appendages, chemosensory receptor "
-        "gene families (OR, GR, IR, OBP, CSP, TRP, and PPK) diversified through lineage-specific "
-        "expansion, contraction, and differential deployment, enabling ecological specialization without "
-        "fundamentally altering appendage identity. (3) Physiological modulation (adult timescale): sex, "
-        "reproductive state, and circadian context modulate the activity of conserved sensory circuits "
-        "through regulation of shared signaling pathways, including sex determination (transformer), "
-        "circadian regulation (daywake), neuropeptide signalling (the SIFamide receptor) and remodelling "
-        "of the cuticle and extracellular matrix, rather than through wholesale remodeling of peripheral "
-        "receptor repertoires. In the tarsi this modulation abolishes constitutive sex-biased expression "
-        "and installs a female-specific programme of induced genes, with no accompanying change in "
-        "receptor-gene expression. Together, these findings support a hierarchical model in which stable "
-        "appendage-specific sensory architectures provide the anatomical setting in which receptor-family "
-        "diversification and reversible physiological regulation generate behavioral flexibility. "
+        "(intermediate evolutionary timescale): within these conserved appendage architectures, "
+        "chemosensory receptor gene families (OR, GR, IR, OBP, CSP, TRP, and PPK) diversified through "
+        "lineage-specific expansion, contraction, and differential deployment, enabling ecological "
+        "specialization without fundamentally altering appendage identity. (3) Physiological modulation "
+        "(adult timescale): sex, reproductive state, and circadian context modulate the activity of "
+        "conserved sensory circuits through regulation of shared signaling pathways, including sex "
+        "determination (transformer), circadian regulation (daywake), neuropeptide signalling (the "
+        "SIFamide receptor) and remodelling of the cuticle and extracellular matrix, rather than through "
+        "wholesale remodeling of peripheral receptor repertoires. In the tarsi this modulation abolishes "
+        "constitutive sex-biased expression and installs a female-specific programme of induced genes, "
+        "with no accompanying change in receptor-gene expression. Together, these findings support a "
+        "hierarchical model in which stable appendage-specific sensory architectures provide the "
+        "anatomical setting in which receptor-family diversification and reversible physiological "
+        "regulation generate behavioral flexibility. "
     ),
 }
 
@@ -5526,34 +5527,34 @@ SUPP_FIGURE_CAPTIONS = {
         "repertoire and providing the basis for functional annotation. "
     ),
     "Figure S9 — GO: antenna-biased": (
-        "**Figure S9.** Gene Ontology enrichment of antenna-biased genes. with bar length giving the "
-        "significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p, and gene "
-        "counts printed beside each bar. Terms are ordered by significance; bars that do not reach q < "
-        "0.05 are drawn pale. GO terms shown in bold and enclosed in a black box denote the biologically "
-        "salient category discussed in the Results: olfactory receptor activity, the dominant molecular "
-        "function of the antenna. "
+        "**Figure S9.** Gene Ontology enrichment of antenna-biased genes. Bar length gives the number of "
+        "genes in the set carrying the term and stars give the Benjamini–Hochberg adjusted p (*** < "
+        "0.001, ** < 0.01, * < 0.05, n.s. not significant). Terms are ordered by gene count; bars that do "
+        "not reach q < 0.05 are drawn pale. GO terms shown in bold and enclosed in a black box denote the "
+        "biologically salient category discussed in the Results: olfactory receptor activity, the "
+        "dominant molecular function of the antenna. "
     ),
     "Figure S10 — GO: palp-biased": (
         "**Figure S10.** Gene Ontology enrichment of maxillary palp-biased genes. Unlike the antenna, the "
         "maxillary palp exhibits a heterogeneous functional profile: the most strongly over-represented "
         "terms are solute:inorganic anion antiporter activity and odorant binding, with structural "
-        "constituents of the ribosome and cuticle and monooxygenase activity also enriched.with bar "
-        "length giving the significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted "
-        "p, and gene counts printed beside each bar. Terms are ordered by significance; bars that do not "
-        "reach q < 0.05 are drawn pale. solute:inorganic anion antiporter activity and odorant binding, "
-        "the two most strongly over-represented terms. "
+        "constituents of the ribosome and cuticle and monooxygenase activity also enriched.Bar length "
+        "gives the number of genes in the set carrying the term and stars give the Benjamini–Hochberg "
+        "adjusted p (*** < 0.001, ** < 0.01, * < 0.05, n.s. not significant). Terms are ordered by gene "
+        "count; bars that do not reach q < 0.05 are drawn pale. solute:inorganic anion antiporter "
+        "activity and odorant binding, the two most strongly over-represented terms. "
     ),
     "Figure S11 — GO: tarsi-biased": (
         "**Figure S11.** Gene Ontology enrichment of tarsus-biased genes. The tarsus has the largest "
         "appendage-biased repertoire, but over-representation is confined to signalling and regulatory "
         "functions, principally G protein-coupled receptor activity, DNA-binding transcription factor "
-        "activity, regulation of alternative mRNA splicing and neuropeptide hormone activity.with bar "
-        "length giving the significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted "
-        "p, and gene counts printed beside each bar. Terms are ordered by significance; bars that do not "
-        "reach q < 0.05 are drawn pale. G protein-coupled receptor activity. Protein binding and "
-        "nucleotide binding are the numerically largest categories in this set but are not "
-        "over-represented against the annotated background (q = 0.77 and q = 1.00), and are therefore not "
-        "boxed. "
+        "activity, regulation of alternative mRNA splicing and neuropeptide hormone activity.Bar length "
+        "gives the number of genes in the set carrying the term and stars give the Benjamini–Hochberg "
+        "adjusted p (*** < 0.001, ** < 0.01, * < 0.05, n.s. not significant). Terms are ordered by gene "
+        "count; bars that do not reach q < 0.05 are drawn pale. G protein-coupled receptor activity. "
+        "Protein binding and nucleotide binding are the numerically largest categories in this set but "
+        "are not over-represented against the annotated background (q = 0.77 and q = 1.00), and are "
+        "therefore not boxed. "
     ),
     "Figure S12 — GO domain composition": (
         "**Figure S12.** Gene Ontology domain composition of appendage-biased genes. For each pairwise "
@@ -5639,77 +5640,88 @@ SUPP_FIGURE_CAPTIONS = {
     "Figure S20 — GO: sex-biased": (
         "**Figure S20.** Gene Ontology enrichment of sex-biased genes across chemosensory appendages. Top "
         "20 enriched Gene Ontology (GO) terms associated with sex-biased differentially expressed genes "
-        "(virgin female vs. virgin male; adjusted Bar length gives the significance of "
-        "over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p; terms are ordered by "
-        "significance and bars that do not reach q < 0.05 are drawn pale.p < 0.001, |log₂FC| ≥ 1) in the "
-        "antennae (top row), maxillary palps (middle row), and tarsi (bottom row). GO terms are presented "
-        "separately for Molecular Function (MF), Cellular Component (CC), and Biological Process (BP). "
-        "Bar lengths indicate the number of genes assigned to each GO term. Panel titles indicate the "
-        "appendage (rows: antennae, maxillary palps, tarsi) and Gene Ontology domain (columns) shown. GO "
-        "terms shown in bold and enclosed in a black box denote the categories discussed in the main "
-        "text: chemosensory (olfactory receptor activity, odorant binding), pheromone and detoxification "
-        "metabolism (monooxygenase activity), cuticular structure (structural constituent of cuticle), "
-        "and reproduction-, signalling- and immunity-related processes (lipid metabolic process, MAPK "
-        "cascade, defense response, developmental process involved in reproduction). "
+        "(virgin female vs. virgin male; adjusted Bar length gives the number of genes in the set "
+        "carrying the term and stars give the Benjamini–Hochberg adjusted p (*** < 0.001, ** < 0.01, * < "
+        "0.05, n.s. not significant); terms are ordered by gene count and bars that do not reach q < 0.05 "
+        "are drawn pale.Bar length gives the number of genes in the set carrying the term and stars give "
+        "the Benjamini–Hochberg adjusted p (*** < 0.001, ** < 0.01, * < 0.05, n.s. not significant); "
+        "terms are ordered by gene count and bars that do not reach q < 0.05 are drawn pale.p < 0.001, "
+        "|log₂FC| ≥ 1) in the antennae (top row), maxillary palps (middle row), and tarsi (bottom row). "
+        "GO terms are presented separately for Molecular Function (MF), Cellular Component (CC), and "
+        "Biological Process (BP). Bar lengths indicate the number of genes assigned to each GO term. "
+        "Panel titles indicate the appendage (rows: antennae, maxillary palps, tarsi) and Gene Ontology "
+        "domain (columns) shown. GO terms shown in bold and enclosed in a black box denote the categories "
+        "discussed in the main text: chemosensory (olfactory receptor activity, odorant binding), "
+        "pheromone and detoxification metabolism (monooxygenase activity), cuticular structure "
+        "(structural constituent of cuticle), and reproduction-, signalling- and immunity-related "
+        "processes (lipid metabolic process, MAPK cascade, defense response, developmental process "
+        "involved in reproduction). "
     ),
     "Figure S21 — GO: mating-responsive": (
         "**Figure S21.** Gene Ontology enrichment of mating-responsive genes across chemosensory "
-        "appendages. Bar length gives the significance of over-representation, −log₁₀ of the "
-        "Benjamini–Hochberg adjusted p; terms are ordered by significance and bars that do not reach q < "
-        "0.05 are drawn pale.(mated female vs. virgin female and mated female vs. virgin male, "
-        "significant in the same direction in both; adjusted p < 0.001, |log₂FC| ≥ 1) in the antennae "
-        "(top row), maxillary palps (middle row), and tarsi (bottom row). GO terms are presented "
-        "separately for Molecular Function (MF), Cellular Component (CC), and Biological Process (BP). "
-        "Bar lengths indicate the number of genes assigned to each GO term. Panel titles indicate the "
-        "appendage (rows: antennae, maxillary palps, tarsi) and Gene Ontology domain (columns) shown. GO "
-        "terms shown in bold and enclosed in a black box denote the mating-responsive categories "
-        "discussed in the main text: monooxygenase activity, odorant binding and G protein-coupled "
-        "receptor activity, together with the biological processes MAPK cascade, defense response and "
-        "lipid metabolic process. "
+        "appendages. Bar length gives the number of genes in the set carrying the term and stars give the "
+        "Benjamini–Hochberg adjusted p (*** < 0.001, ** < 0.01, * < 0.05, n.s. not significant); terms "
+        "are ordered by gene count and bars that do not reach q < 0.05 are drawn pale.Bar length gives "
+        "the number of genes in the set carrying the term and stars give the Benjamini–Hochberg adjusted "
+        "p (*** < 0.001, ** < 0.01, * < 0.05, n.s. not significant); terms are ordered by gene count and "
+        "bars that do not reach q < 0.05 are drawn pale.(mated female vs. virgin female and mated female "
+        "vs. virgin male, significant in the same direction in both; adjusted p < 0.001, |log₂FC| ≥ 1) in "
+        "the antennae (top row), maxillary palps (middle row), and tarsi (bottom row). GO terms are "
+        "presented separately for Molecular Function (MF), Cellular Component (CC), and Biological "
+        "Process (BP). Bar lengths indicate the number of genes assigned to each GO term. Panel titles "
+        "indicate the appendage (rows: antennae, maxillary palps, tarsi) and Gene Ontology domain "
+        "(columns) shown. GO terms shown in bold and enclosed in a black box denote the mating-responsive "
+        "categories discussed in the main text: monooxygenase activity, odorant binding and G "
+        "protein-coupled receptor activity, together with the biological processes MAPK cascade, defense "
+        "response and lipid metabolic process. "
     ),
     "Figure S22 — GO: sex-biased only": (
         "**Figure S22.** Gene Ontology enrichment of constitutively sex-biased genes. Top enriched Gene "
         "Ontology (GO) terms associated with genes showing constitutive sex-biased expression (virgin "
         "female vs. virgin male) but no significant mating response within each chemosensory appendage "
-        "(adjusted Bar length gives the significance of over-representation, −log₁₀ of the "
-        "Benjamini–Hochberg adjusted p; terms are ordered by significance and bars that do not reach q < "
-        "0.05 are drawn pale (p< 0.001, |log₂FC| ≥ 1). Results are shown separately for the antennae (top "
-        "row), maxillary palps (middle row), and tarsi (bottom row). For each appendage, the top 15 "
-        "enriched GO terms are presented for Molecular Function (MF), Cellular Component (CC), and "
-        "Biological Process (BP), with bar lengths representing the number of genes assigned to each GO "
-        "term. These analyses identify appendage-specific biological functions associated with "
-        "constitutive sexual dimorphism). GO terms shown in bold and enclosed in a black box denote the "
-        "categories underlying constitutive sexual dimorphism discussed in the main text: olfactory "
-        "receptor activity and monooxygenase activity in the antenna, odorant binding in the palp and "
-        "tarsi, and developmental process involved in reproduction in the tarsi. "
+        "(adjusted Bar length gives the number of genes in the set carrying the term and stars give the "
+        "Benjamini–Hochberg adjusted p (*** < 0.001, ** < 0.01, * < 0.05, n.s. not significant); terms "
+        "are ordered by gene count and bars that do not reach q < 0.05 are drawn pale (p< 0.001, |log₂FC| "
+        "≥ 1). Results are shown separately for the antennae (top row), maxillary palps (middle row), and "
+        "tarsi (bottom row). For each appendage, the top 15 enriched GO terms are presented for Molecular "
+        "Function (MF), Cellular Component (CC), and Biological Process (BP), with bar lengths "
+        "representing the number of genes assigned to each GO term. These analyses identify "
+        "appendage-specific biological functions associated with constitutive sexual dimorphism). GO "
+        "terms shown in bold and enclosed in a black box denote the categories underlying constitutive "
+        "sexual dimorphism discussed in the main text: olfactory receptor activity and monooxygenase "
+        "activity in the antenna, odorant binding in the palp and tarsi, and developmental process "
+        "involved in reproduction in the tarsi. "
     ),
     "Figure S23 — GO: mating-responsive only": (
-        "**Figure S23.** Gene Ontology enrichment of mating-responsive genes. Bar length gives the "
-        "significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p; terms are "
-        "ordered by significance and bars that do not reach q < 0.05 are drawn pale.genes responding to "
-        "mating (significant in the same direction against both virgin females and virgin males) but not "
-        "significantly sex GO terms shown in bold and enclosed in a black box denote the post-mating "
-        "categories discussed in the main text: monooxygenase activity and odorant binding, and the "
-        "biological processes immune system process and lipid metabolic process, most pronounced in the "
-        "tarsi. "
+        "**Figure S23.** Gene Ontology enrichment of mating-responsive genes. Bar length gives the number "
+        "of genes in the set carrying the term and stars give the Benjamini–Hochberg adjusted p (*** < "
+        "0.001, ** < 0.01, * < 0.05, n.s. not significant); terms are ordered by gene count and bars that "
+        "do not reach q < 0.05 are drawn pale. Genes responding to mating (significant in the same "
+        "direction against both virgin females and virgin males) but not significantly sex GO terms shown "
+        "in bold and enclosed in a black box denote the post-mating categories discussed in the main "
+        "text: monooxygenase activity and odorant binding, and the biological processes immune system "
+        "process and lipid metabolic process, most pronounced in the tarsi. "
     ),
     "Figure S24 — GO: sex & mating": (
         "**Figure S24.** Gene Ontology enrichment of genes regulated by both sex and mating status. Top "
         "enriched Gene Ontology (GO) terms associated with genes that were significantly differentially "
         "expressed in both the sex comparison (virgin female vs. virgin male) and the mating comparison "
-        "(mated female vs. virgin female) within the same appendage (adjusted Bar length gives the "
-        "significance of over-representation, −log₁₀ of the Benjamini–Hochberg adjusted p; terms are "
-        "ordered by significance and bars that do not reach q < 0.05 are drawn pale.p < 0.001, |log₂FC| ≥ "
-        "1). Results are shown separately for the antennae (top row), maxillary palps (middle row), and "
-        "tarsi (bottom row). For each appendage, the top 15 enriched GO terms are presented for Molecular "
-        "Function (MF), Cellular Component (CC), and Biological Process (BP), with bar lengths "
-        "representing the number of genes assigned to each GO term. Absence of enriched terms is "
-        "indicated where no GO category met the enrichment criteria. These analyses identify biological "
-        "pathways jointly influenced by constitutive sexual dimorphism and reproductive state. GO terms "
-        "shown in bold and enclosed in a black box denote the categories jointly regulated by sex and "
-        "mating discussed in the main text: the tarsal terms monooxygenase activity, G protein-coupled "
-        "receptor activity and odorant binding, and the biological processes MAPK cascade and defense "
-        "response. "
+        "(mated female vs. virgin female) within the same appendage (adjusted Bar length gives the number "
+        "of genes in the set carrying the term and stars give the Benjamini–Hochberg adjusted p (*** < "
+        "0.001, ** < 0.01, * < 0.05, n.s. not significant); terms are ordered by gene count and bars that "
+        "do not reach q < 0.05 are drawn pale.Bar length gives the number of genes in the set carrying "
+        "the term and stars give the Benjamini–Hochberg adjusted p (*** < 0.001, ** < 0.01, * < 0.05, "
+        "n.s. not significant); terms are ordered by gene count and bars that do not reach q < 0.05 are "
+        "drawn pale.p < 0.001, |log₂FC| ≥ 1). Results are shown separately for the antennae (top row), "
+        "maxillary palps (middle row), and tarsi (bottom row). For each appendage, the top 15 enriched GO "
+        "terms are presented for Molecular Function (MF), Cellular Component (CC), and Biological Process "
+        "(BP), with bar lengths representing the number of genes assigned to each GO term. Absence of "
+        "enriched terms is indicated where no GO category met the enrichment criteria. These analyses "
+        "identify biological pathways jointly influenced by constitutive sexual dimorphism and "
+        "reproductive state. GO terms shown in bold and enclosed in a black box denote the categories "
+        "jointly regulated by sex and mating discussed in the main text: the tarsal terms monooxygenase "
+        "activity, G protein-coupled receptor activity and odorant binding, and the biological processes "
+        "MAPK cascade and defense response. "
     ),
     "Figure S25 — DE across appendages": (
         "**Figure S25.** Differential expression across appendages, by sex and by mating. Volcano plots "
@@ -6009,8 +6021,10 @@ def ex_tab_go():
     st.subheader("Gene Ontology over-representation")
     st.markdown(
         "Every GO term tested against its gene set, with the odds ratio and the "
-        "Benjamini–Hochberg adjusted p value. Figures S9–S12 and S20–S24 plot the "
-        "strongest terms; this is the whole table. Tests are one-sided Fisher "
+        "Benjamini–Hochberg adjusted p value. Figures S9–S11 and S20–S24 plot the "
+        "strongest terms; this is the whole table. As in those figures, bar length "
+        "is the gene count and stars give the adjusted p (*** < 0.001, ** < 0.01, "
+        "* < 0.05); pale bars did not reach q < 0.05. Tests are one-sided Fisher "
         "exact tests, corrected within each gene set × GO domain."
     )
     sig = ex_load("go_sig")
@@ -6042,21 +6056,28 @@ def ex_tab_go():
     if sub.empty:
         st.info("No terms match these filters.")
         return
-    sub = sub.sort_values("q_BH")
+    # Matches Figures S9-S11 and S20-S24: bar length is the gene count, and
+    # significance is carried by stars rather than by a second use of length.
+    def _stars(q):
+        return "***" if q < 0.001 else "**" if q < 0.01 else "*" if q < 0.05 else "n.s."
+    sub = sub.sort_values(["k_in_set", "q_BH"], ascending=[False, True])
     st.caption(f"{len(sub):,} terms")
     top = sub.head(25).iloc[::-1]
+    lab = [f"{int(k)} {_stars(q)}" for k, q in zip(top["k_in_set"], top["q_BH"])]
+    pale = [q >= 0.05 for q in top["q_BH"]]
     fig = go.Figure(go.Bar(
-        x=top["odds_ratio"], y=top["GO_term"], orientation="h",
-        marker=dict(color=top["odds_ratio"], colorscale="Blues", showscale=False),
-        customdata=np.stack([top["q_BH"], top["k_in_set"], top["n_set"]], axis=-1),
-        hovertemplate=("<b>%{y}</b><br>odds ratio %{x:.2f}<br>"
-                       "q = %{customdata[0]:.3g}<br>"
-                       "%{customdata[1]} of %{customdata[2]} genes<extra></extra>"),
+        x=top["k_in_set"], y=top["GO_term"], orientation="h",
+        marker=dict(color=["#CDCEF4" if p else "#4D50DB" for p in pale]),
+        text=lab, textposition="outside", textfont=dict(size=10, color="#444444"),
+        customdata=np.stack([top["q_BH"], top["n_set"], top["odds_ratio"]], axis=-1),
+        hovertemplate=("<b>%{y}</b><br>%{x} of %{customdata[1]} genes<br>"
+                       "odds ratio %{customdata[2]:.2f}<br>"
+                       "q = %{customdata[0]:.3g}<extra></extra>"),
     ))
     fig.update_layout(height=max(320, 22 * len(top) + 90), plot_bgcolor="white",
                       margin=dict(l=10, r=10, t=30, b=10),
-                      xaxis_title="Odds ratio", yaxis_title=None,
-                      title=dict(text="Strongest 25 terms", font=dict(size=12)))
+                      xaxis_title="Genes in the set carrying the term", yaxis_title=None,
+                      title=dict(text="Top 25 terms by gene count", font=dict(size=12)))
     st.plotly_chart(fig, use_container_width=True, key="ex_go_fig")
     ex_table(sub, "go", "GO_overrepresentation_filtered.csv", height=360)
 
